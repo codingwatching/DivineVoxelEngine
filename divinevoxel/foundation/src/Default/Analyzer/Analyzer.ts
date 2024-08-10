@@ -1,5 +1,5 @@
 import type { AnaylzerTask } from "../../Types/Tasks.types.js";
-import type { LocationData } from "@divinevoxel/core/Math";;
+import type { LocationData } from "@divinevoxel/core/Math";
 //objects
 import { EngineSettings } from "@divinevoxel/core/Data/Settings/EngineSettings.js";
 import { DivineVoxelEngineConstructor } from "@divinevoxel/core/Contexts/Constructor/DivineVoxelEngineConstructor.js";
@@ -8,8 +8,9 @@ import { AnalyzerUpdater } from "./AnalyzerUpdater.js";
 
 import { DVEAnaylzer } from "../../Interfaces/Anaylzer/DVEAnaylzer.js";
 import { DataTool } from "../Tools/Data/DataTool.js";
-import { TasksRequest } from "../../Contexts/Constructor/Tasks/TasksRequest.js";
+import { TasksRequest } from "../Tasks/Constructor/Tasks/TasksRequest.js";
 import { DVEFConstrucotrCore } from "../../Contexts/Constructor/DVEFConstructorCore.js";
+import { Propagation } from "../Propagation/Propagation.js";
 //tools
 
 const mainDT = new DataTool();
@@ -27,67 +28,58 @@ export class Analyzer extends DVEAnaylzer {
   async runPropagation(data: AnaylzerTask) {
     let t: any = {};
 
-      const options = {
-        light: EngineSettings.doLight(),
-        flow: EngineSettings.doFlow(),
-      };
-      mainDT.setDimension(data[0][0]);
-      secondaryDT.setDimension(data[0][0]);
-      const tasks = TasksRequest.getVoxelUpdateRequests(
-        data[0],
-        "none",
-        "self"
-      );
-      tasks.start();
-      this.processor.goThroughColumn(data[0], (x, y, z) => {
-        if (!mainDT.loadInAt(x, y, z) || mainDT.isAir()) return;
+    const options = {
+      light: EngineSettings.doLight(),
+      flow: EngineSettings.doFlow(),
+    };
+    mainDT.setDimension(data[0][0]);
+    secondaryDT.setDimension(data[0][0]);
+    const tasks = TasksRequest.getVoxelUpdateRequests(data[0], "none", "self");
+    tasks.start();
+    this.processor.goThroughColumn(data[0], (x, y, z) => {
+      if (!mainDT.loadInAt(x, y, z) || mainDT.isAir()) return;
 
-        if (options.light) {
-          if (mainDT.isLightSource()) {
-            tasks.queues.rgb.update.push(x, y, z);
-          }
+      if (options.light) {
+        if (mainDT.isLightSource()) {
+          tasks.queues.rgb.update.push(x, y, z);
         }
-        if (options.flow) {
-          t = {
-            id: mainDT.getStringId(),
-            sustance: mainDT.getSubstance(),
-            substanceStringId: mainDT.getSubstanceStringId(),
-          };
-          if (mainDT.getSubstnaceData().isLiquid()) {
-            let add = false;
-            for (const check of this._flowChecks) {
-              if (
-                secondaryDT.loadInAt(x + check[0], y + check[1], z + check[2])
-              ) {
-                if (secondaryDT.isAir()) {
-                  add = true;
-                  break;
-                }
+      }
+      if (options.flow) {
+        t = {
+          id: mainDT.getStringId(),
+          sustance: mainDT.getSubstance(),
+          substanceStringId: mainDT.getSubstanceStringId(),
+        };
+        if (mainDT.getSubstnaceData().isLiquid()) {
+          let add = false;
+          for (const check of this._flowChecks) {
+            if (
+              secondaryDT.loadInAt(x + check[0], y + check[1], z + check[2])
+            ) {
+              if (secondaryDT.isAir()) {
+                add = true;
+                break;
               }
             }
-            if (add) {
-              tasks.queues.flow.update.queue.push([x, y, z]);
-            }
+          }
+          if (add) {
+            tasks.queues.flow.update.queue.push([x, y, z]);
           }
         }
-      });
-
-      DVEFConstrucotrCore.instance.propagation.rgbUpdate(tasks);
-      const dimension = data[0][0];
-      for (const flowUpdate of tasks.queues.flow.update.queue) {
-        const [x, y, z] = flowUpdate;
-        if (!mainDT.loadInAt(x, y, z)) continue;
-        await DVEFConstrucotrCore.instance.propagation.flowUpdate(
-          TasksRequest.getFlowUpdateRequest(
-            [dimension, x, y, z],
-            "none",
-            "self"
-          ),
-          false
-        );
       }
-      tasks.stop();
-  
+    });
+
+    Propagation.instance.rgbUpdate(tasks);
+    const dimension = data[0][0];
+    for (const flowUpdate of tasks.queues.flow.update.queue) {
+      const [x, y, z] = flowUpdate;
+      if (!mainDT.loadInAt(x, y, z)) continue;
+      await Propagation.instance.flowUpdate(
+        TasksRequest.getFlowUpdateRequest([dimension, x, y, z], "none", "self"),
+        false
+      );
+    }
+    tasks.stop();
   }
 
   async runUpdate(data: AnaylzerTask) {

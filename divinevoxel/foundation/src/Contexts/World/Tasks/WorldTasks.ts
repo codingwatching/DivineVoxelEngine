@@ -3,27 +3,19 @@ import type { LocationData } from "@divinevoxel/core/Math/index.js";
 import { Threads } from "@amodx/threads/";
 //data
 import { WorldRegister } from "../../../Data/World/WorldRegister.js";
-import { WorldDataGenerator } from "../Data/Generators/WorldDataGenerator.js";
 import { DVEFWorldCore } from "../DVEFWorldCore.js";
 import {
   LoadRegionHeadertasks,
-  LoadChunkDataTasks,
   WorldLockTasks,
-  LoadRegionDataTasks,
   LoadColumnDataTasks,
 } from "../../../Types/Tasks.types.js";
-import { RegionDataTool } from "../../../Default/Tools/Data/WorldData/RegionDataTool.js";
 import { ColumnDataTool } from "../../../Default/Tools/Data/WorldData/ColumnDataTool.js";
-import { ChunkDataTool } from "../../../Default/Tools/Data/WorldData/ChunkDataTool.js";
 import { RegionHeaderRegister } from "../../../Data/RegionHeaderRegister.js";
 import { DataLoaderTool } from "../../../Default/DataLoader/World/Tools/DataLoaderTool.js";
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
-import { BuilderTool } from "../../../Default/Tools/Build/BuilderTool.js";
 import { WorldLock } from "../Lock/WorldLock.js";
 import { DVEFDataSync } from "../DVEFDataSync.js";
-import { Region } from "../../../Data/World/Classes/Region.js";
 import { Column, ColumnData } from "../../../Data/World/Classes/Column.js";
-import { Chunk } from "../../../Data/World/Classes/Chunk.js";
 
 export class WorldTasks {
   private columnTool = new ColumnDataTool();
@@ -59,11 +51,7 @@ export class WorldTasks {
 }
 
 export default function (DVEW: DVEFWorldCore) {
-  const regionTool = new RegionDataTool();
-  const columnTool = new ColumnDataTool();
-  const chunkTool = new ChunkDataTool();
   const dataLoaderTool = new DataLoaderTool();
-  const builderTool = new BuilderTool();
   const loadInMap: Map<string, boolean> = new Map();
 
   Threads.registerTasks("add-chunk", async (location: LocationData) => {
@@ -83,7 +71,7 @@ export default function (DVEW: DVEFWorldCore) {
       const success = await dataLoaderTool.loadIfExists(columnLocation);
       loadInMap.delete(columnLocation.toString());
       if (!success) {
-        builderTool.setLocation(columnLocation).fillColumn();
+        WorldRegister.instance.column.fill(columnLocation);
       }
 
       return;

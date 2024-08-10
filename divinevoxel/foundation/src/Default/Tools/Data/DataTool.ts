@@ -2,7 +2,7 @@ import type { RawVoxelData } from "@divinevoxel/core/Types/Voxel.types.js";
 import { DimensionsRegister } from "../../../Data/World/DimensionsRegister.js";
 import { VoxelStateReader } from "../../../Data/VoxelStateReader.js";
 import { VoxelStruct } from "@divinevoxel/core/Data/Voxel/VoxelStruct.js";
-import { VoxelPaletteReader } from "@divinevoxel/core/Data/Voxel/VoxelPalette.js";
+import { VoxelPalette } from "@divinevoxel/core/Data/Voxel/VoxelPalette.js";
 import { ChunkDataTool } from "./WorldData/ChunkDataTool.js";
 import { HeightMapTool } from "./WorldData/HeightMapTool.js";
 import { DataToolBase } from "../Classes/DataToolBase.js";
@@ -40,10 +40,10 @@ export enum DataToolModes {
 
 export class DataTool extends DataToolBase {
   static GetVoxelIDFromString(id: string) {
-    return VoxelPaletteReader.id.numberFromString(id);
+    return VoxelPalette.ids.getNumberId(id);
   }
   static GetVoxelIDFromNumber(id: number) {
-    return VoxelPaletteReader.id.stringFromNumber(id);
+    return VoxelPalette.ids.getStringId(id);
   }
   static IsSameVoxel(dataTool1: DataTool, dataTool2: DataTool) {
     return dataTool1.getId(true) == dataTool2.getId(true);
@@ -51,11 +51,10 @@ export class DataTool extends DataToolBase {
 
   static VoxelDataToRaw(data: Partial<AddVoxelData>, light = 0): RawVoxelData {
     const id =
-      (data.id !== undefined && VoxelPaletteReader.id.getPaletteId(data.id)) ||
-      0;
+      (data.id !== undefined && VoxelPalette.ids.getNumberId(data.id)) || 0;
     const secondaryId =
       (data.secondaryVoxelId !== undefined &&
-        VoxelPaletteReader.id.getPaletteId(data.secondaryVoxelId)) ||
+        VoxelPalette.ids.getNumberId(data.secondaryVoxelId)) ||
       0;
     let stateData = 0;
 
@@ -124,9 +123,6 @@ export class DataTool extends DataToolBase {
     this._loadedId = this.getId(true);
     return this;
   }
-  _getBaseId(id: number) {
-    return VoxelPaletteReader.id.baseNumeric(id);
-  }
 
   getSubstnaceData() {
     this._substanceTool.setSubstance(this.getSubstance());
@@ -179,7 +175,7 @@ export class DataTool extends DataToolBase {
     this.data.secondaryId = this.data.raw[3];
 
     if (this.data.secondaryId > 1) {
-      this.data.id = this._getBaseId(this.data.secondaryId);
+      this.data.id = this.data.secondaryId;
     } else {
       this.data.secondaryId = 0;
     }
@@ -413,17 +409,17 @@ export class DataTool extends DataToolBase {
     return this;
   }
   setStringId(id: string) {
-    return this.setId(VoxelPaletteReader.id.numberFromString(id)!);
+    return this.setId(VoxelPalette.ids.getNumberId(id)!);
   }
   getStringId() {
     if (this.__secondary) {
-      return VoxelPaletteReader.id.stringFromNumber(this.data.secondaryId);
+      return VoxelPalette.ids.getStringId(this.data.secondaryId);
     }
-    return VoxelPaletteReader.id.stringFromNumber(this.data.id);
+    return VoxelPalette.ids.getStringId(this.data.id);
   }
 
   setName(name: string) {
-    this.setStringId(VoxelPaletteReader.name.getId(name));
+    this.setStringId(VoxelPalette.name.getId(name));
   }
 
   getName() {

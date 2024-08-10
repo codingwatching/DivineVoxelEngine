@@ -13,7 +13,7 @@ import { BinaryStructData } from "@amodx/binary/";
 import { SubstanceStruct } from "../../Data/Substance/SubstanceStruct.js";
 import { DataSyncIds } from "../Common/DataSyncIds.js";
 import { MappedDataRegister } from "../../Data/Register/MappedDataRegister.js";
-import { VoxelPaletteReader } from "../../Data/Voxel/VoxelPalette.js";
+import { VoxelPalette } from "../../Data/Voxel/VoxelPalette.js";
 import { SubstancePaletteReader } from "../../Data/Substance/SubstancePalette.js";
 import { VoxelStruct } from "../../Data/Voxel/VoxelStruct.js";
 
@@ -37,8 +37,8 @@ export abstract class RemoteDataSyncNode {
     voxel: Threads.onDataSync<PaletteSyncData, any>(
       DataSyncIds.VoxelPalette,
       ([palette, map, nameToId, idToName]) => {
-        VoxelPaletteReader.setVoxelIdPalette(palette, map);
-        VoxelPaletteReader.setVoxelNamePalette(nameToId, idToName);
+        VoxelPalette.setVoxelIdPalette(palette, map);
+        VoxelPalette.setVoxelNamePalette(nameToId, idToName);
       }
     ),
     substance: Threads.onDataSync<PaletteSyncData, any>(

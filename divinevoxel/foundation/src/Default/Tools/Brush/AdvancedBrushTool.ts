@@ -4,9 +4,8 @@
 import { BrushTool } from "./Brush.js";
 import { TaskRunModes, TaskTool } from "../Tasks/TasksTool.js";
 
-const tasks = new TaskTool();
-
 export class AdvancedBrush extends BrushTool {
+  tasks = new TaskTool();
   mode: TaskRunModes = "async";
   setMode(mode: TaskRunModes) {
     this.mode = mode;
@@ -28,8 +27,8 @@ export class AdvancedBrush extends BrushTool {
     });
   }
   paintAndUpdate(onDone?: Function) {
-    tasks.setFocalPoint(this.location);
-    tasks.voxelUpdate.paint.run(
+    this.tasks.setFocalPoint(this.location);
+    this.tasks.voxelUpdate.paint.run(
       this.location,
       this.getRaw(),
       () => {
@@ -39,8 +38,8 @@ export class AdvancedBrush extends BrushTool {
     );
   }
   eraseAndUpdate(onDone?: Function) {
-    tasks.setFocalPoint(this.location);
-    tasks.voxelUpdate.erase.run(
+    this.tasks.setFocalPoint(this.location);
+    this.tasks.voxelUpdate.erase.run(
       this.location,
       () => {
         if (onDone) onDone();
@@ -49,8 +48,8 @@ export class AdvancedBrush extends BrushTool {
     );
   }
   update(onDone?: Function) {
-    tasks.setFocalPoint(this.location);
-    tasks.voxelUpdate.update.run(
+    this.tasks.setFocalPoint(this.location);
+    this.tasks.voxelUpdate.update.run(
       this.location,
       this.getRaw(),
       () => {
@@ -67,8 +66,8 @@ export class AdvancedBrush extends BrushTool {
     });
   }
   explode(radius = 6, onDone?: Function) {
-    tasks.setFocalPoint(this.location);
-    tasks.explosion.run(this.location, radius, () => {
+    this.tasks.setFocalPoint(this.location);
+    this.tasks.explosion.run(this.location, radius, () => {
       if (onDone) onDone();
     });
   }

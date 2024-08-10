@@ -37,12 +37,12 @@ export class ChunkDataTool extends EncodedPositionDataTool {
     raw[0] = this._chunk.ids[index];
     raw[1] = this._chunk.light[index];
     raw[2] = this._chunk.state[index];
-    raw[3] = this._chunk.secondaryIds[index];
+    raw[3] = this._chunk.secondary[index];
   }
   setRaw(index: number, raw: RawVoxelData) {
     this._chunk.ids[index] = raw[0];
     this._chunk.light[index] = raw[1];
     this._chunk.state[index] = raw[2];
-    this._chunk.secondaryIds[index] = raw[3];
+    this._chunk.secondary[index] = raw[3];
   }
 }

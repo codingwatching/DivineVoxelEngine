@@ -1,4 +1,4 @@
-import { FaceDataOverride } from "Default/Builder/Types";
+import { FaceDataOverride } from "../../Types";
 type Run = (data: FaceDataOverride) => boolean;
 export class OverrideBase {
   voxels = new Map<number, Map<number, Run>>();

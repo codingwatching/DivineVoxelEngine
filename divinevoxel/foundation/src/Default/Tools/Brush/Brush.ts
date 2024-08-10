@@ -2,7 +2,7 @@ import { DataTool } from "../../Tools/Data/DataTool.js";
 import type { RawVoxelData } from "@divinevoxel/core/Types/Voxel.types.js";
 import { WorldPainter } from "../../../Data/World/WorldPainter.js";
 import { WorldRegister } from "../../../Data/World/WorldRegister.js";
-import { VoxelPaletteReader } from "@divinevoxel/core/Data/Voxel/VoxelPalette.js";
+import { VoxelPalette } from "@divinevoxel/core/Data/Voxel/VoxelPalette.js";
 import { LocationBoundTool } from "../Classes/LocationBoundTool.js";
 import { AddVoxelData } from "../../../Data/Types/WorldData.types.js";
 const air = "dve_air";
@@ -39,7 +39,7 @@ export class BrushTool extends LocationBoundTool {
   }
 
   setName(name: string) {
-    this.data.id = VoxelPaletteReader.name.getId(name);
+    this.data.id = VoxelPalette.name.getId(name);
     this.name = name;
     return this;
   }
@@ -93,10 +93,10 @@ export class BrushTool extends LocationBoundTool {
   }
 
   getRaw() {
-    this._dt.setId(VoxelPaletteReader.id.getPaletteId(this.data.id));
+    this._dt.setId(VoxelPalette.ids.getNumberId(this.data.id));
     this._dt
       .setSecondary(true)
-      .setId(VoxelPaletteReader.id.getPaletteId(this.data.secondaryVoxelId))
+      .setId(VoxelPalette.ids.getNumberId(this.data.secondaryVoxelId))
       .setSecondary(false);
 
     this._dt.setLevel(this.data.level);

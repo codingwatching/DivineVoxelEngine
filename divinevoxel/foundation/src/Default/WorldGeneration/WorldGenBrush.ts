@@ -8,9 +8,10 @@ import { RichDataTool } from "../Tools/Data/RichDataTool.js";
 import { BrushTool } from "../../Default/Tools/Brush/Brush.js";
 import { LightData } from "../../Data/LightData.js";
 import { DVEFConstrucotrCore } from "../../Contexts/Constructor/DVEFConstructorCore.js";
-import { TasksRequest } from "../../Contexts/Constructor/Tasks/TasksRequest.js";
+import { TasksRequest } from "../Tasks/Constructor/Tasks/TasksRequest.js";
 import { WorldGeneration } from "./WorldGeneration.js";
 import { SafePromise } from "@amodx/core/Promises/SafePromise.js";
+import { Propagation } from "../Propagation/Propagation.js";
 
 export class WorldGenBrush extends BrushTool {
   constructor() {
@@ -34,12 +35,12 @@ export class WorldGenBrush extends BrushTool {
 
     if (LightData.hasRGBLight(sl)) {
       this.tasks.queues.rgb.remove.push(this.x, this.y, this.z);
-      DVEFConstrucotrCore.instance.propagation.rgbRemove(this.tasks);
+      Propagation.instance.rgbRemove(this.tasks);
     }
 
     if (LightData.hasSunLight(sl)) {
       this.tasks.queues.sun.remove.push(this.x, this.y, this.z);
-      DVEFConstrucotrCore.instance.propagation.sunRemove(this.tasks);
+      Propagation.instance.sunRemove(this.tasks);
     }
 
     this._worldPainter.paintVoxel(this.location, this.data);
@@ -56,21 +57,21 @@ export class WorldGenBrush extends BrushTool {
 
     if (LightData.hasRGBLight(sl)) {
       this.tasks.queues.rgb.remove.push(this.x, this.y, this.z);
-      DVEFConstrucotrCore.instance.propagation.rgbRemove(this.tasks);
+      Propagation.instance.rgbRemove(this.tasks);
     }
 
     if (LightData.hasSunLight(sl)) {
       this.tasks.queues.sun.remove.push(this.x, this.y, this.z);
 
-      DVEFConstrucotrCore.instance.propagation.sunRemove(this.tasks);
+      Propagation.instance.sunRemove(this.tasks);
     }
 
     this._worldPainter.eraseVoxel(this.location);
   }
 
   runUpdates() {
-    DVEFConstrucotrCore.instance.propagation.rgbUpdate(this.tasks);
-    DVEFConstrucotrCore.instance.propagation.sunUpdate(this.tasks);
+    Propagation.instance.rgbUpdate(this.tasks);
+    Propagation.instance.sunUpdate(this.tasks);
     this.tasks.queues.sun.updateMap.clear();
   }
 

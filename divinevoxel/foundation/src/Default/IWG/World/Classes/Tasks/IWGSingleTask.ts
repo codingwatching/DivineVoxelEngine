@@ -1,8 +1,7 @@
-import { Vec3ArrayDistanceSort } from "@divinevoxel/core/Math/Functions/DistnaceSort.js";
 import { IWG } from "../../IWG.js";
 import { Vec3Array } from "@amodx/math";
 import { IWGTaskBase } from "./IWGTaskBase";
-
+//import { Vec3ArrayDistanceSort } from "@amodx/math/Vectors/Functions/DistnaceSort.js";
 export abstract class IWGSingleTask extends IWGTaskBase {
   abstract run(
     dimensionId: string,
@@ -15,7 +14,7 @@ export abstract class IWGSingleTask extends IWGTaskBase {
     if (this.waitingFor < 0) this.waitingFor = 0;
     if (this.waitingFor >= max) return;
 
-    Vec3ArrayDistanceSort(cachedPosition, this.queue);
+ //   Vec3ArrayDistanceSort(cachedPosition, this.queue);
     while (this.waitingFor < max) {
       const node = this.queue.shift();
       if (!node) break;

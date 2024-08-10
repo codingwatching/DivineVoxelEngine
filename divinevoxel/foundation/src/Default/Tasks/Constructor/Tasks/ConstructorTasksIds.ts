@@ -1,7 +1,7 @@
-export enum ConstructorTasksIds {
-  BuildChunk,
-  BuildColumn,
-  Generate,
+import { ConstructorTasksIds } from "../../../../Contexts/Constructor/ConstructorTasksIds";
+
+export enum DefaultConstructorTasksIds {
+  Generate = ConstructorTasksIds.BuildColumn + 1,
   Decorate,
   RGBlightUpdate,
   RGBlightRemove,

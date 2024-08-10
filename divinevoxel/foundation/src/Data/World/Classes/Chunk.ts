@@ -8,7 +8,7 @@ export interface VoxelDataArrays {
   ids: Uint16Array;
   light: Uint16Array;
   state: Uint16Array;
-  secondaryIds: Uint16Array;
+  secondary: Uint16Array;
 }
 
 export interface ChunkData extends VoxelDataArrays {
@@ -30,14 +30,14 @@ export class Chunk {
     const light = new Uint16Array(lightBuffers);
     const stateBuffers = new SharedArrayBuffer(voxelSize * 2);
     const state = new Uint16Array(stateBuffers);
-    const secondaryIdsBuffers = new SharedArrayBuffer(voxelSize * 2);
-    const secondaryIds = new Uint16Array(secondaryIdsBuffers);
+    const secondaryBuffers = new SharedArrayBuffer(voxelSize * 2);
+    const secondary = new Uint16Array(secondaryBuffers);
     return {
       stateBuffer,
       ids,
       light,
       state,
-      secondaryIds,
+      secondary,
     };
   }
   static toObject(data: ChunkData) {
@@ -56,7 +56,7 @@ export class Chunk {
       stateBuffer: this.stateBuffer,
       ids: this.ids,
       light: this.light,
-      secondaryIds: this.secondaryIds,
+      secondary: this.secondary,
       state: this.state,
     };
   }

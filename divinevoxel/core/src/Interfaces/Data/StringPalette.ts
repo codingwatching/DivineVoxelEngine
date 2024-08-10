@@ -1,12 +1,26 @@
 export class StringPalette {
-  _count = 0;
+  private _count = 0;
   _palette: string[] = [];
   _map: Record<string, number> = {};
 
+  constructor(inital?: ArrayLike<string>) {
+    if (inital) {
+      let length = inital.length;
+      for (let i = 0; i < length; i++) {
+        this.register(inital[i]);
+      }
+    }
+  }
+  get size() {
+    return this._count;
+  }
+
   register(string: string) {
-    this._palette[this._count] = string;
-    this._map[string] = this._count;
+    const id = this._count;
     this._count++;
+    this._palette[id] = string;
+    this._map[string] = id;
+    return id;
   }
 
   get() {

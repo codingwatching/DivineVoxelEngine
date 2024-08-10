@@ -64,8 +64,8 @@ export class VoxelTemplator {
     let use16bitForIds = false;
     let use16bitForState = false;
 
-    if (palette._count > 255) use16bitForIds = true;
-    if (statePalette._count > 255) use16bitForState = true;
+    if (palette.size > 255) use16bitForIds = true;
+    if (statePalette.size > 255) use16bitForState = true;
 
     const idsBuffer = use16bitForIds
       ? new Uint16Array(new SharedArrayBuffer(this.index.size * 2))

@@ -1,4 +1,4 @@
-import type { LightTaskRequest } from "../../../../Contexts/Constructor/Tasks/TasksRequest";
+import type { LightTaskRequest } from "../../../Tasks/Constructor/Tasks/TasksRequest"
 import { IlluminationManager as IM } from "../IlluminationManager.js";
 
 export function SunUpdate(tasks: LightTaskRequest) {

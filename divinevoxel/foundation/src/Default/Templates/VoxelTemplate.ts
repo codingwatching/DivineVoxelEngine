@@ -3,7 +3,7 @@ import { VoxelTemplateData } from "./VoxelTemplates.types";
 import { RawVoxelData } from "@divinevoxel/core";
 import { StringPalette } from "@divinevoxel/core/Interfaces/Data/StringPalette";
 import { NumberPalette } from "@divinevoxel/core/Interfaces/Data/NumberPalette";
-import { VoxelPaletteReader } from "@divinevoxel/core/Data/Voxel/VoxelPalette";
+import { VoxelPalette } from "@divinevoxel/core/Data/Voxel/VoxelPalette";
 
 type TemplateCursor = { position: Vec3Array; raw: RawVoxelData };
 
@@ -36,12 +36,12 @@ export class VoxelTemplate {
       curosr.position[0] = x;
       curosr.position[1] = y;
       curosr.position[2] = z;
-      raw[0] = VoxelPaletteReader.id.numberFromString(
+      raw[0] = VoxelPalette.ids.getNumberId(
         this.palette.getStringId(this.data.voxels.ids[vindex])
       )!;
       raw[1] = 0;
       raw[2] = this.statePalette.getValue(this.data.voxels.state[vindex]);
-      raw[3] = VoxelPaletteReader.id.numberFromString(
+      raw[3] = VoxelPalette.ids.getNumberId(
         this.palette.getStringId(this.data.voxels.secondary[vindex])
       )!;
       if (raw[0] < 1 && raw[3] < 1) continue;

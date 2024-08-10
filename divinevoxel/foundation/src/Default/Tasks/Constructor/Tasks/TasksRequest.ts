@@ -5,18 +5,18 @@ import type {
   Priorities,
   PriorityTask,
   RunRebuildTasks,
-} from "../../../Types/Tasks.types";
-import { ConstructorRemoteThreadTasks } from "../../Common/ConstructorRemoteThreadTasks.js";
+} from "../../../../Types/Tasks.types";
+import { ConstructorRemoteThreadTasks } from "../../../../Contexts/Constructor/ConstructorRemoteThreadTasks"
 import { EngineSettings } from "@divinevoxel/core/Data/Settings/EngineSettings.js";
 import { Thread, Threads } from "@amodx/threads/";
 import { $3dMooreNeighborhood } from "@divinevoxel/core/Math/Constants/CardinalNeighbors.js";
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces";
 
-import { WorldRegister } from "../../../Data/World/WorldRegister.js";
+import { WorldRegister } from "../../../../Data/World/WorldRegister.js";
 
-import { ChunkDataTool } from "../../../Default/Tools/Data/WorldData/ChunkDataTool";
-import { VisitedMap } from "../../../Util/VisistedMap";
-import { DVEFConstrucotrCore } from "../DVEFConstructorCore";
+import { ChunkDataTool } from "../../../../Default/Tools/Data/WorldData/ChunkDataTool";
+import { VisitedMap } from "../../../../Util/VisistedMap";
+import { DVEFConstrucotrCore } from "../../../../Contexts/Constructor/DVEFConstructorCore";
 
 const chunkTool = new ChunkDataTool();
 type RebuildModes = "sync" | "async";
@@ -136,14 +136,14 @@ class Request<T, Q> {
       if (!node) break;
       this.buildTasks.data[0] = node;
       this.comm.runTasks<PriorityTask<BuildTasks>>(
-        ConstructorRemoteThreadTasks.buildChunk,
+        ConstructorRemoteThreadTasks.BuildChunk,
         this.buildTasks
       );
     }
     while (this.syncQueue.length !== 0) {
       const node = this.syncQueue.shift();
       if (!node) break;
-      DVEFConstrucotrCore.instance.builder.buildChunk(node, 1, 0);
+      DVEFConstrucotrCore.instance.mesher.meshChunk(node, 1, 0);
     }
     this.rebuildQueMap.clear();
     return this;

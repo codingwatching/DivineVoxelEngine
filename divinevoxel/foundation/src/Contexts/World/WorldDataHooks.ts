@@ -2,7 +2,7 @@ import { DataHooks } from "../../Data/DataHooks";
 import { WorldDataGenerator } from "./Data/Generators/WorldDataGenerator.js";
 import { DVEFWorldCore } from "./DVEFWorldCore";
 //import type { DataLoaderTool } from "Tools/Loader/DataLoaderTool.js";
-export const RegisterDataHooks = () => {
+export default function (){
   /*   const DVEW = DivineVoxelEngineWorld.instance;
   let dataLoaderTool: null | DataLoaderTool = null;
   if (DVEW.settings.saveWorldData()) {

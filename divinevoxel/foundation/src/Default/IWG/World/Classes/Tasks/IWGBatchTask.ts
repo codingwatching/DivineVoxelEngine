@@ -1,4 +1,4 @@
-import { Vec3ArrayDistanceSort } from "@divinevoxel/core/Math/Functions/DistnaceSort.js";
+import { Vec3ArrayDistanceSort } from "@amodx/math/Vectors/Functions/DistnaceSort.js";
 import { IWG } from "../../IWG.js";
 import { LocationData } from "@divinevoxel/core/Math";
 import {  Vec3Array } from "@amodx/math";

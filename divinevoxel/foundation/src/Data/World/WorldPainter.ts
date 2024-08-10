@@ -4,7 +4,7 @@ import { DataHooks } from "../DataHooks.js";
 import type { LocationData } from "@divinevoxel/core/Math";
 import { DataTool } from "../../Default/Tools/Data/DataTool.js";
 import { AddVoxelData } from "Data/Types/WorldData.types.js";
-import { VoxelPaletteReader } from "@divinevoxel/core/Data/Voxel/VoxelPalette.js";
+import { VoxelPalette } from "@divinevoxel/core/Data/Voxel/VoxelPalette.js";
 export class WorldPainter {
   static instance: WorldPainter;
   constructor() {
@@ -22,7 +22,7 @@ export class WorldPainter {
     }
 
     if (!this.dataTool.setLocation(location).loadIn()) return;
-    const id = VoxelPaletteReader.id.getPaletteId(data.id);
+    const id = VoxelPalette.ids.getNumberId(data.id);
     if (id < 0) return false;
     this.dataTool.setId(id);
 
@@ -33,7 +33,7 @@ export class WorldPainter {
     }
 
     if (data.secondaryVoxelId && data.secondaryVoxelId != "dve_air") {
-      const vid = VoxelPaletteReader.id.getPaletteId(data.secondaryVoxelId);
+      const vid = VoxelPalette.ids.getNumberId(data.secondaryVoxelId);
 
       if (vid > 0) {
         this.dataTool.setSecondary(true);

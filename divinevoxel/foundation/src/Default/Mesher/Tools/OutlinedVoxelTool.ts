@@ -1,7 +1,7 @@
 import type { DirectionNames } from "@divinevoxel/core/Types/";
 import { VoxelMesherDataTool } from "./VoxelMesherDataTool.js";
 import type { ConstructorTextureData } from "../../../Textures/Constructor.types.js";
-import { DVEDefaultBuilder } from "../Builder.js";
+import { DVEDefaultMesher } from "../Mesher.js";
 import { Vec3Array } from "@amodx/math";
 import {
   VoxelFaceDirections,
@@ -228,7 +228,7 @@ export class OutlinedVoxelTool {
     onRegister: (uvs: number[]) => void
   ) {
     const overlayTextures: number[] = [];
-    DVEDefaultBuilder.observers.texturesRegistered.subscribeOnce(
+    DVEDefaultMesher.observers.texturesRegistered.subscribeOnce(
       (textureManager) => {
         const type = texture[0];
         const id = texture[1];

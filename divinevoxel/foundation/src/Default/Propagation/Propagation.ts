@@ -4,24 +4,23 @@ import {
   FlowTaskRequests,
   LightTaskRequest,
   WorldSunTaskRequest,
-} from "../../Contexts/Constructor/Tasks/TasksRequest.js";
+} from "../Tasks/Constructor/Tasks/TasksRequest";
 import { RGBRemove, RGBUpdate } from "./Illumanation/Functions/RGBUpdate.js";
 import { SunRemove, SunUpdate } from "./Illumanation/Functions/SunUpdate.js";
 import { RunWorldSun } from "./Illumanation/Functions/WorldSun.js";
 import { FlowUpdate } from "./Flow/Functions/FlowUpdate.js";
 import { FlowRemove } from "./Flow/Functions/FlowRemove.js";
 import { ExplosionManager } from "./Explosion/ExplosionManager.js";
-import { DVEPropagation } from "../../Interfaces/Propagation/DVEPropagation.js";
-import { FlowManager } from "./Flow/FlowManager.js";
 
-export class Propagation extends DVEPropagation {
-
+export class Propagation {
+  static instance: Propagation;
+  constructor() {
+    if (!Propagation.instance) Propagation.instance = this;
+  }
 
   explosion(tasks: ExplosionTaskRequests) {
     ExplosionManager.runExplosion(tasks);
   }
-
-
 
   async flowUpdate(tasks: FlowTaskRequests, rebuild = true) {
     await FlowUpdate(tasks, rebuild);

@@ -8,4 +8,5 @@ export enum VoxelTagIDs {
   isLightSource = "#dve_is_light_source",
   lightValue = "#dve_light_value",
   isRich = "#dve_is_rich",
+  canHaveSecondary = "#dve_can_have_secondary",
 }

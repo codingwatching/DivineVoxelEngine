@@ -5,7 +5,6 @@ import {
   BinaryNumberTypes,
 } from "@amodx/binary/";
 import { BinaryStruct } from "@amodx/binary/";
-import { DataSync } from "../DataSync.js";
 import { MappedDataRegister } from "../../../../Data/Register/MappedDataRegister.js";
 import {
   RegisterObjectMapSync,

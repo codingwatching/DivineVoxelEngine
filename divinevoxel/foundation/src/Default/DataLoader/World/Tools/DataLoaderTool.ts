@@ -2,7 +2,7 @@ import type { LocationData } from "@divinevoxel/core/Math";
 
 import { ColumnDataTool } from "../../../Tools/Data/WorldData/ColumnDataTool.js";
 import { WorldRegister } from "../../../../Data/World/WorldRegister.js";
-import { Distance3D } from "@divinevoxel/core/Math/Functions/Distance3d.js";
+import { Distance3D } from "@amodx/math/Vectors/Functions/Distance3d";
 import { EngineSettings } from "@divinevoxel/core/Data/Settings/EngineSettings.js";
 import { DataHooks } from "../../../../Data/DataHooks.js";
 import { WorldLock } from "../../../../Contexts/World/Lock/WorldLock.js";

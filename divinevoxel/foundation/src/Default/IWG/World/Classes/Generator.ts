@@ -7,7 +7,7 @@ import {
 import { Vector3Like, Vec3Array, Vector2Like } from "@amodx/math";
 import { ColumnDataTool } from "../../../Tools/Data/WorldData/ColumnDataTool.js";
 import { $2dMooreNeighborhood } from "@divinevoxel/core/Math/Constants/CardinalNeighbors.js";
-import { BuilderTool } from "../../../Tools/Build/BuilderTool.js";
+import { MesherTool } from "../../../Tools/Mesher/MesherTool.js";
 import { TaskTool } from "../../../Tools/Tasks/TasksTool.js";
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 import { DataLoaderTool } from "../../../DataLoader/World/Tools/DataLoaderTool.js";
@@ -31,7 +31,7 @@ export class Generator extends LocationBoundTool {
   anaylzer = new AnaylzerTool();
   columnTool = new ColumnDataTool();
   nColumnTool = new ColumnDataTool();
-  builder = new BuilderTool();
+  builder = new MesherTool();
   dataLoader: DataLoaderTool | null = null;
   richData = new RichDataTool();
   dveTasks = new TaskTool();
@@ -456,8 +456,6 @@ export class Generator extends LocationBoundTool {
       )
         continue;
 
-
-
       const {
         nWorldGenAllDone,
         nSunAllDone,
@@ -472,7 +470,7 @@ export class Generator extends LocationBoundTool {
         continue;
       }
 
-      if(!this.columnTool.loadInAt(cx,0,cz)) {
+      if (!this.columnTool.loadInAt(cx, 0, cz)) {
         continue;
       }
 

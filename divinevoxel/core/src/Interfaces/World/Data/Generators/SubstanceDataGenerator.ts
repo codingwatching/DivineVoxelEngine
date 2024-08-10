@@ -1,4 +1,3 @@
-import type { SubstanceData } from "Types/Substances.types.js";
 import { SubstanceTagBuilder } from "../StructBuilders/SubstanceStructBuilder.js";
 import { SubstanceStruct } from "../../../../Data/Substance/SubstanceStruct.js";
 import { SubstancePaletteReader } from "../../../../Data/Substance/SubstancePalette.js";
@@ -14,7 +13,7 @@ export const SubstanceDataGenerator = {
     SubstancePaletteReader.setPalette(this.palette._palette, this.palette._map);
 
     //create data buffer
-    const tags = SubstanceTagBuilder.build(this.palette._count);
+    const tags = SubstanceTagBuilder.build(this.palette.size);
     const buffer = new SharedArrayBuffer(tags.structData.bufferSize);
     tags.structData.buffer = buffer;
     tags.setBuffer(buffer);

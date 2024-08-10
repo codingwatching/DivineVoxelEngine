@@ -1,9 +1,8 @@
 //types
-import type { VoxelData, VoxelPalette } from "../../../../Types/Voxel.types.js";
 import { VoxelTagIDs } from "../../../../Data/Constants/VoxelTagIds.js";
 //objects
 import { VoxelTagBuilder } from "../StructBuilders/VoxelStructBuilder.js";
-import { VoxelPaletteReader } from "../../../../Data/Voxel/VoxelPalette.js";
+import { VoxelPalette } from "../../../../Data/Voxel/VoxelPalette.js";
 import { VoxelStruct } from "../../../../Data/Voxel/VoxelStruct.js";
 import { VoxelManager } from "../Managers/DataManagers.js";
 import { BinaryStruct } from "@amodx/binary";
@@ -26,27 +25,17 @@ export class VoxelDataGenerator {
       this.nameToIdMap[voxel.name || voxel.id] = voxel.id;
       this.idToNameMap[voxel.id] = voxel.name || voxel.id;
     }
-    VoxelPaletteReader.setVoxelIdPalette(
-      this.palette._palette,
-      this.palette._map
-    );
+    VoxelPalette.setVoxelIdPalette(this.palette._palette, this.palette._map);
 
     //build index
-    const indexBuffer = new SharedArrayBuffer(this.palette._count * 2);
+    const indexBuffer = new SharedArrayBuffer(this.palette.size * 2);
     const voxelIndex = new Uint16Array(indexBuffer);
-    let currentCount = 0;
-    let currentParent = 0;
-    for (let i = 2; i < this.palette._count; i++) {
-      let newParent = VoxelPaletteReader.id.baseNumeric(i);
-      if (newParent != currentParent) {
-        currentParent = newParent;
-        voxelIndex[i] = currentCount;
-        currentCount++;
-      }
+    for (let i = 0; i < this.palette.size; i++) {
+      voxelIndex[i] = i;
     }
 
     //create data bufferv
-    const tags = VoxelTagBuilder.build(this.palette._count);
+    const tags = VoxelTagBuilder.build(this.palette.size);
     const buffer = new SharedArrayBuffer(tags.structData.bufferSize);
     tags.structData.buffer = buffer;
     tags.setBuffer(buffer);
@@ -54,7 +43,7 @@ export class VoxelDataGenerator {
     //  VoxelStruct.setBuffer(buffer);
     //build data
     for (const [key, voxel] of VoxelManager.data) {
-      const baseID = VoxelPaletteReader.id.numberFromString(key);
+      const baseID = VoxelPalette.ids.getNumberId(key);
       if (!baseID) continue;
 
       tags.setStructArrayIndex(voxelIndex[baseID]);

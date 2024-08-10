@@ -1,10 +1,10 @@
 import { DVEWorldCore } from "@divinevoxel/core/Interfaces/World/DVEWorldCore";
 import { DVEFWorldThreads } from "./DVEFWorldThreads";
 import { DVEFDataSync } from "./DVEFDataSync";
-import { DVEFoundationTasksQueues } from "./Tasks/DVEFoundationTasksQueues";
+import { DVEConstructorTasksQueues } from "../Constructor/DVEConstructorTasksQueues";
 import { DataLoaderTool } from "../../Default/DataLoader/World/Tools/DataLoaderTool";
 import { WorldLock } from "./Lock/WorldLock";
-import { RegisterDataHooks } from "./WorldDataHooks";
+import RegisterDataHooks from "./WorldDataHooks";
 import { DVEFDataReigster } from "./Data/DVEFDataRegister";
 import { DVEFDataStructs } from "./Data/DVEFDataStructs";
 import InitWorldTasks, { WorldTasks } from "./Tasks/WorldTasks";
@@ -20,7 +20,7 @@ export class DVEFWorldCore extends DVEWorldCore {
   static instance: DVEFWorldCore;
   threads: DVEFWorldThreads;
   dataSync: DVEFDataSync;
-  queues: DVEFoundationTasksQueues;
+  queues: DVEConstructorTasksQueues;
   dataRegiser: DVEFDataReigster;
   dataTagBulders: DVEFDataStructs;
   tasks = new WorldTasks(this);
@@ -32,10 +32,9 @@ export class DVEFWorldCore extends DVEWorldCore {
     this.threads = new DVEFWorldThreads(this);
 
     this.dataSync = new DVEFDataSync();
-    this.queues = new DVEFoundationTasksQueues();
+    this.queues = new DVEConstructorTasksQueues(this.threads.constructors);
     this.dataRegiser = new DVEFDataReigster();
     this.dataTagBulders = new DVEFDataStructs();
-    this.queues.init(this);
     InitWorldTasks(this);
   }
 

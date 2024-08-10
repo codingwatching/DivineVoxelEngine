@@ -6,17 +6,17 @@ import { RenderedSubstances } from "./Rules/RenderedSubstances.js";
 import { TextureRegister } from "../../Textures/TextureRegister.js";
 import { MesherManager } from "./Meshers/MesherManager.js";
 import { DivineVoxelEngineConstructor } from "@divinevoxel/core/Contexts/Constructor/DivineVoxelEngineConstructor.js";
-import { DVEBuilder } from "../../Interfaces/Builder/DVEBuilder.js";
+import { DVEMesher } from "../../Interfaces/Mesher/DVEMesher.js";
 import { BuildNodeMesh } from "./Tasks/BuidlerTasks.types.js";
 import { SubstanceRules } from "./Rules/SubstanceRules.js";
 import { VoxelConstructor } from "./Constructors/Voxel/Classes/VoxelConstructor.js";
 import { VoxelShapeManager } from "./Shapes/VoxelShapeManager.js";
 
-export type DVEDefaultBuilderInitData = {
+export type DVEDefaultMesherInitData = {
   constructors: VoxelConstructor[];
 };
-export class DVEDefaultBuilder extends DVEBuilder {
-  static instance: DVEDefaultBuilder;
+export class DVEDefaultMesher extends DVEMesher {
+  static instance: DVEDefaultMesher;
   static get defaults() {
     return VoxelConstructors.defaults;
   }
@@ -29,15 +29,15 @@ export class DVEDefaultBuilder extends DVEBuilder {
 
   shapes = VoxelShapeManager;
 
-  observers = DVEBuilder.observers;
+  observers = DVEMesher.observers;
 
-  constructor(data: DVEDefaultBuilderInitData) {
+  constructor(data: DVEDefaultMesherInitData) {
     super();
-    if (!DVEDefaultBuilder.instance) DVEDefaultBuilder.instance = this;
+    if (!DVEDefaultMesher.instance) DVEDefaultMesher.instance = this;
 
     this.constructors.registerVoxel(data.constructors);
 
-    return DVEDefaultBuilder.instance;
+    return DVEDefaultMesher.instance;
   }
 
   init() {
@@ -66,7 +66,7 @@ export class DVEDefaultBuilder extends DVEBuilder {
 
 
   }
-  buildChunk(location: LocationData, LOD = 1, priority = 0) {
+  meshChunk(location: LocationData, LOD = 1, priority = 0) {
     this.chunkProcessor.build(location);
     return true;
   }

@@ -1,4 +1,4 @@
-import { Distance3D } from "@divinevoxel/core/Math/Functions/Distance3d.js";
+import { Distance3D } from "@amodx/math/Vectors/Functions/Distance3d";
 import { ColumnDataTool } from "../Data/WorldData/ColumnDataTool.js";
 import { LocationBoundTool } from "../Classes/LocationBoundTool.js";
 import { WorldRegister } from "../../../Data/World/WorldRegister.js";

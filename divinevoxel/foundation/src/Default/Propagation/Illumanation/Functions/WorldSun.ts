@@ -1,5 +1,5 @@
 //types
-import type { WorldSunTaskRequest } from "../../../../Contexts/Constructor/Tasks/TasksRequest";
+import type { WorldSunTaskRequest } from "../../../Tasks/Constructor/Tasks/TasksRequest"
 //data
 import { WorldBounds } from "@divinevoxel/core/Data/World/WorldBounds.js";
 import { WorldRegister } from "../../../../Data/World/WorldRegister.js";

@@ -4,6 +4,7 @@ import {
   InstantiatedStruct,
 } from "@amodx/binary/";
 import { VoxelTagIDs } from "../../Data/Constants/VoxelTagIds";
+import { VoxelPalette } from "./VoxelPalette";
 
 export interface VoxelStruct {
   [VoxelTagIDs.substance]: number;
@@ -15,6 +16,7 @@ export interface VoxelStruct {
   [VoxelTagIDs.isLightSource]: number;
   [VoxelTagIDs.lightValue]: number;
   [VoxelTagIDs.isRich]: number;
+  [VoxelTagIDs.canHaveSecondary]: number;
 }
 
 const remote = new RemoteBinaryStruct("voxel-data");
@@ -28,7 +30,7 @@ export class VoxelStruct extends InstantiatedStruct<VoxelStruct> {
     VoxelStruct.instance = instance;
   }
   static clone() {
-    return this.instance.clone();
+    return this.instance.createClone();
   }
   static sync(voxelMap: Uint16Array) {
     this.voxelIndex = voxelMap;
@@ -37,8 +39,10 @@ export class VoxelStruct extends InstantiatedStruct<VoxelStruct> {
     const index = this.voxelIndex[id];
     this.instance.setIndex(index);
   }
+  static setStringVoxel(id: string) {
+    const index = this.voxelIndex[VoxelPalette.ids.getNumberId(id)!];
+    this.instance.setIndex(index);
+  }
   static voxelIndex = new Uint16Array();
   static initData: BinaryStructData;
-
-
 }

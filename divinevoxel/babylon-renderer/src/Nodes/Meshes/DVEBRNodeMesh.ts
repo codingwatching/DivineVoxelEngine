@@ -1,9 +1,9 @@
 import type { Scene, Engine } from "@babylonjs/core";
+import type { Vec3Array } from "@amodx/math";
 import { Geometry } from "@babylonjs/core/Meshes/geometry.js";
 import { Vector3 } from "@babylonjs/core/Maths/";
 import { Mesh } from "@babylonjs/core/Meshes/mesh.js";
 import { BoundingInfo } from "@babylonjs/core/Culling/boundingInfo.js";
-import type { Vec3Array } from "@divinevoxel/core/Math/Types/Math.types";
 import type { EngineSettingsData } from "@divinevoxel/core/Types/EngineSettings.types";
 
 import type {
@@ -34,7 +34,7 @@ export class DVEBRNodeMesh extends DVENodeMesh {
         throw new Error(`A scene is required.`);
       }
       this.scene = scene;
-      this.engine = scene.getEngine();
+      this.engine = scene.getEngine() as Engine;
     }
     if (!this.defaultBb) {
       this.defaultBb = new BoundingInfo(
@@ -131,7 +131,6 @@ export class DVEBRNodeMesh extends DVENodeMesh {
           break;
         case "indices":
           mesh.setIndices(attribute as any);
-
           break;
         default:
           mesh.setVerticesBuffer(

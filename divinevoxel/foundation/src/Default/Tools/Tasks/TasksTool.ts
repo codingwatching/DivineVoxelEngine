@@ -16,9 +16,10 @@ import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 import { LocationData } from "@divinevoxel/core/Math";
 import type { RawVoxelData } from "@divinevoxel/core/Types/Voxel.types.js";
 
-import { ConstructorRemoteThreadTasks } from "../../../Contexts/Common/ConstructorRemoteThreadTasks.js";
-import { DVEFWorldCore } from "../../../Contexts/World/DVEFWorldCore.js";
-import { ConstructorTasksIds } from "../../../Contexts/Common/ConstructorTasksIds.js";
+import { ConstructorRemoteThreadTasks } from "../../../Contexts/Constructor/ConstructorRemoteThreadTasks.js";
+import { ConstructorTasksIds } from "../../../Contexts/Constructor/ConstructorTasksIds.js";
+import { DefaultConstructorTasksIds } from "../../Tasks/Constructor/Tasks/ConstructorTasksIds.js";
+import { DVEConstructorTasksQueues } from "../../../Contexts/Constructor/DVEConstructorTasksQueues.js";
 
 export type TaskRunModes = "async" | "sync";
 export class TaskTool {
@@ -41,7 +42,7 @@ export class TaskTool {
   setFocalPoint(location: LocationData) {
     const [dimesnion, x, y, z] = location;
     const queueKey = `${dimesnion}-${WorldSpaces.region.getKeyXYZ(x, y, z)}`;
-    DVEFWorldCore.instance.queues.addQueue(queueKey);
+    DVEConstructorTasksQueues.instance.addQueue(queueKey);
     this._data.queue = queueKey;
     this._thread = Threads.threadName;
     return this;
@@ -55,8 +56,8 @@ export class TaskTool {
         onDone: (data: any) => void,
         mode: TaskRunModes = "sync"
       ) => {
-        DVEFWorldCore.instance.threads.constructors.runPromiseTasks<VoxelUpdateTasks>(
-          ConstructorTasksIds.VoxelUpdate,
+        DVEConstructorTasksQueues.instance.constructors.runPromiseTasks<VoxelUpdateTasks>(
+          DefaultConstructorTasksIds.VoxelUpdate,
           [location, raw, this._data.queue, this._thread],
           [],
           onDone,
@@ -70,8 +71,8 @@ export class TaskTool {
         onDone: (data: any) => void,
         mode: TaskRunModes = "sync"
       ) => {
-        DVEFWorldCore.instance.threads.constructors.runPromiseTasks<UpdateTasks>(
-          ConstructorTasksIds.VoxelErease,
+        DVEConstructorTasksQueues.instance.constructors.runPromiseTasks<UpdateTasks>(
+          DefaultConstructorTasksIds.VoxelErease,
           [location, this._data.queue, this._thread],
           [],
           onDone,
@@ -86,8 +87,8 @@ export class TaskTool {
         onDone: (data: any) => void,
         mode: TaskRunModes = "sync"
       ) => {
-        DVEFWorldCore.instance.threads.constructors.runPromiseTasks<VoxelUpdateTasks>(
-          ConstructorTasksIds.VoxelPaint,
+        DVEConstructorTasksQueues.instance.constructors.runPromiseTasks<VoxelUpdateTasks>(
+          DefaultConstructorTasksIds.VoxelPaint,
           [location, raw, this._data.queue, this._thread],
           [],
           onDone,
@@ -100,7 +101,7 @@ export class TaskTool {
     chunk: {
       deferred: {
         run: (buildTasks: BuildTasks, onDone: (data: any) => void) => {
-          DVEFWorldCore.instance.threads.constructors.runPromiseTasks<
+          DVEConstructorTasksQueues.instance.constructors.runPromiseTasks<
             PriorityTask<BuildTasks>
           >(
             ConstructorTasksIds.BuildChunk,
@@ -117,7 +118,7 @@ export class TaskTool {
       },
       queued: {
         add: (location: LocationData) => {
-          DVEFWorldCore.instance.queues.buildChunk.add(
+          DVEConstructorTasksQueues.instance.getTasks("build-chunk").add(
             {
               data: [location, 1],
               priority: this._priority,
@@ -126,16 +127,17 @@ export class TaskTool {
           );
         },
         run: (onDone: Function) => {
-          DVEFWorldCore.instance.queues.buildChunk.run(this._data.queue);
-          DVEFWorldCore.instance.queues.buildChunk.onDone(
-            this._data.queue,
-            onDone
-          );
+          DVEConstructorTasksQueues.instance
+            .getTasks("build-chunk")
+            .run(this._data.queue);
+          DVEConstructorTasksQueues.instance
+            .getTasks("build-chunk")
+            .onDone(this._data.queue, onDone);
         },
         runAndAwait: async () => {
-          await DVEFWorldCore.instance.queues.buildChunk.runAndAwait(
-            this._data.queue
-          );
+          await DVEConstructorTasksQueues.instance
+            .getTasks("build-chunk")
+            .runAndAwait(this._data.queue);
         },
       },
     },
@@ -143,7 +145,7 @@ export class TaskTool {
       queued: {},
       deferred: {
         run: (location: LocationData, onDone: (data: any) => void) => {
-          DVEFWorldCore.instance.threads.constructors.runPromiseTasks<BuildTasks>(
+          DVEConstructorTasksQueues.instance.constructors.runPromiseTasks<BuildTasks>(
             ConstructorTasksIds.BuildColumn,
             [location, 1],
             [],
@@ -161,8 +163,8 @@ export class TaskTool {
       radius: number,
       onDone: (data: any) => void
     ) => {
-      DVEFWorldCore.instance.threads.constructors.runPromiseTasks<ExplosionTasks>(
-        ConstructorTasksIds.Explosion,
+      DVEConstructorTasksQueues.instance.constructors.runPromiseTasks<ExplosionTasks>(
+        DefaultConstructorTasksIds.Explosion,
         [location, radius, "", ""],
         [],
         onDone,
@@ -174,8 +176,8 @@ export class TaskTool {
   anaylzer = {
     update: {
       run: (location: LocationData, onDone: (data: any) => void) => {
-        DVEFWorldCore.instance.threads.constructors.runPromiseTasks<AnaylzerTask>(
-          ConstructorTasksIds.AnalyzerUpdate,
+        DVEConstructorTasksQueues.instance.constructors.runPromiseTasks<AnaylzerTask>(
+          DefaultConstructorTasksIds.AnalyzerUpdate,
           [location, this._data.queue, this._thread],
           [],
           onDone,
@@ -188,8 +190,8 @@ export class TaskTool {
   propagation = {
     deferred: {
       run: (location: LocationData, onDone: (data: any) => void) => {
-        DVEFWorldCore.instance.threads.constructors.runPromiseTasks<AnaylzerTask>(
-          ConstructorTasksIds.AnalyzerPropagation,
+        DVEConstructorTasksQueues.instance.constructors.runPromiseTasks<AnaylzerTask>(
+          DefaultConstructorTasksIds.AnalyzerPropagation,
           [location, this._data.queue, this._thread],
           [],
           onDone,
@@ -200,25 +202,30 @@ export class TaskTool {
     },
     queued: {
       add: (location: LocationData) => {
-        DVEFWorldCore.instance.queues.propagation.add(
-          [location, this._data.queue, this._thread],
-          this._data.queue
-        );
+        DVEConstructorTasksQueues.instance
+          .getTasks("propagation")
+          .add([location, this._data.queue, this._thread], this._data.queue);
       },
       run: (onDone: Function) => {
-        DVEFWorldCore.instance.queues.propagation.run(this._data.queue);
-        DVEFWorldCore.instance.queues.propagation.onDone(this._data.queue, onDone);
+        DVEConstructorTasksQueues.instance
+          .getTasks("propagation")
+          .run(this._data.queue);
+        DVEConstructorTasksQueues.instance
+          .getTasks("propagation")
+          .onDone(this._data.queue, onDone);
       },
       runAndAwait: async () => {
-        await DVEFWorldCore.instance.queues.propagation.runAndAwait(this._data.queue);
+        await DVEConstructorTasksQueues.instance
+          .getTasks("propagation")
+          .runAndAwait(this._data.queue);
       },
     },
   };
   generate = {
     deferred: {
       run(location: LocationData, data: any, onDone: (data: any) => void) {
-        DVEFWorldCore.instance.threads.constructors.runPromiseTasks<GenerateTasks>(
-          ConstructorTasksIds.Generate,
+        DVEConstructorTasksQueues.instance.constructors.runPromiseTasks<GenerateTasks>(
+          DefaultConstructorTasksIds.Generate,
           [location, data],
           [],
           onDone,
@@ -229,22 +236,30 @@ export class TaskTool {
     },
     queued: {
       add: (data: GenerateTasks) => {
-        DVEFWorldCore.instance.queues.generate.add(data, this._data.queue);
+        DVEConstructorTasksQueues.instance
+          .getTasks("generate")
+          .add(data, this._data.queue);
       },
       run: (onDone: Function) => {
-        DVEFWorldCore.instance.queues.generate.run(this._data.queue);
-        DVEFWorldCore.instance.queues.generate.onDone(this._data.queue, onDone);
+        DVEConstructorTasksQueues.instance
+          .getTasks("generate")
+          .run(this._data.queue);
+        DVEConstructorTasksQueues.instance
+          .getTasks("generate")
+          .onDone(this._data.queue, onDone);
       },
       runAndAwait: async () => {
-        await DVEFWorldCore.instance.queues.generate.runAndAwait(this._data.queue);
+        await DVEConstructorTasksQueues.instance
+          .getTasks("generate")
+          .runAndAwait(this._data.queue);
       },
     },
   };
   decorate = {
     deferred: {
       run: (location: LocationData, data: any, onDone: (data: any) => void) => {
-        DVEFWorldCore.instance.threads.constructors.runPromiseTasks<GenerateTasks>(
-          ConstructorTasksIds.Decorate,
+        DVEConstructorTasksQueues.instance.constructors.runPromiseTasks<GenerateTasks>(
+          DefaultConstructorTasksIds.Decorate,
           [location, data],
           [],
           onDone,
@@ -255,22 +270,30 @@ export class TaskTool {
     },
     queued: {
       add: async (data: GenerateTasks) => {
-        DVEFWorldCore.instance.queues.decorate.add(data, this._data.queue);
+        DVEConstructorTasksQueues.instance
+          .getTasks("decorate")
+          .add(data, this._data.queue);
       },
       run: (onDone: Function) => {
-        DVEFWorldCore.instance.queues.decorate.run(this._data.queue);
-        DVEFWorldCore.instance.queues.decorate.onDone(this._data.queue, onDone);
+        DVEConstructorTasksQueues.instance
+          .getTasks("decorate")
+          .run(this._data.queue);
+        DVEConstructorTasksQueues.instance
+          .getTasks("decorate")
+          .onDone(this._data.queue, onDone);
       },
       runAndAwait: async () => {
-        await DVEFWorldCore.instance.queues.decorate.runAndAwait(this._data.queue);
+        await DVEConstructorTasksQueues.instance
+          .getTasks("decorate")
+          .runAndAwait(this._data.queue);
       },
     },
   };
   worldSun = {
     deferred: {
       run: (location: LocationData, onDone: (data: any) => void) => {
-        DVEFWorldCore.instance.threads.constructors.runPromiseTasks<WorldSunTask>(
-          ConstructorTasksIds.WorldSun,
+        DVEConstructorTasksQueues.instance.constructors.runPromiseTasks<WorldSunTask>(
+          DefaultConstructorTasksIds.WorldSun,
           [location, this._thread],
           [],
           onDone,
@@ -281,30 +304,50 @@ export class TaskTool {
     },
     queued: {
       add: (location: LocationData) => {
-        DVEFWorldCore.instance.queues.worldSun.add(
-          [location, this._data.queue, this._thread],
-          this._data.queue
-        );
+        DVEConstructorTasksQueues.instance
+          .getTasks("world-sun")
+          .add([location, this._data.queue, this._thread], this._data.queue);
         WorldRegister.instance.column.fill(location);
       },
       run: (onDone: Function) => {
-        DVEFWorldCore.instance.queues.worldSun.run(this._data.queue);
-        DVEFWorldCore.instance.queues.worldSun.onDone(this._data.queue, onDone);
+        DVEConstructorTasksQueues.instance
+          .getTasks("world-sun")
+          .run(this._data.queue);
+        DVEConstructorTasksQueues.instance
+          .getTasks("world-sun")
+          .onDone(this._data.queue, onDone);
       },
       runAndAwait: async () => {
-        await DVEFWorldCore.instance.queues.worldSun.runAndAwait(this._data.queue);
+        await DVEConstructorTasksQueues.instance
+          .getTasks("world-sun")
+          .runAndAwait(this._data.queue);
       },
     },
   };
 }
-
-const tasks = new TaskTool();
-const CommonTasks = {
-  buildChunk: Threads.registerTasks<PriorityTask<BuildTasks>>(
-    ConstructorRemoteThreadTasks.buildChunk,
+DVEConstructorTasksQueues.onCreated.subscribe(TaskTool, () => {
+  DVEConstructorTasksQueues.instance.registerTasks(
+    "world-sun",
+    DefaultConstructorTasksIds.WorldSun
+  );
+  DVEConstructorTasksQueues.instance.registerTasks(
+    "decorate",
+    DefaultConstructorTasksIds.Decorate
+  );
+  DVEConstructorTasksQueues.instance.registerTasks(
+    "generate",
+    DefaultConstructorTasksIds.Generate
+  );
+  DVEConstructorTasksQueues.instance.registerTasks(
+    "propagation",
+    DefaultConstructorTasksIds.AnalyzerPropagation
+  );
+  const tasks = new TaskTool();
+  Threads.registerTasks<PriorityTask<BuildTasks>>(
+    ConstructorRemoteThreadTasks.BuildChunk,
     (data) => {
       tasks.setPriority(data.priority);
       tasks.build.chunk.deferred.run(data.data, () => {});
     }
-  ),
-};
+  );
+});

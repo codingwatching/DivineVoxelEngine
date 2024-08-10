@@ -8,7 +8,7 @@ import { SafeInterval } from "@amodx/core/Intervals/SafeInterval.js";
 import { WorldGenInterface } from "../../Interfaces/WorldGen/WorldGen.types.js";
 import { GenerateTasks } from "../../Types/Tasks.types.js";
 import { Threads } from "@amodx/threads";
-import { ConstructorTasksIds } from "../../Contexts/Common/ConstructorTasksIds.js";
+import { DefaultConstructorTasksIds } from "../Tasks/Constructor/Tasks/ConstructorTasksIds.js";
 
 export class WorldGeneration {
   static worldGen: WorldGenInterface | null = null;
@@ -59,7 +59,7 @@ export class WorldGeneration {
 }
 
 Threads.registerTasks<GenerateTasks>(
-  ConstructorTasksIds.Generate,
+  DefaultConstructorTasksIds.Generate,
   (data, onDone) => {
     if (!onDone) return;
     WorldGeneration.generate(data, "generate", onDone);
@@ -67,7 +67,7 @@ Threads.registerTasks<GenerateTasks>(
   "deferred"
 );
 Threads.registerTasks<GenerateTasks>(
-  ConstructorTasksIds.Decorate,
+  DefaultConstructorTasksIds.Decorate,
   (data, onDone) => {
     if (!onDone) return;
     WorldGeneration.generate(data, "decorate", onDone);

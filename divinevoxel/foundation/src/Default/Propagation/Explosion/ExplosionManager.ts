@@ -1,11 +1,11 @@
-import type { ExplosionTaskRequests } from "../../../Contexts/Constructor/Tasks/TasksRequest.js";
+import type { ExplosionTaskRequests } from "../../Tasks/Constructor/Tasks/TasksRequest"
 //data
 import { $3dCardinalNeighbors } from "@divinevoxel/core/Math/Constants/CardinalNeighbors.js";
 //objects
 import { DataTool } from "../../Tools/Data/DataTool.js";
 import { LightData } from "../../../Data/LightData.js";
 //functions
-import { Distance3D } from "@divinevoxel/core/Math/Functions/Distance3d.js";
+import { Distance3D } from "@amodx/math/Vectors/Functions/Distance3d";
 import { RGBRemove, RGBUpdate } from "../Illumanation/Functions/RGBUpdate.js";
 import { SunRemove, SunUpdate } from "../Illumanation/Functions/SunUpdate.js";
 import { FlowManager } from "../Flow/FlowManager.js";

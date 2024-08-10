@@ -17,6 +17,7 @@ export interface VoxelData {
     | [id: "#dve_light_value", value: [r: number, g: number, z: number]]
     | [id: "#dve_collider_id", value: string]
     | [id: "#dve_check_collisions", value: boolean]
+    | [id: "#dve_can_have_secondary", value: boolean]
     | [id: "#dve_material", value: string]
     | [id: "#dve_hardness", value: number]
     | [id: "#dve_is_rich", value: boolean]

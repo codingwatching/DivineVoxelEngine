@@ -1,9 +1,22 @@
 export class NumberPalette {
-  _count = 0;
+  private _count = 0;
   //map id to value
   _palette: number[] = [];
   //map value to id
   _map: Record<number, number> = {};
+
+  get size() {
+    return this._count;
+  }
+
+  constructor(inital?: ArrayLike<number>) {
+    if (inital) {
+      let length = inital.length;
+      for (let i = 0; i < length; i++) {
+        this.register(inital[i]);
+      }
+    }
+  }
 
   register(value: number) {
     const id = this._count;

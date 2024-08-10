@@ -9,6 +9,7 @@ import { Observable } from "@amodx/core/Observers/Observable.js";
 import { DVEBRMesh } from "./Nodes/Meshes/DVEBRMesh.js";
 import { DVEBREngine } from "./Engine/DVEBREngine.js";
 import { SceneTool } from "./Defaults/Foundation/Tools/SceneTool.js";
+import type { Engine } from "@babylonjs/core";
 export interface DVEBabylonRendererInitData {
   scene: Scene;
 }
@@ -16,19 +17,19 @@ export class DVEBabylonRenderer extends DVERenderer {
   static instance: DVEBabylonRenderer;
   observers = {
     meshCreated: new Observable<DVEBRMesh>(),
-    meshDisposed: new Observable<DVEBRMesh>()
+    meshDisposed: new Observable<DVEBRMesh>(),
   };
   nodes: DVEBRNodeManager;
   engine: DVEBREngine;
   scene: DVEBRScene;
   foManager: DVEBRFOManager;
   meshCuller: DVEBRMeshCuller;
-  sceneTool:SceneTool
+  sceneTool: SceneTool;
 
   constructor(data: DVEBabylonRendererInitData) {
     super();
     this.engine = new DVEBREngine();
-    this.engine._engine = data.scene.getEngine();
+    this.engine._engine = data.scene.getEngine() as Engine;
     this.scene = new DVEBRScene();
     this.scene._scene = data.scene;
     this.foManager = new DVEBRFOManager(this.scene);
@@ -40,8 +41,5 @@ export class DVEBabylonRenderer extends DVERenderer {
 
     return DVEBabylonRenderer.instance;
   }
-  async init(dver: DivineVoxelEngineRender) {
-
-  }
-
+  async init(dver: DivineVoxelEngineRender) {}
 }

@@ -2,10 +2,10 @@ import { EngineSettings as ES } from "@divinevoxel/core/Data/Settings/EngineSett
 import { $3dCardinalNeighbors } from "@divinevoxel/core/Math/Constants/CardinalNeighbors.js";
 
 import { LightTaskRequest, TasksRequest } from "./TasksRequest.js";
-import { BrushTool } from "../../../Default/Tools/Brush/Brush.js";
-import { DataTool } from "../../../Default/Tools/Data/DataTool.js";
+import { BrushTool } from "../../../Tools/Brush/Brush.js";
+import { DataTool } from "../../../Tools/Data/DataTool.js";
 import { UpdateTasks, VoxelUpdateTasks } from "Types/Tasks.types";
-import { DVEFConstrucotrCore } from "../../../Contexts/Constructor/DVEFConstructorCore";
+import { Propagation } from "../../../Propagation/Propagation.js";
 
 const dataTool = new DataTool();
 const nDataTool = new DataTool();
@@ -42,7 +42,7 @@ export async function EreaseAndUpdate(data: UpdateTasks) {
   tasks.setBuldMode("async").addNeighborsToRebuildQueue(x, y, z);
   if (ES.doFlow() && dataTool.isRenderable()) {
     if (dataTool.getSubstnaceData().isLiquid()) {
-      await DVEFConstrucotrCore.instance.propagation.flowRemove(tasks);
+      await Propagation.instance.flowRemove(tasks);
       tasks.stop();
       return true;
     }
@@ -57,14 +57,14 @@ export async function EreaseAndUpdate(data: UpdateTasks) {
   if (ES.doLight()) {
     if (ES.doRGBPropagation() && isLightSource) {
       tasks.queues.rgb.remove.push(x, y, z);
-      DVEFConstrucotrCore.instance.propagation.rgbRemove(tasks);
+      Propagation.instance.rgbRemove(tasks);
     }
     updateLightTask(tasks);
     if (ES.doRGBPropagation()) {
-      DVEFConstrucotrCore.instance.propagation.rgbUpdate(tasks);
+      Propagation.instance.rgbUpdate(tasks);
     }
     if (ES.doSunPropagation()) {
-      DVEFConstrucotrCore.instance.propagation.sunUpdate(tasks);
+      Propagation.instance.sunUpdate(tasks);
     }
   }
 
@@ -93,18 +93,16 @@ export async function PaintAndUpdate(data: VoxelUpdateTasks) {
     if (doSun) {
       if (dataTool.hasSunLight()) {
         tasks.queues.sun.remove.push(x, y, z);
-        DVEFConstrucotrCore.instance.propagation.sunRemove(tasks);
+        Propagation.instance.sunRemove(tasks);
       }
     }
     if (doRGB) {
       if (dataTool.hasRGBLight() && isOpaque) {
         tasks.queues.rgb.remove.push(x, y, z);
-        DVEFConstrucotrCore.instance.propagation.rgbRemove(tasks);
+        Propagation.instance.rgbRemove(tasks);
       }
     }
   }
-
-  const test = new DataTool();
 
 
 
@@ -115,10 +113,10 @@ export async function PaintAndUpdate(data: VoxelUpdateTasks) {
     updateLightTask(tasks);
     if (doRGB) {
       tasks.queues.rgb.update.push(x, y, z);
-      DVEFConstrucotrCore.instance.propagation.rgbUpdate(tasks);
+      Propagation.instance.rgbUpdate(tasks);
     }
     if (doSun) {
-      DVEFConstrucotrCore.instance.propagation.sunUpdate(tasks);
+      Propagation.instance.sunUpdate(tasks);
     }
   }
 
@@ -127,7 +125,7 @@ export async function PaintAndUpdate(data: VoxelUpdateTasks) {
 
     const substanceData = nDataTool.getSubstnaceData();
     if (substanceData.isLiquid()) {
-      DVEFConstrucotrCore.instance.propagation.flowUpdate(tasks);
+      Propagation.instance.flowUpdate(tasks);
     }
   }
 
@@ -153,16 +151,16 @@ export async function VoxelUpdate(data: VoxelUpdateTasks) {
     updateLightTask(tasks);
     if (doRGB) {
       tasks.queues.rgb.update.push(x, y, z);
-      DVEFConstrucotrCore.instance.propagation.rgbUpdate(tasks);
+      Propagation.instance.rgbUpdate(tasks);
     }
     if (doSun) {
-      DVEFConstrucotrCore.instance.propagation.sunUpdate(tasks);
+      Propagation.instance.sunUpdate(tasks);
     }
   }
 
   if (ES.doFlow()) {
     if (dataTool.getSubstnaceData().isLiquid()) {
-      DVEFConstrucotrCore.instance.propagation.flowUpdate(tasks);
+      Propagation.instance.flowUpdate(tasks);
     }
   }
 

@@ -129,6 +129,7 @@ export class TextureManager {
 
     return type._getPath(data, varation, type.extension);
   }
+
   static async createRawDataMap() {
     const map: Map<string, Uint8ClampedArray> = new Map();
     for (const [typeKey, type] of this.textureTypes) {
@@ -197,7 +198,8 @@ export class TextureManager {
         }
       }
     }
-
     return map;
   }
+
+  
 }

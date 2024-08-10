@@ -46,6 +46,11 @@ VoxelTagBuilder.addNode([
     default: false,
   },
   {
+    id: VoxelTagIDs.canHaveSecondary,
+    type: "boolean",
+    default: false,
+  },
+  {
     id: VoxelTagIDs.hardness,
     type: "number",
     numberType: BinaryNumberTypes.Uint32,

@@ -1,8 +1,8 @@
 import { DataTool } from "../../Tools/Data/DataTool";
-import { DVEDefaultBuilder } from "../Builder";
+import { DVEDefaultMesher } from "../Mesher";
 
 export class BuilderDataTool extends DataTool {
   getConstructor() {
-    return DVEDefaultBuilder.instance.constructors.get(this.getStringId());
+    return DVEDefaultMesher.instance.constructors.get(this.getStringId());
   }
 }
