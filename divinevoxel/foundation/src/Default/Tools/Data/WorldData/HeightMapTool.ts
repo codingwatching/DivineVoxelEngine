@@ -1,6 +1,6 @@
 import { Chunk } from "../../../../Data/World/Classes/index.js";
 //types
-import type { LocationData } from "@divinevoxel/core/Math";;
+import type { LocationData } from "@divinevoxel/core/Math";
 //Data
 import { WorldRegister } from "../../../../Data/World/WorldRegister.js";
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
@@ -11,6 +11,7 @@ import { ChunkDataTool } from "./ChunkDataTool.js";
 //constants
 import { ChunkStructProperties } from "../../../../Data/Constants/Structs/ChunkStructProperties.js";
 import { $2dMooreNeighborhood } from "@divinevoxel/core/Math/Constants/CardinalNeighbors.js";
+import { Vec3Array } from "@amodx/math";
 
 export class HeightMapTool extends LocationBoundTool {
   static _chunkTool = new ChunkDataTool();
@@ -110,22 +111,24 @@ export class HeightMapTool extends LocationBoundTool {
       if (!column) return WorldBounds.bounds.MinY;
       if (column.chunks.length == 0) return WorldBounds.bounds.MinY;
       let maxHeight = WorldBounds.bounds.MinY;
-      for (const chunk of column.chunks) {
+      const positon: Vec3Array = [location[1], location[2], location[3]];
+      let y = positon[1];
+      for (let i = 0; i < column.chunks.length; i++) {
+        const chunk = column.chunks[i];
         if (!chunk) continue;
 
         this.chunk.setChunk(chunk);
-        const chunkPOS = HeightMapTool._chunkTool.getPositionData();
+        const chunkPOS = y + i * WorldSpaces.chunk._bounds.y;
+
         let [chunkMin, chunkMax] = this.chunk.getMinMax();
         if (chunkMax == 0) continue;
-        chunkMax += chunkPOS.y;
+        chunkMax += chunkPOS;
         if (maxHeight < chunkMax) {
           maxHeight = chunkMax;
         }
       }
+
       return maxHeight + 1;
     },
   };
-
-
-
 }

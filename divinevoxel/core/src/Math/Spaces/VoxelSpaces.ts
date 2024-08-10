@@ -1,4 +1,4 @@
-import { Vector3Like } from "@amodx/math";
+import { Vec3Array, Vector3Like } from "@amodx/math";
 import { VoxelSpace, VoxelSpaceData } from "./VoxelSpace.js";
 
 class RegionSpace extends VoxelSpace {
@@ -59,7 +59,13 @@ export class VoxelSpaces {
       },
       getIndex: (space) => {
         return VoxelSpace.getIndex(
-          VoxelSpace.spatialHash(space, this.region, space._bounds),
+          Vector3Like.DivideInPlace(
+            Vector3Like.SubtractInPlace(
+              VoxelSpace.simpleCubeHash(space),
+              this.region._position
+            ),
+            space._bounds
+          ),
           this.region.columnBounds
         );
       },
@@ -129,7 +135,6 @@ export class VoxelSpaces {
     this.column.setCubeBounds(data.columns);
     this.chunk.setCubeBounds(data.chunks);
     this.voxel.setCubeBounds(data.chunks);
-
     this.region.chunkBounds.x = this.region._bounds.x / this.chunk._bounds.x;
     this.region.chunkBounds.y = this.region._bounds.y / this.chunk._bounds.y;
     this.region.chunkBounds.z = this.region._bounds.z / this.chunk._bounds.z;

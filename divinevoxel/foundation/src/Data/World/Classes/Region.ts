@@ -1,9 +1,9 @@
 import { RemoteBinaryStruct } from "@amodx/binary/";
 import { Column } from "./Column";
-import {
-  DVEMessageHeader,
-  WorldDataHeaders,
-} from "../../Constants/DataHeaders.js";
+import { WorldDataStructProperties } from "../../Constants/Structs/WorldDataStructProperties";
+import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces";
+import { Vec3Array } from "@amodx/math";
+
 export interface RegionData {
   stateBuffer: ArrayBuffer;
   columns: Record<number, Column>;
@@ -14,8 +14,7 @@ export class Region {
   static CreateNew(): RegionData {
     const stateBuffer = new SharedArrayBuffer(Region.StateStruct.structSize);
     Region.StateStruct.setBuffer(stateBuffer);
-    Region.StateStruct.setProperty("#dve_header", DVEMessageHeader);
-    Region.StateStruct.setProperty("#dve_data_type", WorldDataHeaders.region);
+
     return {
       stateBuffer,
       columns: {},
@@ -42,6 +41,33 @@ export class Region {
     for (const [key, column] of this.columns) {
       yield column;
     }
+  }
+
+  getPosition(): Vec3Array {
+    Region.StateStruct.setBuffer(this.stateBuffer);
+    return [
+      Region.StateStruct.getProperty(WorldDataStructProperties.positionX),
+      Region.StateStruct.getProperty(WorldDataStructProperties.positionY),
+      Region.StateStruct.getProperty(WorldDataStructProperties.positionZ),
+    ];
+  }
+
+  getColumnIndex(x: number, y: number, z: number): number {
+    const position = this.getPosition();
+    WorldSpaces.region.setXYZ(...position);
+    return WorldSpaces.column.getIndexXYZ(x, y, z);
+  }
+
+  getColumnPosition(index: number): Vec3Array {
+    const position = this.getPosition();
+    WorldSpaces.region.setXYZ(...position);
+    const columnPos = WorldSpaces.column.getPositionFromIndex(index);
+
+    return [
+      position[0] + columnPos.x,
+      position[1] + columnPos.y,
+      position[2] + columnPos.z,
+    ];
   }
 
   toJSON(): RegionData {

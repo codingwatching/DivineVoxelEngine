@@ -7,6 +7,9 @@ import { EngineSettings } from "@divinevoxel/core/Data/Settings/EngineSettings.j
 import { DataHooks } from "../../../../Data/DataHooks.js";
 import { WorldLock } from "../../../../Contexts/World/Lock/WorldLock.js";
 import { DataHanlderWrapper } from "../DataHandlerWrapper.js";
+import { Column } from "Data/World/Classes/Column.js";
+import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
+import { Vector3Like } from "@amodx/math";
 
 export class DataLoaderTool {
   static columnDataTool = new ColumnDataTool();
@@ -82,12 +85,11 @@ export class DataLoaderTool {
     run: (column: ColumnDataTool) => boolean = (columntool) => true
   ) {
     const proms: Promise<any>[] = [];
-    this.allColumns((column) => {
-      const location = column.getLocationData();
+    this.allColumns((column, location) => {
       const distnace = Distance3D(location[1], 0, location[3], sx, 0, sz);
       if (distnace > radius) {
         if (!run(column)) return;
-        proms.push(this.unLoadColumn([...column.getLocationData()]));
+        proms.push(this.unLoadColumn(location));
       }
     });
     await Promise.all(proms);
@@ -95,19 +97,22 @@ export class DataLoaderTool {
 
   async unLoadAllColumns(onDone?: Function) {
     const proms: Promise<any>[] = [];
-    this.allColumns((column) => {
-      proms.push(this.unLoadColumn([...column.getLocationData()]));
+    this.allColumns((column, location) => {
+      proms.push(this.unLoadColumn(location));
     });
     await Promise.all(proms);
   }
 
-  allColumns(run: (column: ColumnDataTool) => void) {
+  allColumns(run: (column: ColumnDataTool, location: LocationData) => void) {
     const dim = WorldRegister.instance.dimensions.get(this.dimension);
     if (!dim) return;
     for (const [key, region] of dim.regions) {
-      for (const column of region.getColumns()) {
+      for (const [index, column] of region.columns) {
         DataLoaderTool.columnDataTool.setColumn(column);
-        run(DataLoaderTool.columnDataTool);
+        run(DataLoaderTool.columnDataTool, [
+          this.dimension,
+          ...region.getColumnPosition(index)
+        ]);
       }
     }
   }
@@ -125,9 +130,9 @@ export class DataLoaderTool {
   getAllUnStoredColumns(
     run: (dimension: string, x: number, y: number, z: number) => void
   ) {
-    this.allColumns((column) => {
+    this.allColumns((column,location) => {
       if (!column.isStored()) {
-        run(...column.getLocationData());
+        run(...location);
       }
     });
   }

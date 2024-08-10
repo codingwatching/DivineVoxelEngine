@@ -5,7 +5,7 @@ export class StringPalette {
 
   constructor(inital?: ArrayLike<string>) {
     if (inital) {
-      let length = inital.length;
+      const length = inital.length;
       for (let i = 0; i < length; i++) {
         this.register(inital[i]);
       }

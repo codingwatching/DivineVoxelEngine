@@ -1,9 +1,10 @@
 //objects
 import { WorldRegister } from "../../../../Data/World/WorldRegister.js";
-import { EncodedPositionDataTool } from "../../Classes/DataToolBase.js";
+import { DataToolBase } from "../../Classes/DataToolBase.js";
 import { Column } from "../../../../Data/World/Classes/Column.js";
+import { LocationData } from "@divinevoxel/core/Math/index.js";
 
-export class ColumnDataTool extends EncodedPositionDataTool {
+export class ColumnDataTool extends DataToolBase {
  struct = Column.StateStruct;
  _column = <Column>{};
 
@@ -22,6 +23,8 @@ export class ColumnDataTool extends EncodedPositionDataTool {
   this._column = column;
   return this;
  }
+
+
 
  getColumn() {
   return this._column;

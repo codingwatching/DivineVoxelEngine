@@ -8,9 +8,10 @@ import RegisterDataHooks from "./WorldDataHooks";
 import { DVEFDataReigster } from "./Data/DVEFDataRegister";
 import { DVEFDataStructs } from "./Data/DVEFDataStructs";
 import InitWorldTasks, { WorldTasks } from "./Tasks/WorldTasks";
-import { Distance3D } from "@amodx/math";
+import { Distance3D, Vector3Like } from "@amodx/math";
 import { LocationData } from "@divinevoxel/core/Math";
 import { WorldRegister } from "../../Data/World/WorldRegister";
+import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces";
 export type DVEFWorldCoreProps = {
   nexusEnabled?: boolean;
   richWorldEnabled?: boolean;
@@ -48,13 +49,14 @@ export class DVEFWorldCore extends DVEWorldCore {
     const dimension = WorldRegister.instance.dimensions.get(dimesnionId);
     if (!dimension) return;
     dimension.regions.forEach((region) => {
-      region.columns.forEach((column) => {
+
+      region.columns.forEach((column, index) => {
         WorldRegister.instance.columnTool.setColumn(column);
-        const location = WorldRegister.instance.columnTool.getLocationData();
-        const distnace = Distance3D(location[1], 0, location[3], x, 0, z);
+        const location = region.getColumnPosition(index);
+        const distnace = Distance3D(location[0], 0, location[2], x, 0, z);
         if (distnace > radius) {
-          this.dataSync.worldData.column.unSync(location);
-          WorldRegister.instance.column.remove(location);
+          this.dataSync.worldData.column.unSync([origion[0], ...location]);
+          WorldRegister.instance.column.remove([origion[0], ...location]);
         }
       });
     });

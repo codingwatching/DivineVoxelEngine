@@ -7,25 +7,11 @@ import { RegionHeaderTags } from "../../../../Data/RegionHeaderRegister.js";
 export const RegionStateStruct = new BinaryStruct("region-tags");
 RegionStateStruct.registerProperty(
   {
-    id: WorldDataStructProperties.header,
-    type: "header",
-    numberType: BinaryNumberTypes.Uint16,
-  },
-  {
-    id: WorldDataStructProperties.dataType,
-    type: "header",
-    numberType: BinaryNumberTypes.Uint16,
-  },
-  {
     id: "#dve_total_players",
     type: "typed-number",
     numberType: BinaryNumberTypes.Uint16,
   },
-  {
-    id: WorldDataStructProperties.dimensionId,
-    type: "typed-number",
-    numberType: BinaryNumberTypes.Uint16,
-  },
+
   {
     id: WorldDataStructProperties.positionX,
     type: "typed-number",

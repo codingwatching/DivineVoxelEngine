@@ -1,8 +1,5 @@
 import { RemoteBinaryStruct } from "@amodx/binary/";
-import {
-  DVEMessageHeader,
-  WorldDataHeaders,
-} from "../../Constants/DataHeaders.js";
+
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 export interface VoxelDataArrays {
   ids: Uint16Array;
@@ -21,8 +18,7 @@ export class Chunk {
   static CreateNew(): ChunkData {
     const stateBuffer = new SharedArrayBuffer(Chunk.StateStruct.structSize);
     Chunk.StateStruct.setBuffer(stateBuffer);
-    Chunk.StateStruct.setProperty("#dve_header", DVEMessageHeader);
-    Chunk.StateStruct.setProperty("#dve_data_type", WorldDataHeaders.chunk);
+
     const voxelSize = WorldSpaces.chunk.getVolume();
     const idsBuffers = new SharedArrayBuffer(voxelSize * 2);
     const ids = new Uint16Array(idsBuffers);

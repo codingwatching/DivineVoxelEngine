@@ -12,10 +12,8 @@ export class AnaylzerTool extends LocationBoundTool {
     if (!dim) return;
     let totalColumns = 0;
     for (const [key, region] of dim.regions) {
-      for (const column of region.getColumns()) {
-        AnaylzerTool.columnDataTool.setColumn(column);
-        const [dimension, cx, cy, cz] =
-          AnaylzerTool.columnDataTool.getLocationData();
+      for (const [index, column] of region.columns) {
+        const [cx, cy, cz] = region.getColumnPosition(index);
         if (Distance3D(sx, sy, sz, cx, cy, cz) > radius) {
           totalColumns++;
         }

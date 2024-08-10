@@ -76,18 +76,23 @@ const getPaletteBuffer = (
   paletteSize: number,
   data: Uint16Array
 ): Uint16Array | Uint8Array => {
+  console.log("GET PALEETE BUFFER",paletteSize,data)
   if (paletteSize > 15 && paletteSize <= 255) {
+    console.log("1");
     return Uint8Array.from(data);
   }
   if (paletteSize > 4 && paletteSize <= 15) {
+    console.log("2");
     const buffer = new Uint8Array(data.length / 2);
     const nibbleArray = new NibbleArray(buffer);
     for (let i = 0; i < data.length; i++) {
       nibbleArray[i] = data[i];
     }
+
     return buffer;
   }
-  if (paletteSize > 1 && paletteSize <= 4) {
+  if (paletteSize > 2 && paletteSize <= 4) {
+    console.log("3");
     const buffer = new Uint8Array(data.length / 4);
     const halfNibbleArray = new HalfNibbleArray(buffer);
     for (let i = 0; i < data.length; i++) {
@@ -96,6 +101,7 @@ const getPaletteBuffer = (
     return buffer;
   }
   if (paletteSize > 0 && paletteSize <= 2) {
+    console.log("4");
     const buffer = new Uint8Array(data.length / 8);
     const bitArray = new BitArray(buffer);
     for (let i = 0; i < data.length; i++) {
@@ -213,14 +219,10 @@ export default function ArchiveColumn(
       chunk.lightPalette.size <= 255 &&
       !chunk.lightAllTheSame;
     const reMapSecondary =
-      Math.max(
-        chunk.secondaryPalette.size,
-        chunk.secondaryStatePalette.size
-      ) < Math.max(secondaryStatePalette.size, secondaryPalette.size) &&
-      Math.max(
-        chunk.secondaryPalette.size,
-        chunk.secondaryStatePalette.size
-      ) <= 255 &&
+      Math.max(chunk.secondaryPalette.size, chunk.secondaryStatePalette.size) <
+        Math.max(secondaryStatePalette.size, secondaryPalette.size) &&
+      Math.max(chunk.secondaryPalette.size, chunk.secondaryStatePalette.size) <=
+        255 &&
       !chunk.secondaryAllTheSame;
 
     chunk.isLightPaletted =
@@ -236,6 +238,7 @@ export default function ArchiveColumn(
     chunk.rempaedState = reMapState && chunk.isStatePaletted;
     chunk.rempaedSecondary = reMapSecondary && chunk.isSecondaryPaletted;
     if (!reMapIds && !reMapLight && !reMapSecondary && !reMapState) continue;
+    const length = chunk.chunk.ids.length;
     for (let i = 0; i < length; i++) {
       VoxelStruct.setStringVoxel(idsPalette.getStringId(chunk.ids[i]));
       if (reMapIds) chunk.ids[i] = chunk.idPalette.getId(chunk.ids[i]);
@@ -254,65 +257,79 @@ export default function ArchiveColumn(
     version: archiveData.version || 0,
     location: [...archiveData.location],
     columnState,
-    ...(lightPalette.size < 255
-      ? {
-          lightPalette: new Uint16Array(lightPalette._palette),
-        }
-      : {}),
-    ...(statePalette.size < 255
-      ? {
-          statePalette: new Uint16Array(statePalette._palette),
-        }
-      : {}),
-    ...(secondaryStatePalette.size < 255
-      ? {
-          secondaryStatePalette: new Uint16Array(
-            secondaryStatePalette._palette
-          ),
-        }
-      : {}),
+    buffers: {},
+    keys:{
+      chunkState: [...chunkStructInstance.getKeys()],
+    },
+    palettes: {
+      id: idsPalette._palette,
+      ...(secondaryPalette.size > 0
+        ? {
+            secondaryId: secondaryPalette._palette,
+          }
+        : {}),
+      ...(lightPalette.size < 255
+        ? {
+            light: new Uint16Array(lightPalette._palette),
+          }
+        : {}),
+      ...(statePalette.size < 255
+        ? {
+            state: new Uint16Array(statePalette._palette),
+          }
+        : {}),
+      ...(secondaryStatePalette.size < 255
+        ? {
+            secondaryState: new Uint16Array(
+              secondaryStatePalette._palette
+            ),
+          }
+        : {}),
+    },
 
-    chunkStateKeys: [...chunkStructInstance.getKeys()],
-    idPalette: idsPalette._palette,
-    ...(secondaryPalette.size > 0
-      ? {
-          secondaryIdPalette: secondaryPalette._palette,
-        }
-      : {}),
     chunks: states.map((archiveChunk): ArchivedChunkData => {
-      chunkStructInstance.setBuffer(archiveChunk.chunk.state);
+      chunkStructInstance.setBuffer(archiveChunk.chunk.stateBuffer);
+
+      const serializeChunkState = chunkStructInstance.serialize() as Record<
+        string,
+        any
+      >;
+
       return {
-        ...(archiveChunk.rempaedIds
-          ? {
-              idPalette: Uint16Array.from(archiveChunk.idPalette._palette),
-            }
-          : {}),
-        ...(archiveChunk.rempaedState
-          ? {
-              statePalette: Uint16Array.from(
-                archiveChunk.statePalette._palette
-              ),
-            }
-          : {}),
-        ...(archiveChunk.rempaedLight
-          ? {
-              lightPalette: Uint16Array.from(
-                archiveChunk.lightPalette._palette
-              ),
-            }
-          : {}),
-        ...(archiveChunk.rempaedSecondary
-          ? {
-              secondaryIdPalette: Uint16Array.from(
-                archiveChunk.secondaryPalette._palette
-              ),
-              secondaryStatePalette: Uint16Array.from(
-                archiveChunk.secondaryStatePalette._palette
-              ),
-            }
-          : {}),
+        palettes: {
+          ...(archiveChunk.rempaedIds
+            ? {
+                id: Uint16Array.from(archiveChunk.idPalette._palette),
+              }
+            : {}),
+          ...(archiveChunk.rempaedState
+            ? {
+                state: Uint16Array.from(
+                  archiveChunk.statePalette._palette
+                ),
+              }
+            : {}),
+          ...(archiveChunk.rempaedLight
+            ? {
+                light: Uint16Array.from(
+                  archiveChunk.lightPalette._palette
+                ),
+              }
+            : {}),
+          ...(archiveChunk.rempaedSecondary
+            ? {
+                secondaryId: Uint16Array.from(
+                  archiveChunk.secondaryPalette._palette
+                ),
+                secondaryState: Uint16Array.from(
+                  archiveChunk.secondaryStatePalette._palette
+                ),
+              }
+            : {}),
+        },
+
         buffers: {
-          ids: archiveChunk.idsAllTheSame
+          id: archiveChunk.idsAllTheSame
             ? archiveChunk.ids[0]
             : getPaletteBuffer(
                 archiveChunk.rempaedIds
@@ -349,19 +366,12 @@ export default function ArchiveColumn(
                       archiveChunk.secondaryStatePalette.size,
                       archiveChunk.secondaryPalette.size
                     )
-                  : Math.max(
-                      secondaryStatePalette.size,
-                      secondaryPalette.size
-                    ),
+                  : Math.max(secondaryStatePalette.size, secondaryPalette.size),
                 archiveChunk.state
               )
             : new Uint16Array(archiveChunk.secondary),
         },
-        state: Object.entries(
-          chunkStructInstance.serialize() as Record<string, any>
-        ).map((_) => {
-          _[1];
-        }),
+        state: Object.entries(serializeChunkState).map((_) => _[1]),
       };
     }),
   };

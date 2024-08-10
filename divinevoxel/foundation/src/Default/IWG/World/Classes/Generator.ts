@@ -22,6 +22,7 @@ import { WorldRegister } from "../../../../Data/World/WorldRegister";
 import { IWGTaskRegister } from "./Tasks/IWGTaskRegister";
 
 import { Square, Circle } from "@amodx/math/Shapes";
+import { LocationData } from "@divinevoxel/core/Math";
 
 /**# Infinite World Generator
  *
@@ -102,15 +103,15 @@ export class Generator extends LocationBoundTool {
   }
 
   saveUpdate(max = 5) {
-    const dimension = WorldRegister.instance.dimensions.get(this.dimension);
+    const dimesnionId = this.dimension;
+    const dimension = WorldRegister.instance.dimensions.get(dimesnionId);
     if (!dimension) return;
     dimension.regions.forEach((region) => {
-      region.columns.forEach((column) => {
+      region.columns.forEach((column, index) => {
         WorldRegister.instance.columnTool.setColumn(column);
-        const [dim, x, y, z] =
-          WorldRegister.instance.columnTool.getLocationData();
+        const [x, y, z] = region.getColumnPosition(index);
 
-        if (WorldLock.isLocked([dim, x, y, z])) return;
+        if (WorldLock.isLocked([dimesnionId, x, y, z])) return;
         if (IWG.inProgressMap.has(x, 0, z)) return;
         if (
           !WorldRegister.instance.columnTool.isStored() ||
@@ -133,8 +134,7 @@ export class Generator extends LocationBoundTool {
 
   unLoadAllColumns() {
     if (!this.dataLoader) return;
-    this.dataLoader.allColumns((tool) => {
-      const [dim, x, y, z] = tool.getLocationData();
+    this.dataLoader.allColumns((tool, [dim, x, y, z]) => {
       this.tasks["saving"].get("#dve_iwg_save_and_unload")!.add(x, y, z);
     });
   }
@@ -224,16 +224,13 @@ export class Generator extends LocationBoundTool {
     const dimension = WorldRegister.instance.dimensions.get(this.dimension);
     if (!dimension) return;
     dimension.regions.forEach((region) => {
-      region.columns.forEach((column) => {
+      region.columns.forEach((column, index) => {
         WorldRegister.instance.columnTool.setColumn(column);
-        const location = WorldRegister.instance.columnTool.getLocationData();
-        this.columnSquare.center.x = location[1];
-        this.columnSquare.center.y = location[3];
-        const columnKey = WorldSpaces.column.getKeyXYZ(
-          location[1],
-          0,
-          location[3]
-        );
+        const [x, y, z] = region.getColumnPosition(index);
+        const location: LocationData = [this.dimension, x, y, z];
+        this.columnSquare.center.x = x;
+        this.columnSquare.center.y = z;
+        const columnKey = WorldSpaces.column.getKeyXYZ(x, 0, z);
         if (this._builtColumns.has(columnKey)) {
           if (
             !Circle.IsSquareInsideOrTouchingCircle(
@@ -561,6 +558,7 @@ export class Generator extends LocationBoundTool {
       const { nWorldGenAllDone, nSunAllDone, nPropagtionAllDone } =
         this.getColumnState([cx, 0, cz], queue);
 
+ 
       if (nWorldGenAllDone && nSunAllDone && nPropagtionAllDone) {
         /*     if (this.debounedRemoveMesh.hasTasks(columnKey)) {
           this.debounedRemoveMesh.clearTasks(columnKey);
@@ -569,6 +567,7 @@ export class Generator extends LocationBoundTool {
         this.tasks[IWGTasksTypes.Rendering]
           .get("#dve_iwg_build")!
           .add(cx, cy, cz);
+
       }
     }
 

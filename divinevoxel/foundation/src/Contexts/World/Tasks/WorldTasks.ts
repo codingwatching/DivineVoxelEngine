@@ -9,21 +9,15 @@ import {
   WorldLockTasks,
   LoadColumnDataTasks,
 } from "../../../Types/Tasks.types.js";
-import { ColumnDataTool } from "../../../Default/Tools/Data/WorldData/ColumnDataTool.js";
 import { RegionHeaderRegister } from "../../../Data/RegionHeaderRegister.js";
 import { DataLoaderTool } from "../../../Default/DataLoader/World/Tools/DataLoaderTool.js";
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 import { WorldLock } from "../Lock/WorldLock.js";
 import { DVEFDataSync } from "../DVEFDataSync.js";
-import { Column, ColumnData } from "../../../Data/World/Classes/Column.js";
+import { ColumnData } from "../../../Data/World/Classes/Column.js";
 
 export class WorldTasks {
-  private columnTool = new ColumnDataTool();
   constructor(public DVEW: DVEFWorldCore) {}
-
-  getLocation(column: ColumnData) {
-    return this.columnTool.setColumn(new Column(column)).getLocationData();
-  }
 
   loadColumn(location: LocationData, column: ColumnData) {
     WorldRegister.instance.column.add(location, column);

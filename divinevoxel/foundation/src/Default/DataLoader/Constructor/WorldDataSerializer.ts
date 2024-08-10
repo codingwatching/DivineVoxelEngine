@@ -1,11 +1,12 @@
 //types
 import type { ColumnData } from "../../../Data/World/Classes/Column.js";
-import type { LocationData } from "@divinevoxel/core/Math";;
+import type { LocationData } from "@divinevoxel/core/Math";
 //objects
 import { RegionDataTool } from "../../Tools/Data/WorldData/RegionDataTool.js";
 import { ColumnDataTool } from "../../Tools/Data/WorldData/ColumnDataTool.js";
 import { ChunkDataTool } from "../../Tools/Data/WorldData/ChunkDataTool.js";
 import { BinaryObject } from "@amodx/binary";
+import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 
 export class WorldDataSerializer {
   regions = new RegionDataTool();
@@ -21,11 +22,12 @@ export class WorldDataSerializer {
       return false;
     const region = this.regions.getRegion();
     const columnBuffers: [location: LocationData, buffer: ArrayBuffer][] = [];
-    region.columns.forEach((column) => {
+    region.columns.forEach((column, index) => {
       this.columns.setColumn(column);
-      const location = this.columns.getLocationData();
-      const columnBuffer = this.serializeColumn(location);
-      if (columnBuffer) columnBuffers.push([[...location], columnBuffer]);
+      const position = region.getColumnPosition(index);
+      const columnLocation: LocationData = [location[0], ...position];
+      const columnBuffer = this.serializeColumn(columnLocation);
+      if (columnBuffer) columnBuffers.push([[...columnLocation], columnBuffer]);
     });
     return columnBuffers;
   }

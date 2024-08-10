@@ -1,39 +1,7 @@
 import { BinaryNumberTypes, BinaryStruct } from "@amodx/binary/";
-
-import { WorldDataStructProperties } from "../../../../Data/Constants/Structs/WorldDataStructProperties.js";
 import { Column } from "../../../../Data/World/Classes/Column.js";
 export const ColumnStateStruct = new BinaryStruct("column-tags");
 ColumnStateStruct.registerProperty(
-  {
-    id: WorldDataStructProperties.header,
-    type: "header",
-    numberType: BinaryNumberTypes.Uint16,
-  },
-  {
-    id: WorldDataStructProperties.dataType,
-    type: "header",
-    numberType: BinaryNumberTypes.Uint16,
-  },
-  {
-    id: WorldDataStructProperties.dimensionId,
-    type: "typed-number",
-    numberType: BinaryNumberTypes.Uint16,
-  },
-  {
-    id: WorldDataStructProperties.positionX,
-    type: "typed-number",
-    numberType: BinaryNumberTypes.Int32,
-  },
-  {
-    id: WorldDataStructProperties.positionY,
-    type: "typed-number",
-    numberType: BinaryNumberTypes.Int32,
-  },
-  {
-    id: WorldDataStructProperties.positionZ,
-    type: "typed-number",
-    numberType: BinaryNumberTypes.Int32,
-  },
   {
     id: "#dve_last_save_timestamp",
     type: "typed-number",

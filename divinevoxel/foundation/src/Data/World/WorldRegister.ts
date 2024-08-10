@@ -13,14 +13,12 @@ import { DimensionsRegister } from "./DimensionsRegister.js";
 
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 import { type LocationData } from "@divinevoxel/core/Math";
-import { ChunkDataTool } from "../../Default/Tools/Data/WorldData/ChunkDataTool.js";
 import { ColumnDataTool } from "../../Default/Tools/Data/WorldData/ColumnDataTool.js";
 import { RegionDataTool } from "../../Default/Tools/Data/WorldData/RegionDataTool.js";
 import { WorldRegisterCache } from "./WorldRegisterCache.js";
 
 export class WorldRegister {
   static instance: WorldRegister;
-  chunkTool = new ChunkDataTool();
   columnTool = new ColumnDataTool();
   regionTool = new RegionDataTool();
   _dimensions = new Map<string, Dimension>();
@@ -65,7 +63,7 @@ export class WorldRegister {
       const regionPOS = WorldSpaces.region.getPositionLocation(location);
       this.regionTool.setRegion(newRegion);
       this.regionTool.setPositionData(regionPOS.x, regionPOS.y, regionPOS.z);
-      this.regionTool.setDimensionId(location[0]);
+
       dimension.set(WorldSpaces.region.getKey(), newRegion);
       return newRegion;
     },
@@ -99,11 +97,13 @@ export class WorldRegister {
         DataHooks.region.onNew.notify(location);
       }
       const newColumn = Column.toObject(column);
-      const columnPOS = WorldSpaces.column.getPositionLocation(location);
-      this.columnTool.setColumn(newColumn);
-      this.columnTool.setPositionData(columnPOS.x, columnPOS.y, columnPOS.z);
-      this.columnTool.setDimensionId(location[0]);
-      region.columns.set(WorldSpaces.column.getIndex(), newColumn);
+      region.columns.set(
+        region.getColumnIndex(location[1], location[2], location[3]),
+        newColumn
+      );
+      
+
+
       return newColumn;
     },
     get: (location: LocationData): false | Column => {
@@ -167,12 +167,7 @@ export class WorldRegister {
       }
       if (!column) return;
       const newChunk = Chunk.toObject(chunk);
-      this.chunkTool.setChunk(newChunk);
-
-      const chunkPOS = WorldSpaces.chunk.getPositionLocation(location);
-      this.chunkTool.setPositionData(chunkPOS.x, chunkPOS.y, chunkPOS.z);
-      this.chunkTool.setDimensionId(location[0]);
-      column.chunks[WorldSpaces.chunk.getIndex()] = newChunk;
+      column.chunks[WorldSpaces.chunk.getIndexLocation(location)] = newChunk;
       DataHooks.chunk.onNew.notify(location);
       return newChunk;
     },

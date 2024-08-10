@@ -5,12 +5,10 @@ import type { BuildTasks, PriorityTask } from "../../Types/Tasks.types.js";
 
 import { WorldRegister } from "../../Data/World/WorldRegister.js";
 
-import { ChunkDataTool } from "../../Default/Tools/Data/WorldData/ChunkDataTool.js";
 import { DVEFConstrucotrCore } from "./DVEFConstructorCore.js";
+import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 
 export default function (DVEC: DVEFConstrucotrCore) {
-  const chunkTool = new ChunkDataTool();
-
   Threads.registerTasks("clear-all", () => {
     WorldRegister.instance.clearAll();
   });
@@ -29,6 +27,7 @@ export default function (DVEC: DVEFConstrucotrCore) {
   Threads.registerTasks<BuildTasks>(
     ConstructorTasksIds.BuildColumn,
     async (data, onDone) => {
+
       WorldRegister.instance.cache.enable();
       const column = WorldRegister.instance.column.get(data[0]);
       if (!column) {
@@ -37,14 +36,22 @@ export default function (DVEC: DVEFConstrucotrCore) {
       }
       if (column.chunks.length == 0) return false;
       const location = data[0];
-      for (const chunk of column.chunks) {
-        chunkTool.setChunk(chunk);
-        const chunkPOS = chunkTool.getPositionData();
-        location[1] = chunkPOS.x;
-        location[2] = chunkPOS.y;
-        location[3] = chunkPOS.z;
-        DVEC.mesher.meshChunk([...location], 1, 100);
+      for (let i = 0; i < column.chunks.length; i++) {
+        const chunk = column.chunks[i];
+        if (!chunk) continue;
+  
+        DVEC.mesher.meshChunk(
+          [
+            location[0],
+            location[1],
+            location[2] + i * WorldSpaces.chunk.getHeight(),
+            location[3],
+          ],
+          1,
+          100
+        );
       }
+
       if (onDone) onDone();
       WorldRegister.instance.cache.disable();
     },

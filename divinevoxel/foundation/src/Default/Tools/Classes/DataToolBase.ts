@@ -94,21 +94,11 @@ export abstract class EncodedPositionDataTool extends DataToolBase {
     return this.position;
   }
 
-  setDimensionId(dimensionId: string) {
-    this.setTagValue(
-      WorldDataStructProperties.dimensionId,
-      this._dimensionRegister.getDimensionNumericId(dimensionId)
-    );
-  }
 
-  getDimensionId() {
-    return this._dimensionRegister.getDimensionStringId(
-      this.getStructValue(WorldDataStructProperties.dimensionId)
-    );
-  }
+
 
   getLocationData(): LocationData {
     const pos = this.getPositionData();
-    return [this.getDimensionId(), pos.x, pos.y, pos.z];
+    return [this.dimension, pos.x, pos.y, pos.z];
   }
 }

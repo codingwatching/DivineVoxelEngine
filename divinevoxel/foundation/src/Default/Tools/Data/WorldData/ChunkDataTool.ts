@@ -1,17 +1,13 @@
 //objects
-import { EncodedPositionDataTool } from "../../Classes/DataToolBase.js";
+import { DataToolBase } from "../../Classes/DataToolBase.js";
 import { WorldRegister } from "../../../../Data/World/WorldRegister.js";
 
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 import { Chunk } from "../../../../Data/World/Classes/Chunk.js";
 import { RawVoxelData } from "@divinevoxel/core";
 
-export class ChunkDataTool extends EncodedPositionDataTool {
+export class ChunkDataTool extends DataToolBase {
   struct = Chunk.StateStruct;
-
-  constructor() {
-    super();
-  }
 
   _chunk: Chunk;
 

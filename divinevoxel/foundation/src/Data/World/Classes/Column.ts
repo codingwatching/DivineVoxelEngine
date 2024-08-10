@@ -1,9 +1,9 @@
 import { RemoteBinaryStruct } from "@amodx/binary/";
-import {
-  DVEMessageHeader,
-  WorldDataHeaders,
-} from "../../Constants/DataHeaders.js";
+
 import { Chunk, ChunkData } from "./Chunk.js";
+import { WorldDataStructProperties } from "../../../Data/Constants/Structs/WorldDataStructProperties.js";
+import { Vec3Array } from "@amodx/math";
+import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 export interface ColumnData {
   stateBuffer: ArrayBuffer;
   chunks: ChunkData[];
@@ -15,9 +15,8 @@ export class Column {
   static CreateNew(data: Partial<ColumnData>): ColumnData {
     const stateBuffer = new SharedArrayBuffer(Column.StateStruct.structSize);
     Column.StateStruct.setBuffer(stateBuffer);
-    Column.StateStruct.setProperty("#dve_header", DVEMessageHeader);
-    Column.StateStruct.setProperty("#dve_data_type", WorldDataHeaders.column);
-  Column.StateStruct.setProperty("#dve_is_stored", 0);
+
+    Column.StateStruct.setProperty("#dve_is_stored", 0);
     return {
       stateBuffer,
       chunks: [],
@@ -35,6 +34,7 @@ export class Column {
     this.stateBuffer = data.stateBuffer;
     this.chunks = data.chunks.map((_) => _ && new Chunk(_));
   }
+
 
   toJSON(): ColumnData {
     return {

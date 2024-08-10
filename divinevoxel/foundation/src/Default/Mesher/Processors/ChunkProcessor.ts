@@ -61,6 +61,7 @@ export class ChunkProcessor {
     const [dimension, cx, cy, cz] = location;
     this.nLocation[0] = dimension;
     const [minY, maxY] = this.heightMapTool.chunk.getMinMax();
+
     if (Math.abs(minY) == Infinity || Math.abs(maxY) == Infinity) return;
 
     for (let y = minY; y <= maxY; y++) {
@@ -79,8 +80,6 @@ export class ChunkProcessor {
       this.heightMapTool.chunk.setY(y).setDirty(false);
     }
 
-
-
     const chunks = <SetChunkMeshTask>[location, [], priority];
     const trasnfers: any[] = [];
     for (const [substance, mesher] of RenderedSubstances.meshers._map) {
@@ -90,9 +89,7 @@ export class ChunkProcessor {
         continue;
       }
 
-   
       const [attributes, buffers] = mesher.getAllAttributes();
-
 
       trasnfers.push(...buffers);
       chunks[1].push([substance, [location, attributes]]);

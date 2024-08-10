@@ -34,58 +34,84 @@ const updateChunkBuffers = (
   column: ArchivedColumnData,
   chunk: ArchivedChunkData
 ) => {
-  if (column.idPalette.length <= 15 && ArrayBuffer.isView(chunk.buffers.ids))
-    chunk.buffers.ids = getArray(
-      column.idPalette.length,
-      chunk.buffers.ids
-    ) as any;
   if (
-    ((chunk.statePalette && chunk.statePalette.length <= 15) ||
-      (column.statePalette && column.statePalette.length <= 15)) &&
+    (column.palettes.id.length <= 15 ||
+      (chunk.palettes.id && chunk.palettes.id.length <= 15)) &&
+    ArrayBuffer.isView(chunk.buffers.id)
+  ) {
+    chunk.buffers.id = getArray(
+      Math.min(
+        chunk.palettes.id?.length || Infinity,
+        column.palettes.id?.length || 0
+      ),
+      chunk.buffers.id
+    ) as any;
+  }
+  if (
+    ((chunk.palettes.light && chunk.palettes.light.length <= 15) ||
+      (column.palettes.light && column.palettes.light.length <= 15)) &&
+    ArrayBuffer.isView(chunk.buffers.light)
+  )
+    chunk.buffers.light = getArray(
+      Math.min(
+        chunk.palettes.light?.length || Infinity,
+        column.palettes.light?.length || 0
+      ),
+      chunk.buffers.light
+    ) as any;
+
+  if (
+    ((chunk.palettes.state && chunk.palettes.state.length <= 15) ||
+      (column.palettes.state && column.palettes.state.length <= 15)) &&
     ArrayBuffer.isView(chunk.buffers.state)
   )
     chunk.buffers.state = getArray(
-      column.idPalette.length,
+      Math.min(
+        chunk.palettes.state?.length || Infinity,
+        column.palettes.state?.length || 0
+      ),
       chunk.buffers.state
     ) as any;
+
   if (
-    ((chunk.statePalette && chunk.statePalette.length <= 15) ||
-      (column.statePalette && column.statePalette.length <= 15)) &&
+    ((chunk.palettes.secondaryState &&
+      chunk.palettes.secondaryState.length <= 15) ||
+      (column.palettes.secondaryState &&
+        column.palettes.secondaryState.length <= 15)) &&
+    ((chunk.palettes.secondaryId && chunk.palettes.secondaryId.length <= 15) ||
+      (column.palettes.secondaryId &&
+        column.palettes.secondaryId.length <= 15)) &&
     ArrayBuffer.isView(chunk.buffers.secondary)
   )
-    if (
-      ((chunk.secondaryStatePalette &&
-        chunk.secondaryStatePalette.length <= 15) ||
-        (column.secondaryStatePalette &&
-          column.secondaryStatePalette.length <= 15)) &&
-      ((chunk.secondaryIdPalette && chunk.secondaryIdPalette.length <= 15) ||
-        (column.secondaryIdPalette &&
-          column.secondaryIdPalette.length <= 15)) &&
-      ArrayBuffer.isView(chunk.buffers.secondary)
-    )
-      chunk.buffers.secondary = getArray(
-        Math.max(
-          column.secondaryIdPalette?.length || 0,
-          column.secondaryStatePalette?.length || 0
+    chunk.buffers.secondary = getArray(
+      Math.max(
+        Math.min(
+          chunk.palettes.secondaryId?.length || Infinity,
+          column.palettes.secondaryId?.length || 0
         ),
-        chunk.buffers.secondary
-      ) as any;
+        Math.min(
+          chunk.palettes.secondaryState?.length || Infinity,
+          column.palettes.secondaryState?.length || 0
+        )
+      ),
+      chunk.buffers.secondary
+    ) as any;
 };
 type ImportedColumnData = {
   column: ArchivedColumnData;
   idPalette: StringPalette;
-  secondaryIdPalette?: StringPalette;
+  secondaryId?: StringPalette;
   lightPalette?: NumberPalette;
   statePalette?: NumberPalette;
-  secondaryStatePalette?: NumberPalette;
+  secondaryState?: NumberPalette;
 };
 type ImportedChunkData = {
   chunk: ArchivedChunkData;
   idPalette?: NumberPalette;
   lightPalette?: NumberPalette;
   statePalette?: NumberPalette;
-  secondaryStatePalette?: NumberPalette;
-  secondaryIdPalette?: NumberPalette;
+  secondaryState?: NumberPalette;
+  secondaryId?: NumberPalette;
 };
 
 const getImportedColumnData = (
@@ -93,36 +119,38 @@ const getImportedColumnData = (
 ): ImportedColumnData => {
   return {
     column,
-    idPalette: new StringPalette(column.idPalette),
-    secondaryIdPalette: column.secondaryIdPalette
-      ? new StringPalette(column.secondaryIdPalette)
+    idPalette: new StringPalette(column.palettes.id),
+    secondaryId: column.palettes.secondaryId
+      ? new StringPalette(column.palettes.secondaryId)
       : undefined,
-    lightPalette: column.lightPalette
-      ? new NumberPalette(column.lightPalette)
+    lightPalette: column.palettes.light
+      ? new NumberPalette(column.palettes.light)
       : undefined,
-    statePalette: column.statePalette
-      ? new NumberPalette(column.statePalette)
+    statePalette: column.palettes.state
+      ? new NumberPalette(column.palettes.state)
       : undefined,
-    secondaryStatePalette: column.secondaryStatePalette
-      ? new NumberPalette(column.secondaryStatePalette)
+    secondaryState: column.palettes.secondaryState
+      ? new NumberPalette(column.palettes.secondaryState)
       : undefined,
   };
 };
 const getImportedChunkData = (chunk: ArchivedChunkData): ImportedChunkData => {
   return {
     chunk,
-    idPalette: chunk.idPalette ? new NumberPalette(chunk.idPalette) : undefined,
-    lightPalette: chunk.lightPalette
-      ? new NumberPalette(chunk.lightPalette)
+    idPalette: chunk.palettes.id
+      ? new NumberPalette(chunk.palettes.id)
       : undefined,
-    statePalette: chunk.statePalette
-      ? new NumberPalette(chunk.statePalette)
+    lightPalette: chunk.palettes.light
+      ? new NumberPalette(chunk.palettes.light)
       : undefined,
-    secondaryStatePalette: chunk.secondaryStatePalette
-      ? new NumberPalette(chunk.secondaryStatePalette)
+    statePalette: chunk.palettes.state
+      ? new NumberPalette(chunk.palettes.state)
       : undefined,
-    secondaryIdPalette: chunk.secondaryIdPalette
-      ? new NumberPalette(chunk.secondaryIdPalette)
+    secondaryState: chunk.palettes.secondaryState
+      ? new NumberPalette(chunk.palettes.secondaryState)
+      : undefined,
+    secondaryId: chunk.palettes.secondaryId
+      ? new NumberPalette(chunk.palettes.secondaryId)
       : undefined,
   };
 };
@@ -133,8 +161,8 @@ const getId = (
 ): number => {
   const { chunk } = importedChunk;
   const { column } = importedColumn;
-  if (typeof chunk.buffers.ids == "number") {
-    return VoxelPalette.ids.getNumberId(column.idPalette[chunk.buffers.ids]);
+  if (typeof chunk.buffers.id == "number") {
+    return VoxelPalette.ids.getNumberId(column.palettes.id[chunk.buffers.id]);
   }
   if (importedChunk.idPalette) {
     return VoxelPalette.ids.getNumberId(
@@ -143,7 +171,10 @@ const getId = (
       )
     );
   }
-  return VoxelPalette.ids.getNumberId(column.idPalette[value]);
+
+  return VoxelPalette.ids.getNumberId(
+    importedColumn.idPalette.getStringId(value)
+  );
 };
 
 const getLight = (
@@ -152,15 +183,16 @@ const getLight = (
   importedChunk: ImportedChunkData
 ): number => {
   const { chunk } = importedChunk;
-  const { column } = importedColumn;
   if (typeof chunk.buffers.light == "number") {
     return value;
   }
-  if (importedChunk.lightPalette) {
-    return importedChunk.lightPalette.getId(value);
+  if (importedChunk.lightPalette && importedColumn.lightPalette) {
+    return importedColumn.lightPalette.getValue(
+      importedChunk.lightPalette.getValue(value)
+    );
   }
   if (importedColumn.lightPalette) {
-    return importedColumn.lightPalette.getId(value);
+    return importedColumn.lightPalette.getValue(value);
   }
   return value;
 };
@@ -170,15 +202,16 @@ const getState = (
   importedChunk: ImportedChunkData
 ): number => {
   const { chunk } = importedChunk;
-  const { column } = importedColumn;
   if (typeof chunk.buffers.state == "number") {
     return value;
   }
-  if (importedChunk.statePalette) {
-    return importedChunk.statePalette.getId(value);
+  if (importedChunk.statePalette && importedColumn.statePalette) {
+    return importedColumn.statePalette.getValue(
+      importedChunk.statePalette.getValue(value)
+    );
   }
   if (importedColumn.statePalette) {
-    return importedColumn.statePalette.getId(value);
+    return importedColumn.statePalette.getValue(value);
   }
   return value;
 };
@@ -194,27 +227,29 @@ const getSecondary = (
   if (VoxelStruct.instance[VoxelTagIDs.canHaveSecondary] == 1) {
     if (typeof chunk.buffers.secondary == "number") {
       return VoxelPalette.ids.getNumberId(
-        column.secondaryIdPalette![chunk.buffers.secondary]
+        column.palettes.secondaryId![chunk.buffers.secondary]
       );
     }
-    if (importedChunk.secondaryIdPalette) {
+    if (importedChunk.secondaryId) {
       return VoxelPalette.ids.getNumberId(
-        importedColumn.secondaryIdPalette!.getStringId(
-          importedChunk.secondaryIdPalette.getValue(value)
+        importedColumn.secondaryId!.getStringId(
+          importedChunk.secondaryId.getValue(value)
         )
       );
     }
-    return VoxelPalette.ids.getNumberId(column.secondaryIdPalette![value]);
+    return VoxelPalette.ids.getNumberId(column.palettes.secondaryId![value]);
   }
 
   if (typeof chunk.buffers.secondary == "number") {
     return value;
   }
-  if (importedChunk.secondaryStatePalette) {
-    return importedChunk.secondaryStatePalette.getId(value);
+  if (importedChunk.secondaryState && importedColumn.secondaryState) {
+    return importedColumn.secondaryState.getValue(
+      importedChunk.secondaryState.getValue(value)
+    );
   }
-  if (importedColumn.secondaryStatePalette) {
-    return importedColumn.secondaryStatePalette.getId(value);
+  if (importedColumn.secondaryState) {
+    return importedColumn.secondaryState.getId(value);
   }
   return value;
 };
@@ -231,62 +266,72 @@ export default function ImportColumn(
   const newColumn = Column.CreateNew({});
   if (!archiveData.loadColumnState) {
     columnStructInstance.setBuffer(newColumn.stateBuffer);
-    const columnStateKeys = Object.keys(column.columnState);
-    for (let i = 0; i < columnStateKeys.length; i++) {
-      chunkStructInstance[columnStateKeys[i]] =
-        column.columnState[columnStateKeys[i]];
-    }
+    columnStructInstance.deserialize(column.columnState);
   } else {
     archiveData.loadColumnState(column.columnState, newColumn);
   }
 
   const importedColumn = getImportedColumnData(column);
 
-  for (const chunk of column.chunks) {
+  for (let chunkIndex = 0; chunkIndex < column.chunks.length; chunkIndex++) {
+    const chunk = column.chunks[chunkIndex];
     const importedChunk = getImportedChunkData(chunk);
     const newChunk = Chunk.CreateNew();
-    chunkStructInstance.setBuffer(newChunk.stateBuffer);
+
+    const chunkState: Record<string, any> = {};
+    for (let i = 0; i < column.keys.chunkState.length; i++) {
+      chunkState[column.keys.chunkState[i]] = chunk.state[i];
+    }
 
     updateChunkBuffers(column, chunk);
     if (!archiveData.loadChunkState) {
-      for (let i = 0; i < column.chunkStateKeys.length; i++) {
-        chunkStructInstance[column.chunkStateKeys[i]] = chunk.state[i];
-      }
+      chunkStructInstance.setBuffer(newChunk.stateBuffer);
+      chunkStructInstance.deserialize(chunkState);
     } else {
-      archiveData.loadChunkState(column.chunkStateKeys, chunk.state, newChunk);
+      archiveData.loadChunkState(column.keys.chunkState, chunk.state, newChunk);
     }
 
-    for (let i = 0; i < newChunk.ids.length; i++) {
-      newChunk.ids[i] = getId(
-        typeof chunk.buffers.ids == "number"
-          ? chunk.buffers.ids
-          : chunk.buffers.ids[i],
-        importedColumn,
-        importedChunk
+    try {
+      for (let i = 0; i < newChunk.ids.length; i++) {
+        newChunk.ids[i] = getId(
+          typeof chunk.buffers.id == "number"
+            ? chunk.buffers.id
+            : chunk.buffers.id[i],
+          importedColumn,
+          importedChunk
+        );
+        newChunk.state[i] = getState(
+          typeof chunk.buffers.state == "number"
+            ? chunk.buffers.state
+            : chunk.buffers.state[i],
+          importedColumn,
+          importedChunk
+        );
+        newChunk.light[i] = getLight(
+          typeof chunk.buffers.light == "number"
+            ? chunk.buffers.light
+            : chunk.buffers.light[i],
+          importedColumn,
+          importedChunk
+        );
+        newChunk.secondary[i] = getSecondary(
+          newChunk.ids[i],
+          typeof chunk.buffers.secondary == "number"
+            ? chunk.buffers.secondary
+            : chunk.buffers.secondary[i],
+          importedColumn,
+          importedChunk
+        );
+      }
+    } catch (error) {
+      console.log(
+        chunk.buffers.light,
+        (chunk.buffers.light as any as NibbleArray).buffer
       );
-      newChunk.state[i] = getState(
-        typeof chunk.buffers.state == "number"
-          ? chunk.buffers.state
-          : chunk.buffers.state[i],
-        importedColumn,
-        importedChunk
-      );
-      newChunk.light[i] = getLight(
-        typeof chunk.buffers.light == "number"
-          ? chunk.buffers.light
-          : chunk.buffers.light[i],
-        importedColumn,
-        importedChunk
-      );
-      newChunk.secondary[i] = getSecondary(
-        newChunk.ids[i],
-        typeof chunk.buffers.secondary == "number"
-          ? chunk.buffers.secondary
-          : chunk.buffers.secondary[i],
-        importedColumn,
-        importedChunk
-      );
+      console.error(error);
     }
+
+    newColumn.chunks[chunkIndex] = newChunk;
   }
 
   return newColumn;
