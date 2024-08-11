@@ -24,13 +24,36 @@ export class WorldGenBrush extends BrushTool {
 
   richData = new RichDataTool();
 
+  setDimension(dimensionId: string) {
+    this.location[0] = dimensionId;
+    this.tasks.origin[0] = dimensionId;
+    this._dt.setDimension(dimensionId);
+    return this;
+  }
+
+  get keepTrackOfChunksToBuild() {
+    return this.tasks.keepTrackOfChunks;
+  }
+  set keepTrackOfChunksToBuild(value: boolean) {
+    this.tasks.keepTrackOfChunks = value;
+  }
   paint() {
-    if (!this._dt.loadInAtLocation(this.location) && this.requestsId != "") {
-      WorldGenRegister.addToRequest(this.requestsId, this.location, [
-        ...this.getRaw(),
-      ] as any);
+    if (!this._dt.loadInAtLocation(this.location)) {
+      if (this.requestsId != "") {
+        WorldGenRegister.addToRequest(this.requestsId, this.location, [
+          ...this.getRaw(),
+        ] as any);
+      }
+      throw new Error(
+        `Tried painting in an unloaded location ${this.location.toString()}`
+      );
       return this;
     }
+    if (this._dt.isRenderable()) {
+      this.erase();
+      this._dt.loadInAtLocation(this.location);
+    }
+
     const sl = this._dt.getLight();
 
     if (LightData.hasRGBLight(sl)) {
@@ -45,15 +68,54 @@ export class WorldGenBrush extends BrushTool {
 
     this._worldPainter.paintVoxel(this.location, this.data);
 
+    if (this.keepTrackOfChunksToBuild) {
+      this.tasks.addNeighborsToRebuildQueue(this.x, this.y, this.z);
+    }
+
     return this;
   }
 
-  erease() {
+  getUpdatedChunks() {
+    const queue: Vec3Array[] = [];
+    if (this.keepTrackOfChunksToBuild) {
+      for (const [key, position] of this.tasks.trackedChunks) {
+        queue.push(position);
+      }
+      this.tasks.trackedChunks.clear();
+    }
+    this.tasks.clearBuildQueue();
+    return queue;
+  }
+
+  update() {
+    if (!this._dt.loadInAtLocation(this.location) && this.requestsId != "")
+      return false;
+
     const sl = this._dt.getLight();
+
+    if (LightData.hasRGBLight(sl)) {
+      this.tasks.queues.rgb.update.push(this.x, this.y, this.z);
+      Propagation.instance.rgbUpdate(this.tasks);
+    }
+
+    if (LightData.hasSunLight(sl)) {
+      this.tasks.queues.sun.update.push(this.x, this.y, this.z);
+      Propagation.instance.sunUpdate(this.tasks);
+    }
+    if (this.keepTrackOfChunksToBuild) {
+      this.tasks.addNeighborsToRebuildQueue(this.x, this.y, this.z);
+    }
+  }
+
+  erase() {
+    if (!this._dt.loadInAtLocation(this.location) && this.requestsId != "")
+      return this;
+    const sl = this._dt.getLight();
+    this._worldPainter.eraseVoxel(this.location);
     this._dt
       .setAir()
       .setLight(sl > 0 ? sl : 0)
-      .commit(2);
+      .commit();
 
     if (LightData.hasRGBLight(sl)) {
       this.tasks.queues.rgb.remove.push(this.x, this.y, this.z);
@@ -66,12 +128,18 @@ export class WorldGenBrush extends BrushTool {
       Propagation.instance.sunRemove(this.tasks);
     }
 
-    this._worldPainter.eraseVoxel(this.location);
+    if (this.keepTrackOfChunksToBuild) {
+      this.tasks.addNeighborsToRebuildQueue(this.x, this.y, this.z);
+    }
+
+    return this;
   }
 
   runUpdates() {
     Propagation.instance.rgbUpdate(this.tasks);
     Propagation.instance.sunUpdate(this.tasks);
+
+    this.tasks.queues.rgb.map.clear();
     this.tasks.queues.sun.updateMap.clear();
   }
 

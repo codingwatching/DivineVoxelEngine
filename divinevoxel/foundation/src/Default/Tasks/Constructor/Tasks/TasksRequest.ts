@@ -6,7 +6,7 @@ import type {
   PriorityTask,
   RunRebuildTasks,
 } from "../../../../Types/Tasks.types";
-import { ConstructorRemoteThreadTasks } from "../../../../Contexts/Constructor/ConstructorRemoteThreadTasks"
+import { ConstructorRemoteThreadTasks } from "../../../../Contexts/Constructor/ConstructorRemoteThreadTasks";
 import { EngineSettings } from "@divinevoxel/core/Data/Settings/EngineSettings.js";
 import { Thread, Threads } from "@amodx/threads/";
 import { $3dMooreNeighborhood } from "@divinevoxel/core/Math/Constants/CardinalNeighbors.js";
@@ -17,6 +17,7 @@ import { WorldRegister } from "../../../../Data/World/WorldRegister.js";
 import { ChunkDataTool } from "../../../../Default/Tools/Data/WorldData/ChunkDataTool";
 import { VisitedMap } from "../../../../Util/VisistedMap";
 import { DVEFConstrucotrCore } from "../../../../Contexts/Constructor/DVEFConstructorCore";
+import { Vec3Array } from "@amodx/math";
 
 const chunkTool = new ChunkDataTool();
 type RebuildModes = "sync" | "async";
@@ -33,6 +34,9 @@ class Request<T, Q> {
     data: [["main", 0, 0, 0], 1],
     priority: 0,
   };
+
+  trackedChunks = new Map<string, Vec3Array>();
+  keepTrackOfChunks = false;
 
   rebuildTasks: AddToRebuildQueue;
   constructor(
@@ -84,6 +88,13 @@ class Request<T, Q> {
     return this.originThread != "self";
   }
 
+  clearBuildQueue() {
+    this.trackedChunks.clear();
+    this.rebuildQueMap.clear();
+    this.aSyncQueue = [];
+    this.syncQueue = [];
+  }
+
   setBuldMode(mode: RebuildModes) {
     this.buildMode = mode;
     return this;
@@ -91,21 +102,29 @@ class Request<T, Q> {
 
   addToRebuildQueue(x: number, y: number, z: number) {
     if (EngineSettings.isServer()) return false;
-    if (!this.needsRebuild()) return false;
+    if (!this.needsRebuild() && !this.keepTrackOfChunks) return false;
     if (!chunkTool.setDimension(this.origin[0]).loadInAt(x, y, z)) return false;
     const chunkKey = WorldSpaces.chunk.getKeyLocation(chunkTool.location);
     if (this.rebuildQueMap.has(chunkKey)) return false;
     this.rebuildQueMap.set(chunkKey, true);
-    if (this.buildMode == "async") {
-      this.aSyncQueue.push([...chunkTool.location]);
+    if (this.keepTrackOfChunks) {
+      const chunkPOS = WorldSpaces.chunk.getPosition();
+      !this.trackedChunks.has(chunkKey) &&
+        this.trackedChunks.set(chunkKey, [chunkPOS.x, chunkPOS.y, chunkPOS.z]);
+    }
+    if (this.needsRebuild()) {
+      if (this.buildMode == "async") {
+        this.aSyncQueue.push([...chunkTool.location]);
+        return true;
+      }
+      this.syncQueue.push([...chunkTool.location]);
       return true;
     }
-    this.syncQueue.push([...chunkTool.location]);
-    return true;
+    return false;
   }
 
   addNeighborsToRebuildQueue(x: number, y: number, z: number) {
-    if (!this.needsRebuild()) return false;
+    if (!this.needsRebuild() && !this.keepTrackOfChunks) return false;
     const voxelPOS = WorldSpaces.voxel.getPositionXYZ(x, y, z);
     if (
       voxelPOS.x == 0 ||
@@ -158,7 +177,7 @@ class Request<T, Q> {
   }
 }
 
-type Vec3Array = [x: number, y: number, z: number][];
+type ArrayOfVec3Arrays = [x: number, y: number, z: number][];
 type FlowVec3Array = number[][];
 
 const getLightQueues = () => {
@@ -197,7 +216,7 @@ const getVoxelUpdateQueueData = () => {
 
 const getExplosionQueuesData = () => {
   return {
-    queue: <Vec3Array>[],
+    queue: <ArrayOfVec3Arrays>[],
     map: new VisitedMap(),
     ...getLightQueues(),
     flow: getFlowQueues(),
