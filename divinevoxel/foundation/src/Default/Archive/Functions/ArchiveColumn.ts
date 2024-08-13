@@ -76,13 +76,13 @@ const getPaletteBuffer = (
   paletteSize: number,
   data: Uint16Array
 ): Uint16Array | Uint8Array => {
-  console.log("GET PALEETE BUFFER",paletteSize,data)
+
   if (paletteSize > 15 && paletteSize <= 255) {
-    console.log("1");
+
     return Uint8Array.from(data);
   }
   if (paletteSize > 4 && paletteSize <= 15) {
-    console.log("2");
+
     const buffer = new Uint8Array(data.length / 2);
     const nibbleArray = new NibbleArray(buffer);
     for (let i = 0; i < data.length; i++) {
@@ -92,7 +92,7 @@ const getPaletteBuffer = (
     return buffer;
   }
   if (paletteSize > 2 && paletteSize <= 4) {
-    console.log("3");
+
     const buffer = new Uint8Array(data.length / 4);
     const halfNibbleArray = new HalfNibbleArray(buffer);
     for (let i = 0; i < data.length; i++) {
@@ -101,7 +101,7 @@ const getPaletteBuffer = (
     return buffer;
   }
   if (paletteSize > 0 && paletteSize <= 2) {
-    console.log("4");
+
     const buffer = new Uint8Array(data.length / 8);
     const bitArray = new BitArray(buffer);
     for (let i = 0; i < data.length; i++) {
@@ -158,15 +158,15 @@ export default function ArchiveColumn(
       const voxelState = !statePalette.isRegistered(chunk.state[i])
         ? statePalette.register(chunk.state[i])
         : statePalette.getId(chunk.state[i]);
-      if (!archivedChunk.statePalette.isRegistered(voxelId))
-        archivedChunk.statePalette.register(voxelId);
+      if (!archivedChunk.statePalette.isRegistered(voxelState))
+        archivedChunk.statePalette.register(voxelState);
       if (firstState == -1) firstState = voxelState;
 
       const voxelLight = !lightPalette.isRegistered(chunk.light[i])
         ? lightPalette.register(chunk.light[i])
         : lightPalette.getId(chunk.light[i]);
-      if (!archivedChunk.lightPalette.isRegistered(voxelId))
-        archivedChunk.lightPalette.register(voxelId);
+      if (!archivedChunk.lightPalette.isRegistered(voxelLight))
+        archivedChunk.lightPalette.register(voxelLight);
       if (firtLight == -1) firtLight = voxelLight;
 
       const secondaryId =
@@ -242,13 +242,13 @@ export default function ArchiveColumn(
     for (let i = 0; i < length; i++) {
       VoxelStruct.setStringVoxel(idsPalette.getStringId(chunk.ids[i]));
       if (reMapIds) chunk.ids[i] = chunk.idPalette.getId(chunk.ids[i]);
-      if (reMapState) chunk.state[i] = chunk.statePalette.getId(chunk.ids[i]);
-      if (reMapLight) chunk.light[i] = chunk.lightPalette.getId(chunk.ids[i]);
+      if (reMapState) chunk.state[i] = chunk.statePalette.getId(chunk.state[i]);
+      if (reMapLight) chunk.light[i] = chunk.lightPalette.getId(chunk.light[i]);
       if (reMapSecondary)
         chunk.ids[i] =
           VoxelStruct.instance[VoxelTagIDs.canHaveSecondary] == 1
-            ? chunk.secondaryPalette.getId(chunk.ids[i])
-            : chunk.secondaryStatePalette.getId(chunk.ids[i]);
+            ? chunk.secondaryPalette.getId(chunk.secondary[i])
+            : chunk.secondaryStatePalette.getId(chunk.secondary[i]);
     }
   }
 
@@ -258,7 +258,7 @@ export default function ArchiveColumn(
     location: [...archiveData.location],
     columnState,
     buffers: {},
-    keys:{
+    keys: {
       chunkState: [...chunkStructInstance.getKeys()],
     },
     palettes: {
@@ -280,9 +280,7 @@ export default function ArchiveColumn(
         : {}),
       ...(secondaryStatePalette.size < 255
         ? {
-            secondaryState: new Uint16Array(
-              secondaryStatePalette._palette
-            ),
+            secondaryState: new Uint16Array(secondaryStatePalette._palette),
           }
         : {}),
     },
@@ -304,16 +302,12 @@ export default function ArchiveColumn(
             : {}),
           ...(archiveChunk.rempaedState
             ? {
-                state: Uint16Array.from(
-                  archiveChunk.statePalette._palette
-                ),
+                state: Uint16Array.from(archiveChunk.statePalette._palette),
               }
             : {}),
           ...(archiveChunk.rempaedLight
             ? {
-                light: Uint16Array.from(
-                  archiveChunk.lightPalette._palette
-                ),
+                light: Uint16Array.from(archiveChunk.lightPalette._palette),
               }
             : {}),
           ...(archiveChunk.rempaedSecondary

@@ -291,44 +291,36 @@ export default function ImportColumn(
       archiveData.loadChunkState(column.keys.chunkState, chunk.state, newChunk);
     }
 
-    try {
-      for (let i = 0; i < newChunk.ids.length; i++) {
-        newChunk.ids[i] = getId(
-          typeof chunk.buffers.id == "number"
-            ? chunk.buffers.id
-            : chunk.buffers.id[i],
-          importedColumn,
-          importedChunk
-        );
-        newChunk.state[i] = getState(
-          typeof chunk.buffers.state == "number"
-            ? chunk.buffers.state
-            : chunk.buffers.state[i],
-          importedColumn,
-          importedChunk
-        );
-        newChunk.light[i] = getLight(
-          typeof chunk.buffers.light == "number"
-            ? chunk.buffers.light
-            : chunk.buffers.light[i],
-          importedColumn,
-          importedChunk
-        );
-        newChunk.secondary[i] = getSecondary(
-          newChunk.ids[i],
-          typeof chunk.buffers.secondary == "number"
-            ? chunk.buffers.secondary
-            : chunk.buffers.secondary[i],
-          importedColumn,
-          importedChunk
-        );
-      }
-    } catch (error) {
-      console.log(
-        chunk.buffers.light,
-        (chunk.buffers.light as any as NibbleArray).buffer
+    for (let i = 0; i < newChunk.ids.length; i++) {
+      newChunk.ids[i] = getId(
+        typeof chunk.buffers.id == "number"
+          ? chunk.buffers.id
+          : chunk.buffers.id[i],
+        importedColumn,
+        importedChunk
       );
-      console.error(error);
+      newChunk.state[i] = getState(
+        typeof chunk.buffers.state == "number"
+          ? chunk.buffers.state
+          : chunk.buffers.state[i],
+        importedColumn,
+        importedChunk
+      );
+      newChunk.light[i] = getLight(
+        typeof chunk.buffers.light == "number"
+          ? chunk.buffers.light
+          : chunk.buffers.light[i],
+        importedColumn,
+        importedChunk
+      );
+      newChunk.secondary[i] = getSecondary(
+        newChunk.ids[i],
+        typeof chunk.buffers.secondary == "number"
+          ? chunk.buffers.secondary
+          : chunk.buffers.secondary[i],
+        importedColumn,
+        importedChunk
+      );
     }
 
     newColumn.chunks[chunkIndex] = newChunk;
