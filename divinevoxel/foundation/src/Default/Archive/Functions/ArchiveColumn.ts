@@ -10,6 +10,7 @@ import { NibbleArray } from "@amodx/binary/Arrays/NibbleArray";
 import { HalfNibbleArray } from "@amodx/binary/Arrays/HalfNibbleArray";
 import { BitArray } from "@amodx/binary/Arrays/BitArray";
 import { ArchivedChunkData, ArchivedColumnData } from "../Archive.types";
+import { convertToPaletteBuffer } from "./Palettes";
 
 type ArchiveChunkState = {
   ids: Uint16Array;
@@ -72,45 +73,7 @@ type ArchiveColumnData = {
   location: LocationData;
 };
 
-const getPaletteBuffer = (
-  paletteSize: number,
-  data: Uint16Array
-): Uint16Array | Uint8Array => {
 
-  if (paletteSize > 15 && paletteSize <= 255) {
-
-    return Uint8Array.from(data);
-  }
-  if (paletteSize > 4 && paletteSize <= 15) {
-
-    const buffer = new Uint8Array(data.length / 2);
-    const nibbleArray = new NibbleArray(buffer);
-    for (let i = 0; i < data.length; i++) {
-      nibbleArray[i] = data[i];
-    }
-
-    return buffer;
-  }
-  if (paletteSize > 2 && paletteSize <= 4) {
-
-    const buffer = new Uint8Array(data.length / 4);
-    const halfNibbleArray = new HalfNibbleArray(buffer);
-    for (let i = 0; i < data.length; i++) {
-      halfNibbleArray[i] = data[i];
-    }
-    return buffer;
-  }
-  if (paletteSize > 0 && paletteSize <= 2) {
-
-    const buffer = new Uint8Array(data.length / 8);
-    const bitArray = new BitArray(buffer);
-    for (let i = 0; i < data.length; i++) {
-      bitArray[i] = data[i];
-    }
-    return buffer;
-  }
-  return data;
-};
 export default function ArchiveColumn(
   archiveData: ArchiveColumnData
 ): ArchivedColumnData {
@@ -325,7 +288,7 @@ export default function ArchiveColumn(
         buffers: {
           id: archiveChunk.idsAllTheSame
             ? archiveChunk.ids[0]
-            : getPaletteBuffer(
+            : convertToPaletteBuffer(
                 archiveChunk.rempaedIds
                   ? archiveChunk.idPalette.size
                   : idsPalette.size,
@@ -334,7 +297,7 @@ export default function ArchiveColumn(
           light: archiveChunk.lightAllTheSame
             ? archiveChunk.chunk.light[0]
             : archiveChunk.isLightPaletted
-            ? getPaletteBuffer(
+            ? convertToPaletteBuffer(
                 archiveChunk.rempaedLight
                   ? archiveChunk.lightPalette.size
                   : lightPalette.size,
@@ -344,7 +307,7 @@ export default function ArchiveColumn(
           state: archiveChunk.stateAllTheSame
             ? archiveChunk.state[0]
             : archiveChunk.isStatePaletted
-            ? getPaletteBuffer(
+            ? convertToPaletteBuffer(
                 archiveChunk.rempaedState
                   ? archiveChunk.statePalette.size
                   : statePalette.size,
@@ -354,7 +317,7 @@ export default function ArchiveColumn(
           secondary: archiveChunk.secondaryAllTheSame
             ? archiveChunk.secondary[0]
             : archiveChunk.isSecondaryPaletted
-            ? getPaletteBuffer(
+            ? convertToPaletteBuffer(
                 archiveChunk.rempaedSecondary
                   ? Math.max(
                       archiveChunk.secondaryStatePalette.size,

@@ -9,11 +9,9 @@ import {
 import { ArchivedChunkData, ArchivedColumnData } from "../Archive.types";
 import { VoxelStruct } from "@divinevoxel/core/Data/Voxel/VoxelStruct";
 import { VoxelTagIDs } from "@divinevoxel/core/Data/Constants/VoxelTagIds";
-import { BitArray } from "@amodx/binary/Arrays/BitArray";
-import { HalfNibbleArray } from "@amodx/binary/Arrays/HalfNibbleArray";
-import { NibbleArray } from "@amodx/binary/Arrays/NibbleArray";
 import { NumberPalette } from "@divinevoxel/core/Interfaces/Data/NumberPalette";
 import { StringPalette } from "@divinevoxel/core/Interfaces/Data/StringPalette";
+import { getPaletteArray } from "./Palettes";
 
 let columnStructInstance: ReturnType<typeof Column.StateStruct.instantiate>;
 let chunkStructInstance: ReturnType<typeof Chunk.StateStruct.instantiate<any>>;
@@ -24,12 +22,6 @@ type RunData = {
   loadChunkState?: (keys: string[], data: any[], chunk: ChunkData) => void;
 };
 
-const getArray = (size: number, buffer: ArrayBufferLike) => {
-  if (size == 2) return new BitArray(buffer);
-  if (size > 2 && size <= 4) return new HalfNibbleArray(buffer);
-  if (size > 4 && size <= 15) return new NibbleArray(buffer);
-  return buffer;
-};
 const updateChunkBuffers = (
   column: ArchivedColumnData,
   chunk: ArchivedChunkData
@@ -39,7 +31,7 @@ const updateChunkBuffers = (
       (chunk.palettes.id && chunk.palettes.id.length <= 15)) &&
     ArrayBuffer.isView(chunk.buffers.id)
   ) {
-    chunk.buffers.id = getArray(
+    chunk.buffers.id = getPaletteArray(
       Math.min(
         chunk.palettes.id?.length || Infinity,
         column.palettes.id?.length || 0
@@ -52,7 +44,7 @@ const updateChunkBuffers = (
       (column.palettes.light && column.palettes.light.length <= 15)) &&
     ArrayBuffer.isView(chunk.buffers.light)
   )
-    chunk.buffers.light = getArray(
+    chunk.buffers.light = getPaletteArray(
       Math.min(
         chunk.palettes.light?.length || Infinity,
         column.palettes.light?.length || 0
@@ -65,7 +57,7 @@ const updateChunkBuffers = (
       (column.palettes.state && column.palettes.state.length <= 15)) &&
     ArrayBuffer.isView(chunk.buffers.state)
   )
-    chunk.buffers.state = getArray(
+    chunk.buffers.state = getPaletteArray(
       Math.min(
         chunk.palettes.state?.length || Infinity,
         column.palettes.state?.length || 0
@@ -83,7 +75,7 @@ const updateChunkBuffers = (
         column.palettes.secondaryId.length <= 15)) &&
     ArrayBuffer.isView(chunk.buffers.secondary)
   )
-    chunk.buffers.secondary = getArray(
+    chunk.buffers.secondary = getPaletteArray(
       Math.max(
         Math.min(
           chunk.palettes.secondaryId?.length || Infinity,

@@ -301,6 +301,9 @@ export class DataTool extends DataToolBase {
   hasSecondaryVoxel() {
     return this.data.secondaryId > 1;
   }
+  canHaveSecondaryVoxel() {
+    return this.__struct[VoxelTagIDs.canHaveSecondary] == 1;
+  }
 
   //voxel data
   getShapeId() {
