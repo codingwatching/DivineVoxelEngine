@@ -220,6 +220,7 @@ export class DataTool extends DataToolBase {
         //on add
         if (heightMapUpdate == 1) {
           DataTool._heightMapTool.chunk.setY(this.y).setHasVoxels(true);
+
           //  DataTool._heightMapTool.chunk.update("add", substance, this.location);
         }
         //on remove

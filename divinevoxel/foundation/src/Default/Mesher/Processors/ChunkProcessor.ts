@@ -34,11 +34,18 @@ export class ChunkProcessor {
       }
     }
     const constructor = this.mDataTool.getConstructor();
+
     const mesher = RenderedSubstances.meshers.get(
       this.mDataTool.getSubstnaceData().getRendered()
     );
 
-    if (!mesher || !constructor) return hasVoxel;
+    if (!mesher || !constructor) {
+      throw new Error(
+        `Could not find mesh or constructor ${this.mDataTool.getId()} | ${this.mDataTool.getName()} | ${
+          this.mDataTool.getConstructor()?.id
+        }`
+      );
+    }
 
     const voxelPOS = WorldSpaces.voxel
       .setLocation(this.nLocation)
@@ -60,9 +67,9 @@ export class ChunkProcessor {
     this.mDataTool.setDimension(location[0]);
     const [dimension, cx, cy, cz] = location;
     this.nLocation[0] = dimension;
-    const [minY, maxY] = this.heightMapTool.chunk.getMinMax();
+    let [minY, maxY] = this.heightMapTool.chunk.getMinMax();
 
-    if (Math.abs(minY) == Infinity || Math.abs(maxY) == Infinity) return;
+    if (Math.abs(minY) == Infinity && Math.abs(maxY) == Infinity) return;
 
     for (let y = minY; y <= maxY; y++) {
       let foundVoxels = false;

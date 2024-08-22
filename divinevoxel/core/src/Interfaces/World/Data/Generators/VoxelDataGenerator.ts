@@ -17,16 +17,17 @@ export class VoxelDataGenerator {
   static nameToIdMap: Record<string, string> = {};
   static idToNameMap: Record<string, string> = {};
   static generate() {
-    this.nameToIdMap = {};
-    this.idToNameMap = {};
     //build palette
     for (const [key, voxel] of VoxelManager.data) {
+      if(this.palette.isRegistered(voxel.id)) throw new Error(`Duplicate voxel id ${voxel.id}`)
       this.palette.register(voxel.id);
-      this.nameToIdMap[voxel.name || voxel.id] = voxel.id;
-      this.idToNameMap[voxel.id] = voxel.name || voxel.id;
+      this.nameToIdMap[voxel.name ? voxel.name : voxel.id] = voxel.id;
+      this.idToNameMap[voxel.id] = voxel.name ? voxel.name : voxel.id;
     }
     VoxelPalette.setVoxelIdPalette(this.palette._palette, this.palette._map);
 
+
+    VoxelPalette.setVoxelNamePalette(this.nameToIdMap, this.idToNameMap);
     //build index
     const indexBuffer = new SharedArrayBuffer(this.palette.size * 2);
     const voxelIndex = new Uint16Array(indexBuffer);

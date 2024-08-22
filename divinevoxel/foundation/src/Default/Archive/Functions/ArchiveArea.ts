@@ -329,7 +329,7 @@ export default function CreateArchiveArea(
 export function CreateColumnFromArea(
   area: ArchivedAreaData,
   column: ArchivedAreaColumnData
-) {
+): ArchivedColumnData {
   const columnState: Record<string, any> = {};
   const currentState =
     typeof column.columnState == "string"
@@ -339,9 +339,7 @@ export function CreateColumnFromArea(
     columnState[area.keys.columnState[i]] = currentState[i];
   }
 
-
-
-  const columData: ArchivedColumnData = {
+  return {
     archiverVersion: area.archiverVersion,
     version: area.version,
     location: [area.dimension, ...column.position],
@@ -374,13 +372,11 @@ export function CreateColumnFromArea(
     keys: {
       chunkState: area.keys.chunkState,
     },
-
     chunks: column.chunks.map((_) => {
       if (typeof _ == "string") return area.maps.chunk[_];
       return _;
     }) as ArchivedChunkData[],
   };
-  return columData;
 }
 
 export function* CreateColumnsFromArea(

@@ -29,10 +29,10 @@
   "license": "MIT",
   "devDependencies": {},
   "dependencies": {
-    "@amodx/binary": "^0.0.0",
-    "@amodx/core": "^0.0.0",
-    "@amodx/uri": "^0.0.0",
-    "@amodx/threads": "^0.0.0"
+    "@amodx/binary": "^0.0.11",
+    "@amodx/core": "^0.0.11",
+    "@amodx/uri": "^0.0.11",
+    "@amodx/threads": "^0.0.11"
   },
   "main": "index.js",
   "publishConfig": {

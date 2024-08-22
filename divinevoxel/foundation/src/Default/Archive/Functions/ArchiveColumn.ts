@@ -6,11 +6,9 @@ import { VoxelPalette } from "@divinevoxel/core/Data/Voxel/VoxelPalette";
 import { VoxelStruct } from "@divinevoxel/core/Data/Voxel/VoxelStruct";
 import { VoxelTagIDs } from "@divinevoxel/core/Data/Constants/VoxelTagIds";
 import { Chunk, ChunkData, Column } from "../../../Data/World/Classes";
-import { NibbleArray } from "@amodx/binary/Arrays/NibbleArray";
-import { HalfNibbleArray } from "@amodx/binary/Arrays/HalfNibbleArray";
-import { BitArray } from "@amodx/binary/Arrays/BitArray";
 import { ArchivedChunkData, ArchivedColumnData } from "../Archive.types";
 import { convertToPaletteBuffer } from "./Palettes";
+import { Flat3DIndex } from "@amodx/math";
 
 type ArchiveChunkState = {
   ids: Uint16Array;
@@ -31,13 +29,14 @@ type ArchiveChunkState = {
   isSecondaryPaletted: boolean;
   rempaedSecondary: boolean;
   secondaryPalette: NumberPalette;
-  secondaryStatePalette: NumberPalette;
+  secondaryStatePalette: NumberPalette
   idsAllTheSame: boolean;
   stateAllTheSame: boolean;
   lightAllTheSame: boolean;
   secondaryAllTheSame: boolean;
   hasSecondaryVoxels: boolean;
 };
+
 const getArchiveChunkState = (chunk: ChunkData): ArchiveChunkState => {
   return {
     chunk,
@@ -231,17 +230,17 @@ export default function ArchiveColumn(
             secondaryId: secondaryPalette._palette,
           }
         : {}),
-      ...(lightPalette.size < 255
+      ...(lightPalette.size <= 255
         ? {
             light: new Uint16Array(lightPalette._palette),
           }
         : {}),
-      ...(statePalette.size < 255
+      ...(statePalette.size <= 255
         ? {
             state: new Uint16Array(statePalette._palette),
           }
         : {}),
-      ...(secondaryStatePalette.size < 255
+      ...(secondaryStatePalette.size <= 255
         ? {
             secondaryState: new Uint16Array(secondaryStatePalette._palette),
           }

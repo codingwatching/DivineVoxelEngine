@@ -39,6 +39,7 @@ export class BrushTool extends LocationBoundTool {
   }
 
   setName(name: string) {
+
     this.data.id = VoxelPalette.name.getId(name);
     this.name = name;
     return this;

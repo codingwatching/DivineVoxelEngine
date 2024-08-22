@@ -2,7 +2,7 @@ import type { RawVoxelData } from "@divinevoxel/core/Types/index.js";
 import {
   BuildNodeMesh,
   SetNodeMesh,
-} from "@divinevoxel/foundation/Default/Builder/Tasks/BuidlerTasks.types.js";
+} from "@divinevoxel/foundation/Default/Mesher/Tasks/BuidlerTasks.types.js";
 import {
   DivineVoxelEngineRender as DVER,
   DivineVoxelEngineRender,
@@ -14,7 +14,7 @@ import type { ConstructorTextureData } from "@divinevoxel/foundation/Textures/Co
 import { DataTool } from "@divinevoxel/foundation/Default/Tools/Data/DataTool.js";
 import { EntityTool } from "./EntityTool.js";
 import { DVEBabylonRenderer } from "../../../DVEBabylonRenderer.js";
-import { AddVoxelData } from "@divinevoxel/foundation/Data/Types/WorldData.types";
+import { AddVoxelData } from "@divinevoxel/foundation/Data/Types/WorldData.types.js";
 
 import type { Mesh } from "@babylonjs/core";
 import { LocationData } from "@divinevoxel/core/Math/index.js";

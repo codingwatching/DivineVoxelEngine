@@ -20,9 +20,9 @@
   "url": "https://github.com/Divine-Star-Software/DivineVoxelEngine/issues"
  },
  "dependencies": {
-  "@divinevoxel/core": "^0.0.55",
-  "@divinevoxel/foundation": "^0.0.52",
-  "@divinevoxel/magic": "^0.0.52"
+    "@divinevoxel/core": "^0.0.56",
+    "@divinevoxel/foundation": "^0.0.53",
+    "@divinevoxel/magic": "^0.0.52"
  },
  "publishConfig": {
   "access": "public"

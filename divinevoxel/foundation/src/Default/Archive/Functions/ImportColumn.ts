@@ -53,6 +53,19 @@ const updateChunkBuffers = (
     ) as any;
 
   if (
+    ((chunk.palettes.light && chunk.palettes.light.length >= 15) ||
+      (column.palettes.light && column.palettes.light.length >= 15)) &&
+    ArrayBuffer.isView(chunk.buffers.light)
+  ) {
+    console.warn(
+      "FOUND SOMETHING",
+      chunk,column,
+      chunk.palettes.light,
+      column.palettes.light
+    );
+  }
+
+  if (
     ((chunk.palettes.state && chunk.palettes.state.length <= 15) ||
       (column.palettes.state && column.palettes.state.length <= 15)) &&
     ArrayBuffer.isView(chunk.buffers.state)
@@ -151,6 +164,8 @@ const getId = (
   importedColumn: ImportedColumnData,
   importedChunk: ImportedChunkData
 ): number => {
+  if (importedChunk.chunk.buffers.state instanceof Uint16Array) return value;
+
   const { chunk } = importedChunk;
   const { column } = importedColumn;
   if (typeof chunk.buffers.id == "number") {
@@ -175,6 +190,7 @@ const getLight = (
   importedChunk: ImportedChunkData
 ): number => {
   const { chunk } = importedChunk;
+  if (importedChunk.chunk.buffers.light instanceof Uint16Array) return value;
   if (typeof chunk.buffers.light == "number") {
     return value;
   }
@@ -193,6 +209,8 @@ const getState = (
   importedColumn: ImportedColumnData,
   importedChunk: ImportedChunkData
 ): number => {
+  if (importedChunk.chunk.buffers.state instanceof Uint16Array) return value;
+
   const { chunk } = importedChunk;
   if (typeof chunk.buffers.state == "number") {
     return value;
@@ -213,6 +231,8 @@ const getSecondary = (
   importedColumn: ImportedColumnData,
   importedChunk: ImportedChunkData
 ): number => {
+  if (importedChunk.chunk.buffers.state instanceof Uint16Array) return value;
+
   const { chunk } = importedChunk;
   const { column } = importedColumn;
   VoxelStruct.setVoxel(voxelId);
