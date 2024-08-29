@@ -4,7 +4,7 @@ import { ShapeTool } from "../../ShapeTool.js";
 import { QuadScalarVertexData } from "@amodx/meshing/Classes/QuadVertexData";
 
 import { DirectionNames } from "@divinevoxel/core/Types/Util.types.js";
-import { BoxVoxelShape } from "../Box/Box.voxel.shape.js";
+import { CubeVoxelShape } from "../Cube/Cube.voxel.shape.js";
 import { VoxelFaces } from "@divinevoxel/core/Math/index.js";
 import { VoxelShapeBase } from "../../VoxelShapeBase.js";
 import { Quad } from "@amodx/meshing/Classes/Quad.js";
@@ -257,7 +257,7 @@ class LiquidVoxelShapeClass extends VoxelShapeBase {
 
     bottom() {
       ShapeTool.data.getAnimationData().setAll(0);
-      BoxVoxelShape.add.bottom();
+      CubeVoxelShape.add.bottom();
     },
 
     north() {

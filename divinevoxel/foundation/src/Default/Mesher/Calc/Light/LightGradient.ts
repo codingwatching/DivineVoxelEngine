@@ -7,6 +7,7 @@ import { QuadScalarVertexData } from "@amodx/meshing/Classes/QuadVertexData";
 import { SubstanceRules } from "../../Rules/SubstanceRules.js";
 import { QuadVerticies } from "@amodx/meshing/Geometry.types";
 import { VoxelFaces, VoxelFaceDirections } from "@divinevoxel/core/Math";
+import { Vector3Like } from "@amodx/math";
 
 const LD = LightData;
 const LightValue = new QuadScalarVertexData();
@@ -93,9 +94,9 @@ const shouldAOFlip = (face: VoxelFaces) => {
 };
 
 const flipCheck = (face: VoxelFaces) => {
+  if (shouldAOFlip(face)) return true;
   if (shouldRGBFlip(face)) return true;
-  if (shouldSunFlip(face)) return true;
-  return shouldAOFlip(face);
+  return shouldSunFlip(face);
 };
 /**
  * 
@@ -160,6 +161,7 @@ export const LightGradient = {
     doRGB: true,
     doSun: true,
   },
+  aoOffset: Vector3Like.Create(),
   calculate(face: VoxelFaces, tool: VoxelMesherDataTool, ignoreAO?: boolean) {
     tool.setFaceFlipped(false).getWorldLight().setAll(0);
 
@@ -179,6 +181,8 @@ export const LightGradient = {
     } else {
       states.ignoreAO = true;
     }
+
+    let baseAO = 0;
 
     const faceNormal = VoxelFaceDirections[face];
     tool.nVoxel.loadInAt(
@@ -247,24 +251,26 @@ export const LightGradient = {
             nlValues.g = values[2];
             nlValues.b = values[3];
 
-            doRGB: if (this.settings.doRGB) {
-              if (!LD.removeS(nl)) break doRGB;
-              if (nlValues.r > RGBValues.r && RGBValues.r < 15) {
-                RGBValues.r = nlValues.r;
-              }
+            if (this.settings.doRGB) {
+              if (LD.removeS(nl)) {
+                if (nlValues.r > RGBValues.r && RGBValues.r < 15) {
+                  RGBValues.r = nlValues.r;
+                }
 
-              if (nlValues.g > RGBValues.g && RGBValues.g < 15) {
-                RGBValues.g = nlValues.g;
-              }
+                if (nlValues.g > RGBValues.g && RGBValues.g < 15) {
+                  RGBValues.g = nlValues.g;
+                }
 
-              if (nlValues.b > RGBValues.b && RGBValues.b < 15) {
-                RGBValues.b = nlValues.b;
+                if (nlValues.b > RGBValues.b && RGBValues.b < 15) {
+                  RGBValues.b = nlValues.b;
+                }
               }
             }
-            doSun: if (this.settings.doSun) {
-              if (!LD.getS(nl)) break doSun;
-              if (sunValues.s < nlValues.s && sunValues.s < 15) {
-                sunValues.s = nlValues.s;
+            if (this.settings.doSun) {
+              if (LD.getS(nl)) {
+                if (sunValues.s < nlValues.s && sunValues.s < 15) {
+                  sunValues.s = nlValues.s;
+                }
               }
             }
           }
@@ -272,39 +278,48 @@ export const LightGradient = {
         /*
     Do AO
     */
-        doAO: if (!states.ignoreAO) {
+
+        if (!states.ignoreAO) {
+          if (
+            !tool.nVoxel.loadInAt(
+              tool.nVoxel.x + this.aoOffset.x,
+              tool.nVoxel.y + this.aoOffset.y,
+              tool.nVoxel.z + this.aoOffset.z
+            )
+          )
+            continue;
           if (aoOverRide > 0) {
             AOValues.a = aoOverRide;
-            break doAO;
+          } else if (!tool.nVoxel.isRenderable()) {
+          } else {
+            const neighborVoxelSubstance = SubstanceRules.getSubstanceParent(
+              tool.nVoxel.getSubstance()
+            );
+            const neightLightSource = tool.nVoxel.isLightSource();
+
+            let finalResult = true;
+
+            if (neighborVoxelSubstance != voxelSubstance) {
+              finalResult = false;
+            }
+
+            if (isLightSource || neightLightSource) {
+              finalResult = false;
+            }
+
+            tool.faceDataOverride.face = face;
+            tool.faceDataOverride.default = finalResult;
+
+            finalResult = OverrideManager.AO.run(
+              tool.voxel.getShapeId(),
+              tool.nVoxel.getShapeId(),
+              tool.faceDataOverride
+            );
+
+            if (finalResult) {
+              AOValues.a++;
+            }
           }
-
-          if (!tool.nVoxel.isRenderable()) break doAO;
-          const neighborVoxelSubstance = SubstanceRules.getSubstanceParent(
-            tool.nVoxel.getSubstance()
-          );
-          const neightLightSource = tool.nVoxel.isLightSource();
-
-          let finalResult = true;
-
-          if (neighborVoxelSubstance != voxelSubstance) {
-            finalResult = false;
-          }
-
-          if (isLightSource || neightLightSource) {
-            finalResult = false;
-          }
-
-          tool.faceDataOverride.face = face;
-          tool.faceDataOverride.default = finalResult;
-
-          finalResult = OverrideManager.AO.run(
-            tool.voxel.getShapeId(),
-            tool.nVoxel.getShapeId(),
-            tool.faceDataOverride
-          );
-
-          if (!finalResult) break doAO;
-          AOValues.a++;
         }
       }
 

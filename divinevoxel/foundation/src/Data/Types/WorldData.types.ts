@@ -2,6 +2,7 @@ export class AddVoxelData {
   static Create(data: Partial<AddVoxelData>) {
     return new AddVoxelData(
       data.id,
+      data.mod,
       data.shapeState,
       data.level,
       data.levelState,
@@ -10,6 +11,7 @@ export class AddVoxelData {
   }
   private constructor(
     public id: string = "dve_air",
+    public mod:number = 0,
     public shapeState: number = 0,
     public level: number = 0,
     public levelState: number = 0,

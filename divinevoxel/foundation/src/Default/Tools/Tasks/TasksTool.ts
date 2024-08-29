@@ -14,8 +14,7 @@ import {
 
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 import { LocationData } from "@divinevoxel/core/Math";
-import type { RawVoxelData } from "@divinevoxel/core/Types/Voxel.types.js";
-
+import type { RawVoxelData } from "../../../Data/Types/VoxelData.types.js"
 import { ConstructorRemoteThreadTasks } from "../../../Contexts/Constructor/ConstructorRemoteThreadTasks.js";
 import { ConstructorTasksIds } from "../../../Contexts/Constructor/ConstructorTasksIds.js";
 import { DefaultConstructorTasksIds } from "../../Tasks/Constructor/Tasks/ConstructorTasksIds.js";

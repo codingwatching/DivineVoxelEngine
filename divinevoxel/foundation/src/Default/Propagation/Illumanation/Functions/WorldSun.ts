@@ -172,7 +172,7 @@ export function RunWorldSun(tasks: WorldSunTaskRequest) {
             .setLight(IM.lightData.getSunLightForUnderVoxel(sl, nl))
             .commit();
         } else {
-          if (IM._nDataTool.getSubstnaceData().allowLight()) {
+          if (!IM._nDataTool.isOpaque()) {
             queue.enqueue(node.x, node.y - 1, node.z);
             IM._nDataTool
               .setLight(IM.lightData.getMinusOneForSun(sl, nl))

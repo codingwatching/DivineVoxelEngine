@@ -46,6 +46,11 @@ VoxelTagBuilder.addNode([
     default: false,
   },
   {
+    id: VoxelTagIDs.isTransparent,
+    type: "boolean",
+    default: false,
+  },
+  {
     id: VoxelTagIDs.canHaveSecondary,
     type: "boolean",
     default: false,

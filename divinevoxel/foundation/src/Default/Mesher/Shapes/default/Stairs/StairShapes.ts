@@ -12,7 +12,6 @@ import {
   Mat3Array,
   Matrix3x3Like,
   Vec3Array,
-  Vec4Array,
   Vector3Like,
 } from "@amodx/math";
 
@@ -127,7 +126,7 @@ const sideFaces = [
 const upsideDownMatrix = Matrix3x3Like.RotationZ(AMath.DegreesToRadians(180));
 const flipMatrix = Matrix3x3Like.Scaling(1, -1, 1);
 
-const creteShading = (
+const createShading = (
   v1: QuadShadeData,
   v2: QuadShadeData,
   v3: QuadShadeData,
@@ -141,7 +140,7 @@ const creteShading = (
   });
 };
 
-const normalShading = creteShading(
+const normalShading = createShading(
   [QuadVerticies.TopRight, QuadVerticies.TopRight],
   [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
   [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
@@ -149,13 +148,13 @@ const normalShading = creteShading(
 );
 
 const sideBottomShade = [
-  creteShading(
+  createShading(
     [HalfRight, HalfRight],
     [HalfLeft, HalfLeft],
     [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
     [QuadVerticies.BottomRight, QuadVerticies.BottomRight]
   ),
-  creteShading(
+  createShading(
     [QuadVerticies.TopRight, QuadVerticies.TopRight],
     [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
     [HalfRight, HalfRight],
@@ -176,28 +175,28 @@ const DefaultStair: StairShapeState = {
       ],
       bottomHalfUVs,
       [
-        creteShading(
+        createShading(
           [AO.Dark, HalfRight],
           [AO.Dark, HalfLeft],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
           [QuadVerticies.BottomRight, QuadVerticies.BottomRight]
         ),
         //90
-        creteShading(
+        createShading(
           [AO.Dark, CenterBottomRight],
           [AO.Dark, CenterTopRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft]
         ),
         //180
-        creteShading(
+        createShading(
           [AO.Dark, HalfRight],
           [AO.Dark, HalfLeft],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [QuadVerticies.TopRight, QuadVerticies.TopRight]
         ),
         //270
-        creteShading(
+        createShading(
           [AO.Dark, CenterTopLeft],
           [AO.Dark, CenterBottomLeft],
           [QuadVerticies.BottomRight, QuadVerticies.BottomRight],
@@ -212,28 +211,28 @@ const DefaultStair: StairShapeState = {
       ],
       topHalfUVs,
       [
-        creteShading(
+        createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [AO.None, HalfRight],
           [AO.None, HalfLeft]
         ),
         //90
-        creteShading(
+        createShading(
           [QuadVerticies.BottomRight, QuadVerticies.BottomRight],
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
           [AO.None, CenterTopLeft],
           [AO.None, CenterBottomLeft]
         ),
         //180
-        creteShading(
+        createShading(
           [QuadVerticies.BottomRight, QuadVerticies.BottomRight],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
           [AO.None, HalfLeft],
           [AO.None, HalfRight]
         ),
         //270
-        creteShading(
+        createShading(
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
           [AO.None, CenterBottomLeft],
@@ -273,13 +272,13 @@ const DefaultStair: StairShapeState = {
       ],
       bottomHalfUVs,
       [
-        creteShading(
+        createShading(
           [AO.None, HalfRight],
           [AO.None, HalfLeft],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
           [QuadVerticies.BottomRight, QuadVerticies.BottomRight]
         ),
-        creteShading(
+        createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [HalfLeft, HalfLeft],
@@ -294,13 +293,13 @@ const DefaultStair: StairShapeState = {
       ],
       topHalfUVs,
       [
-        creteShading(
+        createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [AO.Dark, HalfLeft],
           [AO.Dark, HalfRight]
         ),
-        creteShading(
+        createShading(
           [AO.Dark, HalfRight],
           [AO.Dark, HalfRight],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomRight],
@@ -326,13 +325,13 @@ const DefaultStair: StairShapeState = {
       ],
       upperRightQuaterUvs,
       [
-        creteShading(
+        createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
           [CenterTopLeft, CenterTopLeft],
           [Center, Center],
           [HalfRight, HalfRight]
         ),
-        creteShading(
+        createShading(
           [HalfRight, HalfRight],
           [Center, Center],
           [CenterBottomLeft, CenterBottomLeft],
@@ -358,13 +357,13 @@ const DefaultStair: StairShapeState = {
       ],
       bottomLeftQuaterUvs,
       [
-        creteShading(
+        createShading(
           [CenterTopRight, CenterTopRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [HalfLeft, HalfLeft],
           [Center, Center]
         ),
-        creteShading(
+        createShading(
           [Center, Center],
           [HalfLeft, HalfLeft],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
@@ -385,7 +384,7 @@ const DefaultConnectedStair: StairShapeState = {
         [1, 0.5, 1],
       ],
       fullUVs,
-      creteShading(
+      createShading(
         [AO.ExtraDark, QuadVerticies.TopRight],
         [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
         [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
@@ -399,7 +398,7 @@ const DefaultConnectedStair: StairShapeState = {
         [1, 1, 1],
       ],
       upperRightQuaterUvs,
-      creteShading(
+      createShading(
         [AO.None, QuadVerticies.TopRight],
         [AO.None, QuadVerticies.TopRight],
         [AO.None, Center],
@@ -435,13 +434,13 @@ const DefaultConnectedStair: StairShapeState = {
       ],
       bottomHalfUVs,
       [
-        creteShading(
+        createShading(
           [CenterTopRight, CenterTopRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [HalfLeft, HalfLeft],
           [Center, Center]
         ),
-        creteShading(
+        createShading(
           [Center, Center],
           [HalfLeft, Center],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
@@ -459,13 +458,13 @@ const DefaultConnectedStair: StairShapeState = {
       ],
       bottomHalfUVs,
       [
-        creteShading(
+        createShading(
           [AO.None, HalfRight],
           [AO.None, HalfLeft],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
           [QuadVerticies.BottomRight, QuadVerticies.BottomRight]
         ),
-        creteShading(
+        createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [AO.None, HalfRight],
@@ -480,13 +479,13 @@ const DefaultConnectedStair: StairShapeState = {
       ],
       upperRightQuaterUvs,
       [
-        creteShading(
+        createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
           [CenterTopLeft, CenterTopLeft],
           [AO.Dark, Center],
           [AO.Dark, HalfRight]
         ),
-        creteShading(
+        createShading(
           [AO.Dark, HalfRight],
           [AO.Dark, Center],
           [CenterBottomLeft, CenterBottomLeft],
@@ -512,13 +511,13 @@ const DefaultConnectedStair: StairShapeState = {
       ],
       upperRightQuaterUvs,
       [
-        creteShading(
+        createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
           [CenterTopLeft, CenterTopLeft],
           [Center, Center],
           [HalfRight, HalfRight]
         ),
-        creteShading(
+        createShading(
           [HalfRight, HalfRight],
           [Center, Center],
           [CenterBottomLeft, CenterBottomLeft],
@@ -536,13 +535,13 @@ const DefaultConnectedStair: StairShapeState = {
       ],
       bottomHalfUVs,
       [
-        creteShading(
+        createShading(
           [AO.None, HalfRight],
           [AO.None, HalfLeft],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
           [QuadVerticies.BottomRight, QuadVerticies.BottomRight]
         ),
-        creteShading(
+        createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [AO.None, HalfRight],
@@ -557,13 +556,13 @@ const DefaultConnectedStair: StairShapeState = {
       ],
       bottomLeftQuaterUvs,
       [
-        creteShading(
+        createShading(
           [CenterTopRight, CenterTopRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [AO.Dark, HalfLeft],
           [AO.Dark, CenterTopRight]
         ),
-        creteShading(
+        createShading(
           [AO.Dark, HalfLeft],
           [AO.Dark, Center],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomRight],
@@ -849,4 +848,3 @@ export const addStairQuads = (face: VoxelFaces) => {
     VoxelGeometry.addQuad(ShapeTool.data, ShapeTool.origin, quad);
   }
 };
-

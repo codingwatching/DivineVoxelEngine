@@ -31,8 +31,13 @@ export class WorldPainter {
     if (this.dataTool.getSubstnaceData().isLiquid()) {
       this.dataTool.setLevel(7);
     }
+    this.dataTool.setMod(data.mod);
 
-    if (data.secondaryVoxelId && data.secondaryVoxelId != "dve_air") {
+    if (
+      data.secondaryVoxelId &&
+      data.secondaryVoxelId != "dve_air" &&
+      this.dataTool.canHaveSecondaryVoxel()
+    ) {
       const vid = VoxelPalette.ids.getNumberId(data.secondaryVoxelId);
 
       if (vid > 0) {
@@ -60,12 +65,11 @@ export class WorldPainter {
     this.dataTool.setLocation(location);
     if (!this.dataTool.loadIn()) return;
     if (!this.dataTool.isRenderable()) return;
-    this.dataTool
-      .setLight(0)
-      .setLevel(0)
-      .setLevelState(0)
-      .setShapeState(0)
-      .setAir()
-      .commit(2);
+    this.dataTool.data.raw[0] = 0;
+    this.dataTool.data.raw[1] = 0;
+    this.dataTool.data.raw[2] = 0;
+    this.dataTool.data.raw[3] = 0;
+    this.dataTool.data.raw[4] = 0;
+    this.dataTool.commit(2);
   }
 }

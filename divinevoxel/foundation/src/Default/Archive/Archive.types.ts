@@ -33,6 +33,8 @@ export interface ArchivedColumnPaletteData {
   secondaryId?: string[];
   /** Optional Uint16Array representing the state of voxels, indicating specific conditions or variations. */
   state?: Uint16Array;
+  /** Optional Uint16Array representing the mod state of voxels, indicating specific conditions or variations. */
+  mod?: Uint16Array;
   /** Optional Uint16Array representing light levels for each voxel in the column. */
   light?: Uint16Array;
   /** Optional Uint16Array representing the state of secondary voxels. */
@@ -76,6 +78,8 @@ export interface ArchivedChunkPaletteData {
   secondaryId?: Uint16Array;
   /** Optional Uint16Array for storing voxel states within the chunk. */
   state?: Uint16Array;
+  /** Optional Uint16Array for storing mod data. */
+  mod?: Uint16Array;
   /** Optional Uint16Array for storing states of secondary voxels. */
   secondaryState?: Uint16Array;
 }
@@ -90,6 +94,8 @@ export interface ArchivedChunkBuffers {
   light: Uint16Array | Uint8Array | number;
   /** The buffer for voxel states, which could be a Uint16Array, Uint8Array, or a single number if all states are the same. */
   state: Uint16Array | Uint8Array | number;
+  /** The buffer for voxel mod states, which could be a Uint16Array, Uint8Array, or a single number if all states are the same. */
+  mod: Uint16Array | Uint8Array | number;
   /** The buffer for secondary voxel data, which could be a Uint16Array, Uint8Array, or a single number if all secondary data is the same. */
   secondary: Uint16Array | Uint8Array | number;
 }
@@ -126,6 +132,8 @@ export interface ArchivedAreaMapData {
   lightPalette: Record<string, Uint16Array>;
   /** Record mapping string IDs to Uint16Arrays of voxel states. */
   statePalette: Record<string, Uint16Array>;
+  /** Record mapping string IDs to Uint16Arrays of voxel mods. */
+  modPalette: Record<string, Uint16Array>;
   /** Record mapping string IDs to Uint16Arrays of secondary voxel states. */
   secondaryStatePalette: Record<string, Uint16Array>;
   /** Record mapping chunk identifiers to `ArchivedChunkData`. */
@@ -154,6 +162,8 @@ export interface ArchivedAreaColumnPaletteData {
   secondary?: string[];
   /** Optional Uint16Array representing the state of voxels in the column. */
   state?: Uint16Array;
+  /** Optional Uint16Array representing the mod of voxels in the column. */
+  mod?: Uint16Array;
   /** Optional Uint16Array representing light levels for each voxel in the column. */
   light?: Uint16Array;
   /** Optional Uint16Array representing the state of secondary voxels. */

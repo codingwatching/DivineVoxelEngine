@@ -26,7 +26,6 @@ function uint16To4CharString(value: number): string {
     chars.unshift(charset[charCode]);
   }
 
-  // Join the characters and remove leading zeros
   const result = chars.join("").replace(/^0+(?!$)/, "");
 
   return result;
@@ -227,6 +226,11 @@ const getPaletteMaps = (archiveData: RunData) => {
   createPaletteMaps("state", statePalette, statePaletteIdsMap);
   createPaletteMaps("state", statePalette, statePaletteIdsMap);
 
+  const modPalette: Record<string, Uint16Array> = {};
+  const modPaletteIdsMap = new Map<string, string>();
+  createPaletteMaps("mod", modPalette, modPaletteIdsMap);
+  createPaletteMaps("mod", modPalette, modPaletteIdsMap);
+
   const secondaryStatePalette: Record<string, Uint16Array> = {};
   const secondaryStatePaletteIdsMap = new Map<string, string>();
   createPaletteMaps(
@@ -264,6 +268,7 @@ const getPaletteMaps = (archiveData: RunData) => {
     lightPalette,
     statePalette,
     secondaryStatePalette,
+    modPalette,
   };
 };
 
@@ -319,6 +324,11 @@ export default function CreateArchiveArea(
                 state: column.palettes.state,
               }
             : {}),
+          ...(column.palettes.mod
+            ? {
+                mod: column.palettes.mod,
+              }
+            : {}),
         },
         chunks: column.chunks,
       };
@@ -366,6 +376,10 @@ export function CreateColumnFromArea(
         typeof column.palettes.state == "string"
           ? area.maps.statePalette[column.palettes.state]
           : column.palettes.state,
+      mod:
+        typeof column.palettes.mod == "string"
+          ? area.maps.statePalette[column.palettes.mod]
+          : column.palettes.mod,
     },
     buffers: column.buffers,
     columnState,

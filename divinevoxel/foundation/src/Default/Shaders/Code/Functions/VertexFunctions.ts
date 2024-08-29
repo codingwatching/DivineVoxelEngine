@@ -56,7 +56,7 @@ p += (normal * -1.) * height * .05;
 return p;`,
     },
   });
-  builder.functions.create("dve_box_wind_anim", {
+  builder.functions.create("dve_cube_wind_anim", {
     setID: "#dve_vertex",
     inputs: [
       ["posWorld", "vec4"],

@@ -1,6 +1,6 @@
 import { Flat3DIndex, Traverse, Vec3Array } from "@amodx/math";
 import { VoxelTemplateData } from "./VoxelTemplates.types";
-import { RawVoxelData } from "@divinevoxel/core";
+import type { RawVoxelData } from "../../Data/Types/VoxelData.types";
 import { StringPalette } from "@divinevoxel/core/Interfaces/Data/StringPalette";
 import { NumberPalette } from "@divinevoxel/core/Interfaces/Data/NumberPalette";
 import { VoxelPalette } from "@divinevoxel/core/Data/Voxel/VoxelPalette";
@@ -16,17 +16,20 @@ export class VoxelTemplate {
   size: Vec3Array;
   ids: Uint8Array | Uint16Array | number;
   state: Uint8Array | Uint16Array | number;
+  mod: Uint8Array | Uint16Array | number;
   secondary: Uint8Array | Uint16Array | number;
 
   idPalette = new StringPalette();
   secondaryIdPalette = new StringPalette();
   statePalette = new NumberPalette();
+  modPalette = new NumberPalette();
   secondaryStatePalette = new NumberPalette();
   constructor(data: VoxelTemplateData) {
     this.size = [...data.size];
     this.index.setBounds(...data.size);
     data.palettes.id.forEach((_) => this.idPalette.register(_));
     data.palettes.state.forEach((_) => this.statePalette.register(_));
+    data.palettes.mod.forEach((_) => this.modPalette.register(_));
     data.palettes.secondaryId.forEach((_) =>
       this.secondaryIdPalette.register(_)
     );
@@ -47,6 +50,13 @@ export class VoxelTemplate {
           data.buffers.state as any
         ) as any)
       : (this.state = data.buffers.state);
+
+    typeof data.buffers.mod == "object"
+      ? (this.mod = getPaletteArray(
+          data.palettes.mod.length,
+          data.buffers.mod as any
+        ) as any)
+      : (this.mod = data.buffers.mod);
 
     typeof data.buffers.secondary == "object"
       ? (this.secondary = getPaletteArray(
@@ -74,6 +84,10 @@ export class VoxelTemplate {
       typeof state == "number" ? state : state[index]
     );
   }
+  getMod(index: number) {
+    const mod = this.mod;
+    return this.modPalette.getValue(typeof mod == "number" ? mod : mod[index]);
+  }
   getSecondary(id: number, index: number) {
     const secondary = this.secondary;
     VoxelStruct.setVoxel(id);
@@ -92,7 +106,7 @@ export class VoxelTemplate {
   *traverse(): Generator<TemplateCursor> {
     const end = this.size;
 
-    const raw: RawVoxelData = [0, 0, 0, 0];
+    const raw: RawVoxelData = [0, 0, 0, 0, 0];
 
     const curosr: TemplateCursor = {
       position: [0, 0, 0],
@@ -112,6 +126,8 @@ export class VoxelTemplate {
       raw[1] = 0;
       raw[2] = this.getState(vindex);
       raw[3] = this.getSecondary(raw[0], vindex);
+      raw[4] = this.getMod(vindex);
+
       if (raw[0] < 1 && raw[3] < 1) continue;
 
       yield curosr;
@@ -127,6 +143,7 @@ export class VoxelTemplate {
         id: this.idPalette._palette,
         secondaryId: this.secondaryIdPalette._palette,
         state: Uint16Array.from(this.statePalette._palette),
+        mod: Uint16Array.from(this.modPalette._palette),
         secondaryState: Uint16Array.from(this.secondaryStatePalette._palette),
       },
       buffers: {
@@ -136,6 +153,12 @@ export class VoxelTemplate {
           typeof this.ids == "number"
             ? this.ids
             : new Uint8Array((this.ids as NibbleArray).buffer),
+        mod:
+          this.mod instanceof Uint16Array ||
+          this.mod instanceof Uint8Array ||
+          typeof this.mod == "number"
+            ? this.mod
+            : new Uint8Array((this.mod as NibbleArray).buffer),
         state:
           this.state instanceof Uint16Array ||
           this.state instanceof Uint8Array ||

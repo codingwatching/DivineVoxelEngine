@@ -4,7 +4,7 @@ import { WorldRegister } from "../../../../Data/World/WorldRegister.js";
 
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 import { Chunk } from "../../../../Data/World/Classes/Chunk.js";
-import { RawVoxelData } from "@divinevoxel/core";
+import { RawVoxelData } from "../../../../Data/Types/VoxelData.types.js";
 
 export class ChunkDataTool extends DataToolBase {
   struct = Chunk.StateStruct;
@@ -34,11 +34,13 @@ export class ChunkDataTool extends DataToolBase {
     raw[1] = this._chunk.light[index];
     raw[2] = this._chunk.state[index];
     raw[3] = this._chunk.secondary[index];
+    raw[4] = this._chunk.mod[index];
   }
   setRaw(index: number, raw: RawVoxelData) {
     this._chunk.ids[index] = raw[0];
     this._chunk.light[index] = raw[1];
     this._chunk.state[index] = raw[2];
     this._chunk.secondary[index] = raw[3];
+    this._chunk.mod[index] = raw[4];
   }
 }

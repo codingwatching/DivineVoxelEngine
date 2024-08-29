@@ -22,20 +22,24 @@ export default function CreateTemplate(
   const idPalette = new StringPalette();
   const secondaryIdPalette = new StringPalette();
   const statePalette = new NumberPalette();
+  const modPalette = new NumberPalette();
   const secondaryStatePalette = new NumberPalette();
 
   const ids: number[] = new Array(index.size);
   const state: number[] = new Array(index.size);
+  const mod: number[] = new Array(index.size);
   const secondary: number[] = new Array(index.size);
 
   dataTool.setDimension(dimension);
 
   let idsAllTheSame = true;
   let stateAllTheSame = true;
+  let modAllTheSame = true;
   let secondaryAllTheSame = true;
 
   let firstId = -1;
   let firstState = -1;
+  let firstMod = -1;
   let firstSecondary = -1;
 
   for (const { x, y, z } of Traverse.FromToVec3(
@@ -52,7 +56,9 @@ export default function CreateTemplate(
     const stateId = !statePalette.isRegistered(raw[2])
       ? statePalette.register(raw[2])
       : statePalette.getId(raw[2]);
-
+    const modId = !modPalette.isRegistered(raw[4])
+      ? modPalette.register(raw[4])
+      : modPalette.getId(raw[4]);
     const voxelId = !idPalette.isRegistered(stringId)
       ? idPalette.register(stringId)
       : idPalette.getNumberId(stringId);
@@ -75,17 +81,22 @@ export default function CreateTemplate(
     }
     if (firstId == -1) firstId = voxelId;
     if (firstState == -1) firstState = stateId;
+    if (firstMod == -1) firstMod = modId;
     if (firstSecondary == -1) firstSecondary = secondaryData;
 
     ids[vindex] = voxelId;
+    mod[vindex] = modId;
     state[vindex] = stateId;
     secondary[vindex] = secondaryData;
 
     if (firstId != voxelId) idsAllTheSame = false;
     if (firstState != stateId) stateAllTheSame = false;
+    if (firstMod != modId) modAllTheSame = false;
     if (firstSecondary != secondaryData) secondaryAllTheSame = false;
   }
 
+
+  console.log("CREATE VOXEL TEMPLATE",{modPalette,mod})
   return new VoxelTemplate({
     templatorVersion: 0,
     version: 0,
@@ -94,12 +105,16 @@ export default function CreateTemplate(
       id: idPalette._palette,
       secondaryId: secondaryIdPalette._palette,
       state: Uint16Array.from(statePalette._palette),
+      mod: Uint16Array.from(modPalette._palette),
       secondaryState: Uint16Array.from(secondaryStatePalette._palette),
     },
     buffers: {
       ids: !idsAllTheSame
         ? convertToPaletteBuffer(idPalette.size, Uint16Array.from(ids), true)
         : ids[0],
+      mod: !modAllTheSame
+        ? convertToPaletteBuffer(modPalette.size, Uint16Array.from(mod), true)
+        : mod[0],
       state: !stateAllTheSame
         ? convertToPaletteBuffer(
             statePalette.size,

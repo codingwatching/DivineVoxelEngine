@@ -1,4 +1,4 @@
-import type { RawVoxelData } from "@divinevoxel/core/Types/index.js";
+import type { RawVoxelData } from "@divinevoxel/foundation/Data/Types/VoxelData.types.js"
 import {
   BuildNodeMesh,
   SetNodeMesh,

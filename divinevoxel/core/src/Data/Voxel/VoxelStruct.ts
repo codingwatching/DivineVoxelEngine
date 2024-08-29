@@ -17,6 +17,7 @@ export interface VoxelStruct {
   [VoxelTagIDs.lightValue]: number;
   [VoxelTagIDs.isRich]: number;
   [VoxelTagIDs.canHaveSecondary]: number;
+  [VoxelTagIDs.isTransparent]: number;
 }
 
 const remote = new RemoteBinaryStruct("voxel-data");

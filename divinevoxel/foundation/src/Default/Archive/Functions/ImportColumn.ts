@@ -43,7 +43,7 @@ const updateChunkBuffers = (
     ((chunk.palettes.light && chunk.palettes.light.length <= 15) ||
       (column.palettes.light && column.palettes.light.length <= 15)) &&
     ArrayBuffer.isView(chunk.buffers.light)
-  )
+  ) {
     chunk.buffers.light = getPaletteArray(
       Math.min(
         chunk.palettes.light?.length || Infinity,
@@ -51,25 +51,13 @@ const updateChunkBuffers = (
       ),
       chunk.buffers.light
     ) as any;
-
-  if (
-    ((chunk.palettes.light && chunk.palettes.light.length >= 15) ||
-      (column.palettes.light && column.palettes.light.length >= 15)) &&
-    ArrayBuffer.isView(chunk.buffers.light)
-  ) {
-    console.warn(
-      "FOUND SOMETHING",
-      chunk,column,
-      chunk.palettes.light,
-      column.palettes.light
-    );
   }
 
   if (
     ((chunk.palettes.state && chunk.palettes.state.length <= 15) ||
       (column.palettes.state && column.palettes.state.length <= 15)) &&
     ArrayBuffer.isView(chunk.buffers.state)
-  )
+  ) {
     chunk.buffers.state = getPaletteArray(
       Math.min(
         chunk.palettes.state?.length || Infinity,
@@ -77,6 +65,21 @@ const updateChunkBuffers = (
       ),
       chunk.buffers.state
     ) as any;
+  }
+
+  if (
+    ((chunk.palettes.mod && chunk.palettes.mod.length <= 15) ||
+      (column.palettes.mod && column.palettes.mod.length <= 15)) &&
+    ArrayBuffer.isView(chunk.buffers.mod)
+  ) {
+    chunk.buffers.mod = getPaletteArray(
+      Math.min(
+        chunk.palettes.mod?.length || Infinity,
+        column.palettes.mod?.length || 0
+      ),
+      chunk.buffers.mod
+    ) as any;
+  }
 
   if (
     ((chunk.palettes.secondaryState &&
@@ -87,7 +90,7 @@ const updateChunkBuffers = (
       (column.palettes.secondaryId &&
         column.palettes.secondaryId.length <= 15)) &&
     ArrayBuffer.isView(chunk.buffers.secondary)
-  )
+  ) {
     chunk.buffers.secondary = getPaletteArray(
       Math.max(
         Math.min(
@@ -101,20 +104,24 @@ const updateChunkBuffers = (
       ),
       chunk.buffers.secondary
     ) as any;
+  }
 };
 type ImportedColumnData = {
   column: ArchivedColumnData;
   idPalette: StringPalette;
   secondaryId?: StringPalette;
   lightPalette?: NumberPalette;
+  modPalette?: NumberPalette;
   statePalette?: NumberPalette;
   secondaryState?: NumberPalette;
 };
 type ImportedChunkData = {
   chunk: ArchivedChunkData;
   idPalette?: NumberPalette;
+
   lightPalette?: NumberPalette;
   statePalette?: NumberPalette;
+  modPalette?: NumberPalette;
   secondaryState?: NumberPalette;
   secondaryId?: NumberPalette;
 };
@@ -134,6 +141,9 @@ const getImportedColumnData = (
     statePalette: column.palettes.state
       ? new NumberPalette(column.palettes.state)
       : undefined,
+    modPalette: column.palettes.mod
+      ? new NumberPalette(column.palettes.mod)
+      : undefined,
     secondaryState: column.palettes.secondaryState
       ? new NumberPalette(column.palettes.secondaryState)
       : undefined,
@@ -150,6 +160,9 @@ const getImportedChunkData = (chunk: ArchivedChunkData): ImportedChunkData => {
       : undefined,
     statePalette: chunk.palettes.state
       ? new NumberPalette(chunk.palettes.state)
+      : undefined,
+    modPalette: chunk.palettes.mod
+      ? new NumberPalette(chunk.palettes.mod)
       : undefined,
     secondaryState: chunk.palettes.secondaryState
       ? new NumberPalette(chunk.palettes.secondaryState)
@@ -222,6 +235,27 @@ const getState = (
   }
   if (importedColumn.statePalette) {
     return importedColumn.statePalette.getValue(value);
+  }
+  return value;
+};
+const getMod = (
+  value: number,
+  importedColumn: ImportedColumnData,
+  importedChunk: ImportedChunkData
+): number => {
+  if (importedChunk.chunk.buffers.mod instanceof Uint16Array) return value;
+
+  const { chunk } = importedChunk;
+  if (typeof chunk.buffers.mod == "number") {
+    return value;
+  }
+  if (importedChunk.modPalette && importedColumn.modPalette) {
+    return importedColumn.modPalette.getValue(
+      importedChunk.modPalette.getValue(value)
+    );
+  }
+  if (importedColumn.modPalette) {
+    return importedColumn.modPalette.getValue(value);
   }
   return value;
 };
@@ -318,6 +352,14 @@ export default function ImportColumn(
         importedColumn,
         importedChunk
       );
+      newChunk.mod[i] = getMod(
+        typeof chunk.buffers.mod == "number"
+          ? chunk.buffers.mod
+          : chunk.buffers.mod[i],
+        importedColumn,
+        importedChunk
+      );
+
       newChunk.light[i] = getLight(
         typeof chunk.buffers.light == "number"
           ? chunk.buffers.light

@@ -33,9 +33,6 @@ export const TemplateProcessor = {
     if (!mesher || !constructor) return;
     mesher.template.setActive(true);
     mesher.template.load(template, index);
-    const voxelPOS = WorldSpaces.voxel
-      .setLocation(this.nLocation)
-      .getPosition();
 
     mesher.voxel.loadInAtLocation(this.nLocation);
     mesher.nVoxel.loadInAtLocation(this.nLocation);

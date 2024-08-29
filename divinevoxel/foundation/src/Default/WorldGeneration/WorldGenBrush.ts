@@ -62,7 +62,6 @@ export class WorldGenBrush extends BrushTool {
     }
 
     if (LightData.hasSunLight(sl)) {
-      console.log("add to sun update paint",sl);
       this.tasks.queues.sun.remove.push(this.x, this.y, this.z);
       Propagation.instance.sunRemove(this.tasks);
     }

@@ -1,6 +1,6 @@
 import type { LocationData } from "@divinevoxel/core/Math/index.js";
 import type { Vec3Array } from "@amodx/math";
-import type { RawVoxelData } from "@divinevoxel/core/Types/Voxel.types";
+import type { RawVoxelData } from "../Data/Types/VoxelData.types";
 import { ChunkData, ColumnData, RegionData } from "Data/World/Classes";
 
 export type Priorities = 0 | 1 | 2 | 3;

@@ -1,4 +1,4 @@
-import type { RawVoxelData } from "@divinevoxel/core/Types/Voxel.types.js";
+import type { RawVoxelData } from "../../../Data/Types/VoxelData.types";
 import { DimensionsRegister } from "../../../Data/World/DimensionsRegister.js";
 import { VoxelStateReader } from "../../../Data/VoxelStateReader.js";
 import { VoxelStruct } from "@divinevoxel/core/Data/Voxel/VoxelStruct.js";
@@ -65,7 +65,7 @@ export class DataTool extends DataToolBase {
     if (data.shapeState !== undefined)
       stateData = VoxelStateReader.setShapeState(stateData, data.shapeState);
 
-    return [id, light, stateData, secondaryId];
+    return [id, light, stateData, secondaryId, data.mod || 0];
   }
 
   static Modes = DataToolModes;
@@ -77,7 +77,7 @@ export class DataTool extends DataToolBase {
   _loadedIn = false;
   _mode = DataToolModes.WORLD;
   data = {
-    raw: <RawVoxelData>[0, 0, 0, 0],
+    raw: Uint16Array.from([0, 0, 0, 0, 0]) as ArrayLike<number> as RawVoxelData,
     id: 0,
     secondaryId: 0,
   };
@@ -160,6 +160,7 @@ export class DataTool extends DataToolBase {
     this.data.raw[1] = rawData[1];
     this.data.raw[2] = rawData[2];
     this.data.raw[3] = rawData[3];
+    this.data.raw[4] = rawData[4];
     this.__process();
     return this;
   }
@@ -275,9 +276,15 @@ export class DataTool extends DataToolBase {
   }
 
   isOpaque() {
-    return this.getSubstnaceData().isOpaque();
+    return this.__struct[VoxelTagIDs.isTransparent] == 0;
   }
-
+  getMod() {
+    return this.data.raw[4];
+  }
+  setMod(mod: number) {
+    this.data.raw[4] = mod;
+    return this;
+  }
   getLevel() {
     return VoxelStateReader.getLevel(this.data.raw[2]);
   }

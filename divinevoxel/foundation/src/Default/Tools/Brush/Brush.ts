@@ -1,5 +1,5 @@
 import { DataTool } from "../../Tools/Data/DataTool.js";
-import type { RawVoxelData } from "@divinevoxel/core/Types/Voxel.types.js";
+import type { RawVoxelData } from "../../../Data/Types/VoxelData.types.js";
 import { WorldPainter } from "../../../Data/World/WorldPainter.js";
 import { WorldRegister } from "../../../Data/World/WorldRegister.js";
 import { VoxelPalette } from "@divinevoxel/core/Data/Voxel/VoxelPalette.js";
@@ -14,6 +14,7 @@ export class BrushTool extends LocationBoundTool {
     secondaryVoxelId: air,
     level: 0,
     levelState: 0,
+    mod: 0,
   };
 
   name = air;
@@ -30,6 +31,7 @@ export class BrushTool extends LocationBoundTool {
       : air;
     this.data.level = data.level ? data.level : 0;
     this.data.levelState = data.levelState ? data.levelState : 0;
+    this.data.mod = data.mod ? data.mod : 0;
     return this;
   }
 
@@ -39,7 +41,6 @@ export class BrushTool extends LocationBoundTool {
   }
 
   setName(name: string) {
-
     this.data.id = VoxelPalette.name.getId(name);
     this.name = name;
     return this;
@@ -70,12 +71,18 @@ export class BrushTool extends LocationBoundTool {
     this.data.levelState = levelState;
     return this;
   }
+
+  setMod(mod: number) {
+    this.data.mod = mod;
+  }
+
   clear() {
     this.data.id = "dve_air";
     this.data.secondaryVoxelId = "dve_air";
     this.data.level = 0;
     this.data.levelState = 0;
     this.data.shapeState = 0;
+    this.data.mod = 0;
     this.location[1] = 0;
     this.location[2] = 0;
     this.location[3] = 0;
@@ -85,11 +92,14 @@ export class BrushTool extends LocationBoundTool {
     this._dt.loadInRaw(data);
     this.data.id = this._dt.getStringId();
     this.data.shapeState = this._dt.getShapeState();
+    this.data.levelState = this._dt.getLevelState();
+    this.data.level = this._dt.getLevel();
     this._dt.setSecondary(true);
     if (this._dt.data.secondaryId >= 2) {
       this.data.secondaryVoxelId = this._dt.getStringId();
     }
     this._dt.setSecondary(false);
+    this.data.mod = this._dt.getMod();
     return this;
   }
 
@@ -104,6 +114,7 @@ export class BrushTool extends LocationBoundTool {
     this._dt.setLevelState(this.data.levelState);
     this._dt.setShapeState(this.data.shapeState);
     this._dt.data.raw[3] == -1 ? (this._dt.data.raw[3] = 0) : false;
+    this._dt.data.raw[4] = this.data.mod;
     return this._dt.data.raw;
   }
 

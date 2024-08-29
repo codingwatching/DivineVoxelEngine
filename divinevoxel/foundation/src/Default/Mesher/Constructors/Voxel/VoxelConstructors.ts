@@ -5,19 +5,22 @@ import type { DirectionNames } from "@divinevoxel/core/Types/Util.types.js";
 //utils
 
 //constructors
-import { SimpleBoxVoxelConstructor } from "./Classes/Box/SimpleBox.constructor.js";
+import { SimpleCubeVoxelConstructor } from "./Classes/Cube/SimpleCube.constructor.js";
 import {
-  PillarBoxVoxelConstructor,
-  PillarBoxVoxelConstructorData,
-} from "./Classes/Box/PillarBox.constructor.js";
+  PillarCubeVoxelConstructor,
+  PillarCubeVoxelConstructorData,
+} from "./Classes/Cube/PillarCube.constructor.js";
 import { SimpleLiquidConstructor } from "./Classes/Liquid/SimpleLiquid.constructor.js";
 import { SimplePanelVoxelConstructor } from "./Classes/Panel/SimplePanel.constructor.js";
 import { SimpleStairVoxelConstructor } from "./Classes/Stair/SimpleStair.constructor.js";
 import { VoxelConstructor } from "./Classes/VoxelConstructor.js";
 import { SimpleCrossedPanelVoxelConstructor } from "./Classes/Panel/SimpleCrossedPanel.constructor.js";
 import { UtilMap } from "../../../../Util/UtilMap";
-import { ShapeStateBoxVoxelConstructor } from "./Classes/Box/ShapeStateBox.constructor";
+import { ModCubeVoxelConstructor } from "./Classes/Cube/ModCube.constructor";
 import { VoxelFaces } from "@divinevoxel/core/Math";
+import { SimpleHalfCubeVoxelConstructor } from "./Classes/HalfCube/SimpleHalfCube.constructor";
+import { ModHalfCubeVoxelConstructor } from "./Classes/HalfCube/ModHalfCube.constructor";
+import { ModStairVoxelConstructor } from "./Classes/Stair/ModStair.constructor";
 
 export class VoxelConstructors {
   static constructors = new UtilMap<string, VoxelConstructor>();
@@ -35,14 +38,14 @@ export class VoxelConstructors {
   }
 
   static defaults = {
-    box: {
-      shapeState(
+    cube: {
+      mod(
         id: string,
         textures:
           | ConstructorTextureData[]
           | Record<VoxelFaces, ConstructorTextureData[]>
       ) {
-        return new ShapeStateBoxVoxelConstructor(id, textures);
+        return new ModCubeVoxelConstructor(id, textures);
       },
       simple(
         id: string,
@@ -50,13 +53,27 @@ export class VoxelConstructors {
           | ConstructorTextureData
           | Record<DirectionNames, ConstructorTextureData>
       ) {
-        return new SimpleBoxVoxelConstructor(id, textures);
+        return new SimpleCubeVoxelConstructor(id, textures);
       },
-      pillar(id: string, textures: PillarBoxVoxelConstructorData) {
-        return new PillarBoxVoxelConstructor(id, textures);
+      pillar(id: string, textures: PillarCubeVoxelConstructorData) {
+        return new PillarCubeVoxelConstructor(id, textures);
+      },
+    },
+    halfCube: {
+      mod(id: string, textures: ConstructorTextureData[]) {
+        return new ModHalfCubeVoxelConstructor(id, textures);
+      },
+      simple(
+        id: string,
+        textures: SimpleHalfCubeVoxelConstructor["textureData"]
+      ) {
+        return new SimpleHalfCubeVoxelConstructor(id, textures);
       },
     },
     stair: {
+      mod(id: string, textures: ConstructorTextureData[]) {
+        return new ModStairVoxelConstructor(id, textures);
+      },
       simple(id: string, texture: ConstructorTextureData) {
         return new SimpleStairVoxelConstructor(id, texture);
       },

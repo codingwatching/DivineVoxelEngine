@@ -14,53 +14,61 @@ type ArchiveChunkState = {
   ids: Uint16Array;
   rempaedIds: boolean;
   idPalette: NumberPalette;
-
   light: Uint16Array;
   isLightPaletted: boolean;
   rempaedLight: boolean;
   lightPalette: NumberPalette;
   chunk: ChunkData;
-
+  mod: Uint16Array;
   state: Uint16Array;
   isStatePaletted: boolean;
   rempaedState: boolean;
+  rempaedMod: boolean;
   statePalette: NumberPalette;
+  modPalette: NumberPalette;
   secondary: Uint16Array;
   isSecondaryPaletted: boolean;
   rempaedSecondary: boolean;
   secondaryPalette: NumberPalette;
-  secondaryStatePalette: NumberPalette
+  secondaryStatePalette: NumberPalette;
   idsAllTheSame: boolean;
+  isModPaletted: boolean;
   stateAllTheSame: boolean;
+  modAllTheSame: boolean;
+
   lightAllTheSame: boolean;
   secondaryAllTheSame: boolean;
-  hasSecondaryVoxels: boolean;
 };
 
 const getArchiveChunkState = (chunk: ChunkData): ArchiveChunkState => {
   return {
     chunk,
     ids: new Uint16Array(chunk.ids.length),
-    light: new Uint16Array(chunk.ids.length),
+    light: new Uint16Array(chunk.light.length),
     state: new Uint16Array(chunk.state.length),
     secondary: new Uint16Array(chunk.secondary.length),
+    mod: new Uint16Array(chunk.mod.length),
     idPalette: new NumberPalette(),
     lightPalette: new NumberPalette(),
     statePalette: new NumberPalette(),
+    modPalette: new NumberPalette(),
     secondaryPalette: new NumberPalette(),
     secondaryStatePalette: new NumberPalette(),
     isLightPaletted: false,
     isSecondaryPaletted: false,
     isStatePaletted: false,
+    isModPaletted: false,
     rempaedLight: false,
     rempaedIds: false,
     rempaedState: false,
+    rempaedMod: false,
     rempaedSecondary: false,
     idsAllTheSame: true,
     stateAllTheSame: true,
     lightAllTheSame: true,
+    modAllTheSame: true,
     secondaryAllTheSame: true,
-    hasSecondaryVoxels: false,
+  
   };
 };
 
@@ -71,7 +79,6 @@ type ArchiveColumnData = {
   version?: number;
   location: LocationData;
 };
-
 
 export default function ArchiveColumn(
   archiveData: ArchiveColumnData
@@ -92,6 +99,7 @@ export default function ArchiveColumn(
   const lightPalette = new NumberPalette();
   const secondaryPalette = new StringPalette();
   const statePalette = new NumberPalette();
+  const modPalette = new NumberPalette();
   const secondaryStatePalette = new NumberPalette();
 
   columnStructInstance.setBuffer(column.columnState.buffer);
@@ -101,8 +109,9 @@ export default function ArchiveColumn(
   for (const chunk of column.chunks) {
     const length = chunk.ids.length;
     let firstId = -1;
+    let firstMod = -1;
     let firstState = -1;
-    let firtLight = -1;
+    let firstLight = -1;
     let firstSecondary = -1;
 
     const archivedChunk = getArchiveChunkState(chunk);
@@ -117,6 +126,7 @@ export default function ArchiveColumn(
       if (!archivedChunk.idPalette.isRegistered(voxelId))
         archivedChunk.idPalette.register(voxelId);
       if (firstId == -1) firstId = voxelId;
+
       const voxelState = !statePalette.isRegistered(chunk.state[i])
         ? statePalette.register(chunk.state[i])
         : statePalette.getId(chunk.state[i]);
@@ -124,17 +134,23 @@ export default function ArchiveColumn(
         archivedChunk.statePalette.register(voxelState);
       if (firstState == -1) firstState = voxelState;
 
+      const voxelMod = !modPalette.isRegistered(chunk.mod[i])
+        ? modPalette.register(chunk.mod[i])
+        : modPalette.getId(chunk.mod[i]);
+      if (!archivedChunk.modPalette.isRegistered(voxelMod))
+        archivedChunk.modPalette.register(voxelMod);
+      if (firstMod == -1) firstMod = voxelMod;
+
       const voxelLight = !lightPalette.isRegistered(chunk.light[i])
         ? lightPalette.register(chunk.light[i])
         : lightPalette.getId(chunk.light[i]);
       if (!archivedChunk.lightPalette.isRegistered(voxelLight))
         archivedChunk.lightPalette.register(voxelLight);
-      if (firtLight == -1) firtLight = voxelLight;
+      if (firstLight == -1) firstLight = voxelLight;
 
       const secondaryId =
         VoxelStruct.instance[VoxelTagIDs.canHaveSecondary] == 1 &&
         VoxelPalette.ids.getStringId(chunk.secondary[i]);
-      if (secondaryId) archivedChunk.hasSecondaryVoxels = true;
 
       const voxelSecondary = secondaryId
         ? !secondaryPalette.isRegistered(secondaryId)
@@ -154,12 +170,14 @@ export default function ArchiveColumn(
 
       if (voxelId != firstId) archivedChunk.idsAllTheSame = false;
       if (voxelState != firstState) archivedChunk.stateAllTheSame = false;
-      if (voxelLight != firtLight) archivedChunk.lightAllTheSame = false;
+      if (voxelMod != firstMod) archivedChunk.modAllTheSame = false;
+      if (voxelLight != firstLight) archivedChunk.lightAllTheSame = false;
       if (voxelSecondary != firstSecondary)
         archivedChunk.secondaryAllTheSame = false;
 
       archivedChunk.ids[i] = voxelId;
       archivedChunk.state[i] = voxelState;
+      archivedChunk.mod[i] = voxelMod;
       archivedChunk.secondary[i] = voxelSecondary;
       archivedChunk.light[i] = voxelLight;
     }
@@ -176,6 +194,10 @@ export default function ArchiveColumn(
       chunk.statePalette.size < statePalette.size &&
       chunk.statePalette.size <= 255 &&
       !chunk.stateAllTheSame;
+    const reMapMod =
+      chunk.modPalette.size < modPalette.size &&
+      chunk.modPalette.size <= 255 &&
+      !chunk.modAllTheSame;
     const reMapLight =
       chunk.lightPalette.size < lightPalette.size &&
       chunk.lightPalette.size <= 255 &&
@@ -191,6 +213,8 @@ export default function ArchiveColumn(
       lightPalette.size < 65_535 && chunk.lightPalette.size < 255;
     chunk.isStatePaletted =
       statePalette.size < 65_535 && chunk.statePalette.size < 255;
+    chunk.isModPaletted =
+      modPalette.size < 65_535 && chunk.modPalette.size < 255;
     chunk.isSecondaryPaletted =
       secondaryStatePalette.size < 65_535 &&
       chunk.secondaryStatePalette.size < 255 &&
@@ -198,6 +222,7 @@ export default function ArchiveColumn(
     chunk.rempaedIds = reMapIds;
     chunk.rempaedLight = reMapLight && chunk.isLightPaletted;
     chunk.rempaedState = reMapState && chunk.isStatePaletted;
+    chunk.rempaedMod = reMapMod && chunk.isModPaletted;
     chunk.rempaedSecondary = reMapSecondary && chunk.isSecondaryPaletted;
     if (!reMapIds && !reMapLight && !reMapSecondary && !reMapState) continue;
     const length = chunk.chunk.ids.length;
@@ -205,9 +230,10 @@ export default function ArchiveColumn(
       VoxelStruct.setStringVoxel(idsPalette.getStringId(chunk.ids[i]));
       if (reMapIds) chunk.ids[i] = chunk.idPalette.getId(chunk.ids[i]);
       if (reMapState) chunk.state[i] = chunk.statePalette.getId(chunk.state[i]);
+      if (reMapMod) chunk.mod[i] = chunk.modPalette.getId(chunk.mod[i]);
       if (reMapLight) chunk.light[i] = chunk.lightPalette.getId(chunk.light[i]);
       if (reMapSecondary)
-        chunk.ids[i] =
+        chunk.secondary[i] =
           VoxelStruct.instance[VoxelTagIDs.canHaveSecondary] == 1
             ? chunk.secondaryPalette.getId(chunk.secondary[i])
             : chunk.secondaryStatePalette.getId(chunk.secondary[i]);
@@ -240,6 +266,11 @@ export default function ArchiveColumn(
             state: new Uint16Array(statePalette._palette),
           }
         : {}),
+      ...(modPalette.size <= 255
+        ? {
+            mod: new Uint16Array(modPalette._palette),
+          }
+        : {}),
       ...(secondaryStatePalette.size <= 255
         ? {
             secondaryState: new Uint16Array(secondaryStatePalette._palette),
@@ -254,7 +285,6 @@ export default function ArchiveColumn(
         string,
         any
       >;
-
       return {
         palettes: {
           ...(archiveChunk.rempaedIds
@@ -265,6 +295,11 @@ export default function ArchiveColumn(
           ...(archiveChunk.rempaedState
             ? {
                 state: Uint16Array.from(archiveChunk.statePalette._palette),
+              }
+            : {}),
+          ...(archiveChunk.rempaedMod
+            ? {
+                mod: Uint16Array.from(archiveChunk.modPalette._palette),
               }
             : {}),
           ...(archiveChunk.rempaedLight
@@ -313,6 +348,16 @@ export default function ArchiveColumn(
                 archiveChunk.state
               )
             : new Uint16Array(archiveChunk.chunk.state.slice()),
+          mod: archiveChunk.modAllTheSame
+            ? archiveChunk.mod[0]
+            : archiveChunk.isModPaletted
+            ? convertToPaletteBuffer(
+                archiveChunk.rempaedMod
+                  ? archiveChunk.modPalette.size
+                  : modPalette.size,
+                archiveChunk.mod
+              )
+            : new Uint16Array(archiveChunk.chunk.mod.slice()),
           secondary: archiveChunk.secondaryAllTheSame
             ? archiveChunk.secondary[0]
             : archiveChunk.isSecondaryPaletted

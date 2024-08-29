@@ -9,7 +9,11 @@ import { AMath, Directions } from "@amodx/math";
 import { StairStates } from "./StairStates.js";
 import { OverrideManager } from "../../../Rules/Overrides/OverridesManager.js";
 import { StairVoxelShape } from "./Stair.voxel.shape.js";
-import { BoxVoxelShape } from "../Box/Box.voxel.shape.js";
+import { CubeVoxelShape } from "../Cube/Cube.voxel.shape.js";
+import {
+  HalfCubeStates,
+  HalfCubeVoxelShape,
+} from "../Cube/HalfCube.voxel.shape.js";
 /**
  * types
  */
@@ -120,7 +124,6 @@ const StairShapeStates: Record<StairStates, StairShapeState> = {
   ),
 };
 
-
 export class StairOverrides {
   static FaceTypes = FaceType;
   static getStairState(state: number) {
@@ -148,7 +151,7 @@ export class StairOverrides {
     );
     OverrideManager.FaceExposedShapeCheck.register(
       StairVoxelShape.numberId,
-      BoxVoxelShape.numberId,
+      CubeVoxelShape.numberId,
       (data) => {
         const faceType = StairOverrides.getStairState(
           data.currentVoxel.getShapeState()
@@ -158,11 +161,68 @@ export class StairOverrides {
         return true;
       }
     );
+    OverrideManager.FaceExposedShapeCheck.register(
+      StairVoxelShape.numberId,
+      HalfCubeVoxelShape.numberId,
+      (data) => {
+        const state = data.neighborVoxel.getShapeState();
+        const faceType = StairOverrides.getStairState(
+          data.currentVoxel.getShapeState()
+        )[data.face];
+        if (state == HalfCubeStates.Bottom) {
+          return true;
+        }
+        if (state == HalfCubeStates.Top) {
+          if (faceType == FaceType.Top) return false;
+        }
+        return true;
+      }
+    );
+    OverrideManager.AO.register(
+      StairVoxelShape.numberId,
+      HalfCubeVoxelShape.numberId,
+      (data) => {
+        const state = data.neighborVoxel.getShapeState();
+        const faceType = StairOverrides.getStairState(
+          data.currentVoxel.getShapeState()
+        )[data.face];
+        if (state == HalfCubeStates.Bottom) {
+          if(data.neighborVoxel.y < data.currentVoxel.y) return false;
+          if (faceType == FaceType.Front) return false;
+          return true;
+        }
+        return data.default;
+      }
+    );
+    OverrideManager.AO.register(
+      HalfCubeVoxelShape.numberId,
+      StairVoxelShape.numberId,
+      (data) => {
+        const state = data.currentVoxel.getShapeState();
+
+        if (state == HalfCubeStates.Bottom) {
+          if (data.currentVoxel.y == data.neighborVoxel.y) return false;
+          return data.default;
+        }
+        return data.default;
+      }
+    );
     OverrideManager.DarkenFaceUnderneath.register(
       StairVoxelShape.numberId,
-      OverrideManager.ANY,
+      CubeVoxelShape.numberId,
       (data) => {
         return true;
+      }
+    );
+    OverrideManager.DarkenFaceUnderneath.register(
+      StairVoxelShape.numberId,
+      HalfCubeVoxelShape.numberId,
+      (data) => {
+        const state = data.currentVoxel.getShapeState();
+        if (state == HalfCubeStates.Top) {
+          return true;
+        }
+        return false;
       }
     );
   }

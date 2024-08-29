@@ -11,14 +11,14 @@ VoxelManager.registerData([
     id: "dve_air",
     tags: [
       ["#dve_substance", "#dve_air"],
-      ["#dve_shape_id", "#dve_box"],
+      ["#dve_shape_id", "#dve_cube"],
     ],
   },
   {
     id: "dve_barrier",
     tags: [
       ["#dve_substance", "#dve_air"],
-      ["#dve_shape_id", "#dve_box"],
+      ["#dve_shape_id", "#dve_cube"],
     ],
   },
 ]);

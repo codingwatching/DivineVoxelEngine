@@ -3,9 +3,10 @@ import type { LocationData } from "@divinevoxel/core/Math";
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 import { BrushTool } from "../Tools/Brush/Brush";
 import { ChunkDataTool } from "../Tools/Data/WorldData/ChunkDataTool";
-import { RawVoxelData } from "@divinevoxel/core";
+
 import { DVEFConstrucotrCore } from "../../Contexts/Constructor/DVEFConstructorCore";
 import { WorldBounds } from "@divinevoxel/core/Data/World/WorldBounds";
+import { RawVoxelData } from "../../Data/Types/VoxelData.types";
 
 const brush = new BrushTool();
 const dataTool = brush._dt;

@@ -26,13 +26,13 @@ export class SubstanceDataTool {
     return SubstancePaletteReader.id.stringFromNumber(this.substanceTagIndex);
   }
 
-  isTransparent() {
+/*   isTransparent() {
     return SubstanceStruct.instance[SubstanceTagIds.isTransparent] == 1;
   }
 
   isSolid() {
     return SubstanceStruct.instance[SubstanceTagIds.isSolid] == 1;
-  }
+  } */
   isLiquid() {
     return SubstanceStruct.instance[SubstanceTagIds.isLiquid] == 1;
   }
@@ -49,13 +49,13 @@ export class SubstanceDataTool {
   cullDense() {
     return SubstanceStruct.instance[SubstanceTagIds.cullDense] == 1;
   }
-  isOpaque() {
+/*   isOpaque() {
     return this.isSolid() && !this.isTransparent();
   }
-
-  allowLight() {
+ */
+/*   allowLight() {
     return this.isTransparent();
-  }
+  } */
 
   getParent() {
     return MappedDataRegister.stringMaps.get(
