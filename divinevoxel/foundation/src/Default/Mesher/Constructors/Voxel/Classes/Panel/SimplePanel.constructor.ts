@@ -3,7 +3,7 @@ import type { ConstructorTextureData } from "../../../../../../Textures/Construc
 import { VoxelMesherDataTool } from "../../../../Tools/VoxelMesherDataTool.js";
 import { VoxelConstructor } from "../VoxelConstructor.js";
 import { TextureRegister } from "../../../../../../Textures/TextureRegister.js";
-import { PanelVoxelShape } from "../../../../Shapes/default/Panel/Panel.voxel.shape.js";
+import { PanelVoxelShape } from "../../../../Shapes/default/Panel/FlatPanel.voxel.shape.js";
 
 export class SimplePanelVoxelConstructor extends VoxelConstructor {
  texture = 0;

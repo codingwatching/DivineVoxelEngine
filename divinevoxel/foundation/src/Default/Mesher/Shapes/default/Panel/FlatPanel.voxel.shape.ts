@@ -73,8 +73,8 @@ const QuadsPanel: Record<number, Quad> = {
   ),
 };
 
-class PanelVoxelShapeClass extends VoxelShapeBase {
-  id = "#dve_panel";
+class FlatPanelVoxelShapeClass extends VoxelShapeBase {
+  id = "#dve_flat_panel";
   init() {
 
     OverrideManager.FaceExposedShapeCheck.register(
@@ -106,4 +106,4 @@ class PanelVoxelShapeClass extends VoxelShapeBase {
   }
 }
 
-export const PanelVoxelShape = new PanelVoxelShapeClass();
+export const PanelVoxelShape = new FlatPanelVoxelShapeClass();

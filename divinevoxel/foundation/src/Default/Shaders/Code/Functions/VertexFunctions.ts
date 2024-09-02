@@ -25,7 +25,7 @@ return  index & 0xff;`,
 return p;`,
     },
   });
-  builder.functions.create("dve_panel_wind_anim", {
+  builder.functions.create("dve_flat_panel_wind_anim", {
     setID: "#dve_vertex",
     inputs: [
       ["posWorld", "vec4"],

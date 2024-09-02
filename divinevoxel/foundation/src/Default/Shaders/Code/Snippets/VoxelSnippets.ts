@@ -49,7 +49,7 @@ export function RegisterVoxelSnippets(builder: typeof URIShaderBuilder) {
           p.xz = dve_crossed_panel_wind_anim(worldPosition, p).xz;
         }
         if(VOXEL[1].y == 2.) {
-          p.xz = dve_panel_wind_anim(worldPosition, p).xz;
+          p.xz = dve_flat_panel_wind_anim(worldPosition, p).xz;
         }
         if(VOXEL[1].y == 3.) {
           p.xz = dve_cube_wind_anim(worldPosition, p).xz;

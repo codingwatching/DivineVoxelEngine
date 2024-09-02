@@ -97,7 +97,7 @@ class CubeVoxelShapeClass extends VoxelShapeBase {
 
     OverrideManager.FaceExposedShapeCheck.register(
       this.numberId,
-      VoxelShapeManager.getMappedId("#dve_panel"),
+      VoxelShapeManager.getMappedId("#dve_flat_panel"),
       (data) => {
         return true;
       }
@@ -185,7 +185,7 @@ class CubeVoxelShapeClass extends VoxelShapeBase {
     //ao
     OverrideManager.AO.register(
       this.numberId,
-      VoxelShapeManager.getMappedId("#dve_panel"),
+      VoxelShapeManager.getMappedId("#dve_flat_panel"),
       (data) => {
         return false;
       }

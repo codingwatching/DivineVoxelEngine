@@ -96,7 +96,7 @@ class HalfCubeVoxelShapeClass extends VoxelShapeBase {
     //cullface
     OverrideManager.FaceExposedShapeCheck.register(
       this.numberId,
-      VoxelShapeManager.getMappedId("#dve_panel"),
+      VoxelShapeManager.getMappedId("#dve_flat_panel"),
       (data) => {
         return false;
       }
@@ -194,7 +194,7 @@ class HalfCubeVoxelShapeClass extends VoxelShapeBase {
     //AO
     OverrideManager.AO.register(
       this.numberId,
-      VoxelShapeManager.getMappedId("#dve_panel"),
+      VoxelShapeManager.getMappedId("#dve_flat_panel"),
       (data) => {
         return false;
       }
