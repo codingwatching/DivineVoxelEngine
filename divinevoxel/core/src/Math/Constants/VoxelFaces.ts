@@ -1,5 +1,43 @@
 import { CompassDirections, Vec3Array } from "@amodx/math";
 
+export type VoxelFaceNames =
+  | "top"
+  | "bottom"
+  | "north"
+  | "south"
+  | "east"
+  | "west";
+
+export const VoxelFaceNameArray: VoxelFaceNames[] = [
+  "top",
+  "bottom",
+  "north",
+  "south",
+  "east",
+  "west",
+];
+
+export const VoxelFaceNameOppoisteRecord: Record<
+  VoxelFaceNames,
+  VoxelFaceNames
+> = {
+  top: "bottom",
+  bottom: "top",
+  north: "south",
+  south: "north",
+  east: "west",
+  west: "east",
+};
+
+export const VoxelFaceNameDirectionsRecord: Record<VoxelFaceNames, Vec3Array> =
+  {
+    top: [0, 1, 0],
+    bottom: [0, -1, 0],
+    north: [0, 0, 1],
+    south: [0, 0, -1],
+    east: [1, 0, 0],
+    west: [-1, 0, 0],
+  };
 export enum VoxelFaces {
   Top,
   Bottom,
@@ -60,4 +98,13 @@ export const CompassDirectionVoxelFaceMap: Record<
   [CompassDirections.NorthWest]: VoxelFaces.Top,
   [CompassDirections.SouthEast]: VoxelFaces.Top,
   [CompassDirections.SouthWest]: VoxelFaces.Top,
+};
+
+export const VoxelFaceNameRecord: Record<VoxelFaceNames, VoxelFaces> = {
+  top: VoxelFaces.Top,
+  bottom: VoxelFaces.Bottom,
+  north: VoxelFaces.North,
+  south: VoxelFaces.South,
+  east: VoxelFaces.East,
+  west: VoxelFaces.West,
 };

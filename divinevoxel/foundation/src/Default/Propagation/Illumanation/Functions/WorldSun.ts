@@ -1,5 +1,5 @@
 //types
-import type { WorldSunTaskRequest } from "../../../Tasks/Constructor/Tasks/TasksRequest"
+import type { WorldSunTaskRequest } from "../../../Tasks/Constructor/Tasks/TasksRequest";
 //data
 import { WorldBounds } from "@divinevoxel/core/Data/World/WorldBounds.js";
 import { WorldRegister } from "../../../../Data/World/WorldRegister.js";
@@ -80,6 +80,7 @@ export function RunWorldSun(tasks: WorldSunTaskRequest) {
   IM._sDataTool.setDimension(dimension);
   const RmaxY = heightMapTool.column.getRelative(tasks.origin);
   const AmaxY = heightMapTool.column.getAbsolute(tasks.origin);
+
 
   //fill
   for (let iy = AmaxY; iy < WorldBounds.bounds.MaxY; iy++) {

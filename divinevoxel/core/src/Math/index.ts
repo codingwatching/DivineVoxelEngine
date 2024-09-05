@@ -6,5 +6,6 @@ export * from "./Classes/Vector3.js";
 export * from "./Classes/Vector3.js";
 export * from "./VisitAll.js";
 export * from "./Math.types.js";
+export * from "./Constants/VoxelFaces.js";
 export * from "./Spaces/VoxelSpaces.types.js";
 export * from "./Constants/VoxelFaces.js";

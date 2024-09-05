@@ -121,8 +121,8 @@ export class HeightMapTool extends LocationBoundTool {
         const chunkPOS = y + i * WorldSpaces.chunk._bounds.y;
 
         let [chunkMin, chunkMax] = this.chunk.getMinMax();
-        if (chunkMax == 0) continue;
-        chunkMax += chunkPOS;
+        if (Math.abs(chunkMax) == Infinity) continue;
+        chunkMax = chunkPOS + chunkMax;
         if (maxHeight < chunkMax) {
           maxHeight = chunkMax;
         }

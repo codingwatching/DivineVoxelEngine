@@ -58,10 +58,7 @@ export class LocationBoundTool {
     return this;
   }
 
-  setXZ(x: number, z: number) {
-    this.setXYZ(x, this.location[2], z);
-    return this;
-  }
+
 
   setLocation(location: LocationData) {
     this.dimension = location[0];

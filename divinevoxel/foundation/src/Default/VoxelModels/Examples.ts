@@ -1,6 +1,6 @@
 import { VoxelGeometryData, VoxelModelData } from "./VoxelModel.types";
 
-const cube: VoxelGeometryData = {
+export const cube: VoxelGeometryData = {
   id: "dve_cube",
   arguments: {
     topTex: {
@@ -48,7 +48,6 @@ const cube: VoxelGeometryData = {
   },
   nodes: [
     {
-      id: "cube",
       type: "box",
       points: [
         [0, 0, 0],
@@ -83,7 +82,7 @@ const cube: VoxelGeometryData = {
     },
   ],
 };
-const halfCube: VoxelGeometryData = {
+export const halfCube: VoxelGeometryData = {
   id: "dve_half_cube",
   arguments: {
     topTex: {
@@ -131,11 +130,10 @@ const halfCube: VoxelGeometryData = {
   },
   nodes: [
     {
-      id: "cube",
       type: "box",
       points: [
         [0, 0, 0],
-        [0.5, 0.5, 0.5],
+        [1, 0.5, 1],
       ],
       faces: {
         top: {
@@ -166,7 +164,7 @@ const halfCube: VoxelGeometryData = {
     },
   ],
 };
-const quaterCubeWestEast: VoxelGeometryData = {
+export const quaterCubeWestEast: VoxelGeometryData = {
   id: "dve_quater_cube_west_east",
   arguments: {
     topTex: {
@@ -214,7 +212,6 @@ const quaterCubeWestEast: VoxelGeometryData = {
   },
   nodes: [
     {
-      id: "cube",
       type: "box",
       points: [
         [0, 0, 0],
@@ -249,7 +246,7 @@ const quaterCubeWestEast: VoxelGeometryData = {
     },
   ],
 };
-const quaterCubeSouthNorth: VoxelGeometryData = {
+export const quaterCubeSouthNorth: VoxelGeometryData = {
   id: "dve_quater_cube_south_north",
   arguments: {
     topTex: {
@@ -297,7 +294,6 @@ const quaterCubeSouthNorth: VoxelGeometryData = {
   },
   nodes: [
     {
-      id: "cube",
       type: "box",
       points: [
         [0, 0, 0],
@@ -332,7 +328,7 @@ const quaterCubeSouthNorth: VoxelGeometryData = {
     },
   ],
 };
-const quaterCubeTopBottom: VoxelGeometryData = {
+export const quaterCubeTopBottom: VoxelGeometryData = {
   id: "dve_quater_cube_top_bottom",
   arguments: {
     topTex: {
@@ -380,7 +376,6 @@ const quaterCubeTopBottom: VoxelGeometryData = {
   },
   nodes: [
     {
-      id: "cube",
       type: "box",
       points: [
         [0, 0, 0],
@@ -415,7 +410,7 @@ const quaterCubeTopBottom: VoxelGeometryData = {
     },
   ],
 };
-const eighthCube: VoxelGeometryData = {
+export const eighthCube: VoxelGeometryData = {
   id: "dve_eighth_cube",
   arguments: {
     topTex: {
@@ -439,11 +434,10 @@ const eighthCube: VoxelGeometryData = {
   },
   nodes: [
     {
-      id: "cube",
       type: "box",
       points: [
         [0, 0, 0],
-        [0.25, 0.25, 0.25],
+        [0.5, 0.5, 0.5],
       ],
       faces: {
         top: {
@@ -475,7 +469,7 @@ const eighthCube: VoxelGeometryData = {
   ],
 };
 
-const fencePost: VoxelGeometryData = {
+export const fencePost: VoxelGeometryData = {
   id: "dve_fence_post",
   arguments: {
     topTex: {
@@ -499,7 +493,6 @@ const fencePost: VoxelGeometryData = {
   },
   nodes: [
     {
-      id: "box-1",
       type: "box",
       points: [
         [0.5, 0, 0.5],
@@ -534,7 +527,7 @@ const fencePost: VoxelGeometryData = {
     },
   ],
 };
-const fenceEastWest: VoxelGeometryData = {
+export const fenceEastWest: VoxelGeometryData = {
   id: "dve_fence_east_west",
   arguments: {
     topTex: {
@@ -558,7 +551,6 @@ const fenceEastWest: VoxelGeometryData = {
   },
   nodes: [
     {
-      id: "box-1",
       type: "box",
       points: [
         [0.5, 0, 0.5],
@@ -593,7 +585,7 @@ const fenceEastWest: VoxelGeometryData = {
     },
   ],
 };
-const fenceNorthsouth: VoxelGeometryData = {
+export const fenceNorthsouth: VoxelGeometryData = {
   id: "dve_fence_north_south",
   arguments: {
     topTex: {
@@ -617,7 +609,6 @@ const fenceNorthsouth: VoxelGeometryData = {
   },
   nodes: [
     {
-      id: "box-1",
       type: "box",
       points: [
         [0.5, 0, 0.5],
@@ -652,8 +643,8 @@ const fenceNorthsouth: VoxelGeometryData = {
     },
   ],
 };
-const pillarBox: VoxelModelData = {
-  id: "dve_stair",
+export const pillarBox: VoxelModelData = {
+  id: "dve_pillar_box",
   relationsScehma: [
     {
       name: "same-bottom",
@@ -710,7 +701,7 @@ const pillarBox: VoxelModelData = {
       ],
     },
   ],
-  stateSchema: [
+  shapeStateSchema: [
     {
       name: "direction",
       values: {
@@ -825,10 +816,10 @@ const pillarBox: VoxelModelData = {
   },
 };
 
-const stair: VoxelModelData = {
+export const stair: VoxelModelData = {
   id: "dve_stair",
   relationsScehma: [],
-  stateSchema: [
+  shapeStateSchema: [
     {
       name: "direction",
       values: {
@@ -892,7 +883,7 @@ const stair: VoxelModelData = {
       {
         id: "top",
         geometryId: "dve_quater_cube_west_east",
-        position: [0.5, 0.5, 0.5],
+        position: [0, 0.5, 0.5],
         inputs: {
           "@topTex": "@topTex",
           "@bottomTex": "@bottomTex",
@@ -1098,7 +1089,7 @@ const stair: VoxelModelData = {
   },
 };
 
-const fence: VoxelModelData = {
+export const fence: VoxelModelData = {
   id: "dve_fence",
 
   relationsScehma: [
@@ -1139,7 +1130,7 @@ const fence: VoxelModelData = {
       ],
     },
   ],
-  stateSchema: [],
+  shapeStateSchema: [],
   arguments: {
     southTex: {
       type: "texture",
@@ -1161,7 +1152,7 @@ const fence: VoxelModelData = {
     },
   },
   shapeStatesConditonalNodes: {
-    "state=*,same-south=true": [
+    "same-south=true": [
       {
         id: "fence_post",
         geometryId: "dve_fence_north_south",
@@ -1175,7 +1166,7 @@ const fence: VoxelModelData = {
         },
       },
     ],
-    "state=*,same-north=true": [
+    "same-north=true": [
       {
         id: "fence_post",
         geometryId: "dve_fence_north_south",
@@ -1190,7 +1181,7 @@ const fence: VoxelModelData = {
         },
       },
     ],
-    "state=*,same-east=true": [
+    "same-east=true": [
       {
         id: "fence_post",
         geometryId: "dve_fence_east_west",
@@ -1204,7 +1195,7 @@ const fence: VoxelModelData = {
         },
       },
     ],
-    "state=*,same-west=true": [
+    "same-west=true": [
       {
         id: "fence_post",
         geometryId: "dve_fence_east_west",
@@ -1222,7 +1213,7 @@ const fence: VoxelModelData = {
   },
   shapeStatesOverrides: {},
   shapeStatesNodes: {
-    "": [
+    "*": [
       {
         id: "fence_post",
         geometryId: "dve_fence_post",

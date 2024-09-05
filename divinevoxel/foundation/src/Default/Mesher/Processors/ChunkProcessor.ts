@@ -65,6 +65,7 @@ export class ChunkProcessor {
   build(location: LocationData, priority = 0) {
     this.heightMapTool.chunk.loadInAtLocation(location);
     this.mDataTool.setDimension(location[0]);
+    
     const [dimension, cx, cy, cz] = location;
     this.nLocation[0] = dimension;
     let [minY, maxY] = this.heightMapTool.chunk.getMinMax();
@@ -102,6 +103,7 @@ export class ChunkProcessor {
       chunks[1].push([substance, [location, attributes]]);
       mesher.resetAll();
     }
+
 
     DivineVoxelEngineConstructor.instance.core.threads.parent.runTasks<SetChunkMeshTask>(
       "set-chunk",

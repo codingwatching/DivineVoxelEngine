@@ -7,7 +7,7 @@ import {
   DVEDefaultMesherInitData,
 } from "../Mesher/Mesher.js";
 import RegisterDefaultTasks from "../Tasks/Constructor/DefaultConstructorTasks.js";
-
+import InitVoxelModels from "../VoxelModels/Constructor/InitVoxelModelsConstructor.js";
 export async function StartContrusctor(props: {
   mesher: DVEDefaultMesherInitData;
 }) {
@@ -16,6 +16,7 @@ export async function StartContrusctor(props: {
   const core = new DVEFConstrucotrCore({
     mesher: new DVEDefaultMesher(props.mesher),
   });
+  InitVoxelModels(DVEC);
   RegisterDefaultTasks();
   await DVEC.init({
     core,

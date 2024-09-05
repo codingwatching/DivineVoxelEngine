@@ -10,6 +10,8 @@ export default function (DVEW: DivineVoxelEngineWorld): Promise<any> {
     }
     await Threads.init("world", parent);
     await DVEW.core.init();
+
+
     await CreatePromiseCheck({
       check: () => {
         return DVEW.core.threads.state.isReady();
@@ -20,9 +22,9 @@ export default function (DVEW: DivineVoxelEngineWorld): Promise<any> {
     Threads.registerTasks("sync-all-data", async () => {
       await DVEW.core.dataSync.init(DVEW.core);
 
-      await DVEW.core.threads.constructors.getThreads().map((comm) =>
-        comm.waitTillTasksExist("ready")
-      );
+      await DVEW.core.threads.constructors
+        .getThreads()
+        .map((comm) => comm.waitTillTasksExist("ready"));
 
       await Promise.all(
         DVEW.core.threads.constructors.getThreads().map(

@@ -12,6 +12,7 @@ export class DVEFWorldThreads extends WorldThreadManager {
     super();
 
     this.state = new DVEFWorldThreadState(this);
+
     if (core.props.nexusEnabled) {
       this.addThread(this.nexus);
 

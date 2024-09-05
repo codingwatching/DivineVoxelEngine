@@ -3,7 +3,7 @@ import {
   OcclusionPlane,
   OcclusionPlaneContainer,
 } from "../Classes/OcclusionPlane";
-import { VoxelGeometryNodes } from "Default/VoxelModels/VoxelModel.types";
+import { VoxelGeometryNodes } from "../../VoxelModel.types";
 
 export function GetOcclusionPlanes(data: VoxelGeometryNodes[]) {
   const planes = new OcclusionPlaneContainer();
@@ -77,13 +77,7 @@ export function GetOcclusionPlanes(data: VoxelGeometryNodes[]) {
       if (node.rotation) continue;
       const [start, end] = node.points;
 
-      planes.addPlane(
-        new OcclusionPlane(
-          node.direction,
-          start,
-          end
-        )
-      );
+      planes.addPlane(new OcclusionPlane(node.direction, start, end));
     }
   }
 

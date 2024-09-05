@@ -1,21 +1,21 @@
 import { FaceDataOverride } from "../../Types";
 type Run = (data: FaceDataOverride) => boolean;
 export class OverrideBase {
-  voxels = new Map<number, Map<number, Run>>();
+  voxels: Run[][] = [];
 
   register(voxel: number, override: number, run: Run) {
-    let voxelRules = this.voxels.get(voxel);
+    let voxelRules = this.voxels[voxel];
     if (!voxelRules) {
-      voxelRules = new Map();
-      this.voxels.set(voxel,voxelRules)
+      voxelRules = [];
+      this.voxels[voxel] = voxelRules;
     }
-    voxelRules.set(override, run);
+    voxelRules[override] = run;
   }
 
   run(voxel: number, override: number, data: FaceDataOverride) {
-    const voxelRules = this.voxels.get(voxel);
+    const voxelRules = this.voxels[voxel];
     if (!voxelRules) return data.default;
-    const secondRule = voxelRules.get(override);
+    const secondRule = voxelRules[override];
     if (!secondRule) return data.default;
     return secondRule(data);
   }
