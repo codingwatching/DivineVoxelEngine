@@ -66,7 +66,7 @@ export default async function InitDVEMRayMarching({
     textures: [],
     sampler: [],
     code: {
-      top: VoxelCubeShader.define,
+      up: VoxelCubeShader.define,
       beforeMain: VoxelCubeShader.functions,
     },
   });

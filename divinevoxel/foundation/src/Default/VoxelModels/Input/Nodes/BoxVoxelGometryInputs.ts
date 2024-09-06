@@ -2,7 +2,7 @@ import { VoxelFacesArray } from "@divinevoxel/core/Math";
 import { Vec4Array } from "@amodx/math";
 
 export type BoxFaceArags = [
-  //topp
+  //upp
   enabled: boolean,
   Fliped: boolean,
   texture: number,

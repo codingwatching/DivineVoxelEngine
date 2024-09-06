@@ -53,7 +53,7 @@ const QuadsPanel: Record<number, Quad> = {
     false,
     1
   ),
-  [PanelStates.Bottom]: Quad.Create(
+  [PanelStates.Down]: Quad.Create(
     [
       [0, near, 0],
       [1, near, 1],
@@ -62,7 +62,7 @@ const QuadsPanel: Record<number, Quad> = {
     false,
     1
   ),
-  [PanelStates.Top]: Quad.Create(
+  [PanelStates.Up]: Quad.Create(
     [
       [0, far, 0],
       [1, far, 1],

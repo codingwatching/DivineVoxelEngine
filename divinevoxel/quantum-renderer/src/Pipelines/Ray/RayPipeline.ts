@@ -129,7 +129,7 @@ export class RayPipeline {
         targets: [{ format: format }],
       },
       primitive: {
-        topology: "triangle-strip",
+        upology: "triangle-strip",
       },
     });
 

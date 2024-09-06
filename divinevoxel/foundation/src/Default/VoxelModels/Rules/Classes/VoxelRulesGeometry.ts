@@ -2,22 +2,22 @@ import { Vec3Array } from "@amodx/math";
 import { VoxelGeometryData } from "../../VoxelModel.types";
 import { GetOcclusionPlanes } from "../Functions/GetOcclusionPlanes";
 import {
-  OcclusionPlaneContainer,
-  OcclusionPlaneResults,
-} from "./OcclusionPlane";
+  OcclusionQuadContainer,
+  OcclusionQuadResults,
+} from "./OcclusionQuad";
 import { VoxelFaceNames } from "@divinevoxel/core/Math";
 import { BuildGeomtryInputs } from "../Functions/BuildGeomtryInputs";
 
 export class VoxelRuleGeometry {
   outsideOcculedRules = new Map<
     string,
-    Map<VoxelFaceNames, OcclusionPlaneResults<boolean>>
+    Map<VoxelFaceNames, OcclusionQuadResults<boolean>>
   >();
   outsideAORules = new Map<
     string,
-    Map<number, OcclusionPlaneResults<boolean[]>>
+    Map<number, OcclusionQuadResults<boolean[]>>
   >();
-  occlusionPlane: OcclusionPlaneContainer;
+  occlusionPlane: OcclusionQuadContainer;
 
   inputs: ReturnType<typeof BuildGeomtryInputs>;
   constructor(
@@ -38,7 +38,7 @@ export class VoxelRuleGeometry {
   addOutsideOcculedResult(
     id: string,
     direction: VoxelFaceNames,
-    results: OcclusionPlaneResults<boolean>
+    results: OcclusionQuadResults<boolean>
   ) {
     let outsideResults = this.outsideOcculedRules.get(id);
     if (!outsideResults) {
@@ -51,7 +51,7 @@ export class VoxelRuleGeometry {
   addOutsideAOResult(
     id: string,
     direction: number,
-    results: OcclusionPlaneResults<boolean[]>
+    results: OcclusionQuadResults<boolean[]>
   ) {
     let outsideResults = this.outsideAORules.get(id);
     if (!outsideResults) {

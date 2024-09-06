@@ -7,20 +7,20 @@ import { TextureRegister } from "../../../../../../Textures/TextureRegister.js";
 import { VoxelFaces } from "@divinevoxel/core/Math";
 
 export type PillarCubeVoxelConstructorData = {
-  top: ConstructorTextureData;
-  bottom: ConstructorTextureData;
+  up: ConstructorTextureData;
+  down: ConstructorTextureData;
   sideMiddle: ConstructorTextureData;
-  sideBottom: ConstructorTextureData;
-  sideTop: ConstructorTextureData;
+  sideDown: ConstructorTextureData;
+  sideUp: ConstructorTextureData;
   sideFloat: ConstructorTextureData;
 };
 export class PillarCubeVoxelConstructor extends VoxelConstructor {
   textures: [
-    top: number,
-    bottom: number,
+    up: number,
+    down: number,
     sideMiddle: number,
-    sideBottom: number,
-    sideTop: number,
+    sideDown: number,
+    sideUp: number,
     sideFloat: number
   ];
   constructor(
@@ -30,42 +30,42 @@ export class PillarCubeVoxelConstructor extends VoxelConstructor {
     super();
   }
   process(tool: VoxelMesherDataTool) {
-    const topCheck =
+    const upCheck =
       tool.nVoxel.loadInAt(tool.voxel.x, tool.voxel.y + 1, tool.voxel.z) &&
       tool.voxel.isSameVoxel(tool.nVoxel);
 
-    const bottomCheck =
+    const downCheck =
       tool.nVoxel.loadInAt(tool.voxel.x, tool.voxel.y - 1, tool.voxel.z) &&
       tool.voxel.isSameVoxel(tool.nVoxel);
 
     let side = -1;
     determineText: if (side) {
-      if (topCheck && bottomCheck) {
+      if (upCheck && downCheck) {
         side = this.textures[2];
         break determineText;
       }
-      if (topCheck && !bottomCheck) {
+      if (upCheck && !downCheck) {
         side = this.textures[3];
         break determineText;
       }
-      if (!topCheck && bottomCheck) {
+      if (!upCheck && downCheck) {
         side = this.textures[4];
         break determineText;
       }
-      if (!topCheck && !bottomCheck) {
+      if (!upCheck && !downCheck) {
         side = this.textures[5];
         break determineText;
       }
       side = 0;
     }
     tool.getOverlayTextures().setAll(0);
-    if (tool.isFaceExposed(VoxelFaces.Top)) {
-      tool.setTexture(this.textures[0]).calculateLight(VoxelFaces.Top);
-      CubeVoxelShape.add.top();
+    if (tool.isFaceExposed(VoxelFaces.Up)) {
+      tool.setTexture(this.textures[0]).calculateLight(VoxelFaces.Up);
+      CubeVoxelShape.add.up();
     }
-    if (tool.isFaceExposed(VoxelFaces.Bottom)) {
-      tool.setTexture(this.textures[1]).calculateLight(VoxelFaces.Bottom);
-      CubeVoxelShape.add.bottom();
+    if (tool.isFaceExposed(VoxelFaces.Down)) {
+      tool.setTexture(this.textures[1]).calculateLight(VoxelFaces.Down);
+      CubeVoxelShape.add.down();
     }
     if (tool.isFaceExposed(VoxelFaces.East)) {
       tool.setTexture(side).calculateLight(VoxelFaces.East);
@@ -86,11 +86,11 @@ export class PillarCubeVoxelConstructor extends VoxelConstructor {
   }
   onTexturesRegistered(textureManager: typeof TextureRegister): void {
     this.textures = [
-      textureManager.getTextureUV(this.textureData.top),
-      textureManager.getTextureUV(this.textureData.bottom),
+      textureManager.getTextureUV(this.textureData.up),
+      textureManager.getTextureUV(this.textureData.down),
       textureManager.getTextureUV(this.textureData.sideMiddle),
-      textureManager.getTextureUV(this.textureData.sideBottom),
-      textureManager.getTextureUV(this.textureData.sideTop),
+      textureManager.getTextureUV(this.textureData.sideDown),
+      textureManager.getTextureUV(this.textureData.sideUp),
       textureManager.getTextureUV(this.textureData.sideFloat),
     ];
     (this as any).textureData = null;

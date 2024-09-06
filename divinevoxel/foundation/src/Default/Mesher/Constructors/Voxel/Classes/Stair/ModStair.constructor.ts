@@ -14,13 +14,13 @@ export class ModStairVoxelConstructor extends VoxelConstructor {
 
     tool.setTexture(this.textures[tool.voxel.getMod()]);
     tool.getOverlayTextures().setAll(0);
-    if (tool.isFaceExposed(VoxelFaces.Top)) {
-      tool.calculateLight(VoxelFaces.Top);
-      StairVoxelShape.add.top();
+    if (tool.isFaceExposed(VoxelFaces.Up)) {
+      tool.calculateLight(VoxelFaces.Up);
+      StairVoxelShape.add.up();
     }
-    if (tool.isFaceExposed(VoxelFaces.Bottom)) {
-      tool.calculateLight(VoxelFaces.Bottom);
-      StairVoxelShape.add.bottom();
+    if (tool.isFaceExposed(VoxelFaces.Down)) {
+      tool.calculateLight(VoxelFaces.Down);
+      StairVoxelShape.add.down();
     }
     if (tool.isFaceExposed(VoxelFaces.East)) {
       tool.calculateLight(VoxelFaces.East);

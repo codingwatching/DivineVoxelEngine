@@ -18,13 +18,13 @@ export class SimpleCubeVoxelConstructor extends VoxelConstructor {
   }
   process(tool: VoxelMesherDataTool) {
     tool.getOverlayTextures().setAll(0);
-    if (tool.isFaceExposed(VoxelFaces.Top)) {
-      tool.setTexture(this.textures[0]).calculateLight(VoxelFaces.Top);
-      CubeVoxelShape.add.top();
+    if (tool.isFaceExposed(VoxelFaces.Up)) {
+      tool.setTexture(this.textures[0]).calculateLight(VoxelFaces.Up);
+      CubeVoxelShape.add.up();
     }
-    if (tool.isFaceExposed(VoxelFaces.Bottom)) {
-      tool.setTexture(this.textures[1]).calculateLight(VoxelFaces.Bottom);
-      CubeVoxelShape.add.bottom();
+    if (tool.isFaceExposed(VoxelFaces.Down)) {
+      tool.setTexture(this.textures[1]).calculateLight(VoxelFaces.Down);
+      CubeVoxelShape.add.down();
     }
     if (tool.isFaceExposed(VoxelFaces.East)) {
       tool.setTexture(this.textures[2]).calculateLight(VoxelFaces.East);
@@ -55,8 +55,8 @@ export class SimpleCubeVoxelConstructor extends VoxelConstructor {
 
       return;
     }
-    this.textures.push(textureManager.getTextureUV(textures.top));
-    this.textures.push(textureManager.getTextureUV(textures.bottom));
+    this.textures.push(textureManager.getTextureUV(textures.up));
+    this.textures.push(textureManager.getTextureUV(textures.down));
     this.textures.push(textureManager.getTextureUV(textures.east));
     this.textures.push(textureManager.getTextureUV(textures.west));
     this.textures.push(textureManager.getTextureUV(textures.south));

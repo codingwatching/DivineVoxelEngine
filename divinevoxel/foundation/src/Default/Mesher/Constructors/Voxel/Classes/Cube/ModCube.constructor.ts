@@ -7,8 +7,8 @@ import { VoxelFaces, VoxelFacesArray } from "@divinevoxel/core/Math/index.js";
 
 export class ModCubeVoxelConstructor extends VoxelConstructor {
   textures: Record<VoxelFaces, number[]> = {
-    [VoxelFaces.Top]: [],
-    [VoxelFaces.Bottom]: [],
+    [VoxelFaces.Up]: [],
+    [VoxelFaces.Down]: [],
     [VoxelFaces.North]: [],
     [VoxelFaces.South]: [],
     [VoxelFaces.East]: [],
@@ -27,17 +27,17 @@ export class ModCubeVoxelConstructor extends VoxelConstructor {
 
     const shapeState = tool.voxel.getMod();
 
-    if (tool.isFaceExposed(VoxelFaces.Top)) {
+    if (tool.isFaceExposed(VoxelFaces.Up)) {
       tool
-        .setTexture(this.textures[VoxelFaces.Top][shapeState])
-        .calculateLight(VoxelFaces.Top);
-      CubeVoxelShape.add.top();
+        .setTexture(this.textures[VoxelFaces.Up][shapeState])
+        .calculateLight(VoxelFaces.Up);
+      CubeVoxelShape.add.up();
     }
-    if (tool.isFaceExposed(VoxelFaces.Bottom)) {
+    if (tool.isFaceExposed(VoxelFaces.Down)) {
       tool
-        .setTexture(this.textures[VoxelFaces.Bottom][shapeState])
-        .calculateLight(VoxelFaces.Bottom);
-      CubeVoxelShape.add.bottom();
+        .setTexture(this.textures[VoxelFaces.Down][shapeState])
+        .calculateLight(VoxelFaces.Down);
+      CubeVoxelShape.add.down();
     }
     if (tool.isFaceExposed(VoxelFaces.East)) {
       tool

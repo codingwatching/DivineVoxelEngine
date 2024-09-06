@@ -1,7 +1,7 @@
 import { Vec3Array, Vector3Like } from "@amodx/math";
 import { VoxelFaceNameArray, VoxelFaceNames } from "@divinevoxel/core/Math";
 
-export class OcclusionPlane {
+export class OcclusionQuad {
   offset: Vec3Array = [0, 0, 0];
 
   start: Vector3Like;
@@ -52,8 +52,8 @@ export class OcclusionPlane {
   getPoints(): Vec3Array[] {
     const { start, end } = this;
     switch (this.direction) {
-      case "top":
-      case "bottom":
+      case "up":
+      case "down":
         return [
           [start.x, start.y, start.z],
           [end.x, start.y, start.z],
@@ -81,18 +81,18 @@ export class OcclusionPlane {
     }
   }
   clone() {
-    return new OcclusionPlane(this.direction, [...this._start], [...this._end]);
+    return new OcclusionQuad(this.direction, [...this._start], [...this._end]);
   }
 
-  doesCover(plane: OcclusionPlane): boolean {
+  doesCover(plane: OcclusionQuad): boolean {
     switch (this.direction) {
-      case "top":
-        if (plane.direction === "bottom" && this.start.y === plane.end.y) {
+      case "up":
+        if (plane.direction === "down" && this.start.y === plane.end.y) {
           return this.totallyCoversInXAndZ(plane);
         }
         break;
-      case "bottom":
-        if (plane.direction === "top" && this.end.y === plane.start.y) {
+      case "down":
+        if (plane.direction === "up" && this.end.y === plane.start.y) {
           return this.totallyCoversInXAndZ(plane);
         }
         break;
@@ -122,7 +122,7 @@ export class OcclusionPlane {
     return false;
   }
 
-  private totallyCoversInXAndZ(plane: OcclusionPlane): boolean {
+  private totallyCoversInXAndZ(plane: OcclusionQuad): boolean {
     return (
       this.start.x <= plane.start.x &&
       this.end.x >= plane.end.x &&
@@ -131,7 +131,7 @@ export class OcclusionPlane {
     );
   }
 
-  private totallyCoversInXAndY(plane: OcclusionPlane): boolean {
+  private totallyCoversInXAndY(plane: OcclusionQuad): boolean {
     return (
       this.start.x <= plane.start.x &&
       this.end.x >= plane.end.x &&
@@ -140,7 +140,7 @@ export class OcclusionPlane {
     );
   }
 
-  private totallyCoversInYAndZ(plane: OcclusionPlane): boolean {
+  private totallyCoversInYAndZ(plane: OcclusionQuad): boolean {
     return (
       this.start.y <= plane.start.y &&
       this.end.y >= plane.end.y &&
@@ -151,8 +151,8 @@ export class OcclusionPlane {
 
   isPointOnPlane(x: number, y: number, z: number): boolean {
     switch (this.direction) {
-      case "top":
-      case "bottom":
+      case "up":
+      case "down":
         return (
           y === this.start.y &&
           x >= this.start.x &&
@@ -184,10 +184,10 @@ export class OcclusionPlane {
   }
 }
 
-export class OcclusionPlaneContainer {
-  planes: Record<VoxelFaceNames, OcclusionPlane[]> = {
-    top: [],
-    bottom: [],
+export class OcclusionQuadContainer {
+  planes: Record<VoxelFaceNames, OcclusionQuad[]> = {
+    up: [],
+    down: [],
     south: [],
     east: [],
     west: [],
@@ -205,11 +205,11 @@ export class OcclusionPlaneContainer {
     );
   }
 
-  addPlane(plane: OcclusionPlane) {
+  addPlane(plane: OcclusionQuad) {
     this.planes[plane.direction].push(plane);
   }
   clone() {
-    const container = new OcclusionPlaneContainer();
+    const container = new OcclusionQuadContainer();
     VoxelFaceNameArray.forEach((_) => {
       container.planes[_] = this.planes[_].map((_) => _.clone());
     });
@@ -217,10 +217,10 @@ export class OcclusionPlaneContainer {
   }
 }
 
-export class OcclusionPlaneResults<T> {
+export class OcclusionQuadResults<T> {
   planes: Record<VoxelFaceNames, T[]> = {
-    top: [],
-    bottom: [],
+    up: [],
+    down: [],
     south: [],
     east: [],
     west: [],

@@ -44,8 +44,8 @@ class CrossedPanelsClass extends VoxelShapeBase {
   id = "#dve_crossed_panels";
   init() {}
   build() {
-    let topANIM = 0;
-    let bottomANIM = 0;
+    let upANIM = 0;
+    let downANIM = 0;
     let doubleSided = true;
     if (ShapeTool.data.voxel.getSubstnaceData().isWindAffected()) {
       ShapeTool.data.nVoxel.loadInAt(
@@ -54,17 +54,17 @@ class CrossedPanelsClass extends VoxelShapeBase {
         ShapeTool.data.voxel.z
       );
       if (ShapeTool.data.voxel.isSameVoxel(ShapeTool.data.nVoxel)) {
-        topANIM = VoxelShaderData.AnimationStates.WindAffected.Box;
-        bottomANIM = VoxelShaderData.AnimationStates.WindAffected.Box;
+        upANIM = VoxelShaderData.AnimationStates.WindAffected.Box;
+        downANIM = VoxelShaderData.AnimationStates.WindAffected.Box;
       } else {
-        topANIM = VoxelShaderData.AnimationStates.WindAffected.CrossPanel;
+        upANIM = VoxelShaderData.AnimationStates.WindAffected.CrossPanel;
       }
       const animData = ShapeTool.data.getAnimationData();
 
-      animData.vertices[QuadVerticies.TopRight] = topANIM;
-      animData.vertices[QuadVerticies.TopLeft] = topANIM;
-      animData.vertices[QuadVerticies.BottomRight] = bottomANIM;
-      animData.vertices[QuadVerticies.BottomLeft] = bottomANIM;
+      animData.vertices[QuadVerticies.TopRight] = upANIM;
+      animData.vertices[QuadVerticies.TopLeft] = upANIM;
+      animData.vertices[QuadVerticies.BottomRight] = downANIM;
+      animData.vertices[QuadVerticies.BottomLeft] = downANIM;
     }
     if (ShapeTool.data.voxel.getSubstnaceData().isBackFaceCulled()) {
       doubleSided = false;

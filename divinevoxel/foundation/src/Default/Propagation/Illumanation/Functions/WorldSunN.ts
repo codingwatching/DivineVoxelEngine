@@ -193,5 +193,5 @@ export function RunWorldSun(tasks: WorldSunTaskRequest) {
     queue.returnNode(node);
   }
 
-  tasks.stop();
+  tasks.sup();
 }

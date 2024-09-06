@@ -15,16 +15,16 @@ export function BuildAORulesIndex(
   //12 byte header for all direction indexes
   const headerSize = 2 * 6;
   const faceIndexes: Record<VoxelFaceNames, number> = {
-    top: 0,
-    bottom: 0,
+    up: 0,
+    down: 0,
     north: 0,
     south: 0,
     east: 0,
     west: 0,
   };
   const vertexCounts: Record<VoxelFaceNames, number> = {
-    top: 0,
-    bottom: 0,
+    up: 0,
+    down: 0,
     north: 0,
     south: 0,
     east: 0,
@@ -47,8 +47,8 @@ export function BuildAORulesIndex(
   );
 
   const view = new DataView(rulesBuffer);
-  view.setUint16(VoxelFaces.Top * 2, faceIndexes.top);
-  view.setUint16(VoxelFaces.Bottom * 2, faceIndexes.bottom);
+  view.setUint16(VoxelFaces.Up * 2, faceIndexes.up);
+  view.setUint16(VoxelFaces.Down * 2, faceIndexes.down);
   view.setUint16(VoxelFaces.North * 2, faceIndexes.north);
   view.setUint16(VoxelFaces.South * 2, faceIndexes.south);
   view.setUint16(VoxelFaces.East * 2, faceIndexes.east);

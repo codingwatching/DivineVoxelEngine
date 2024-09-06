@@ -12,8 +12,8 @@ import { LightGradient } from "../../../../Calc/Light/LightGradient.js";
 
 export class ModHalfCubeVoxelConstructor extends VoxelConstructor {
   textures: Record<VoxelFaces, number[]> = {
-    [VoxelFaces.Top]: [],
-    [VoxelFaces.Bottom]: [],
+    [VoxelFaces.Up]: [],
+    [VoxelFaces.Down]: [],
     [VoxelFaces.North]: [],
     [VoxelFaces.South]: [],
     [VoxelFaces.East]: [],
@@ -30,19 +30,19 @@ export class ModHalfCubeVoxelConstructor extends VoxelConstructor {
     const modState = tool.voxel.getMod();
     const shapeState = tool.voxel.getShapeState();
 
-    if (tool.isFaceExposed(VoxelFaces.Top)) {
-      if (shapeState == HalfCubeStates.Bottom) LightGradient.aoOffset.y = -1;
+    if (tool.isFaceExposed(VoxelFaces.Up)) {
+      if (shapeState == HalfCubeStates.Down) LightGradient.aoOffset.y = -1;
       tool
-        .setTexture(this.textures[VoxelFaces.Top][modState])
-        .calculateLight(VoxelFaces.Top);
-      HalfCubeVoxelShape.add.top();
+        .setTexture(this.textures[VoxelFaces.Up][modState])
+        .calculateLight(VoxelFaces.Up);
+      HalfCubeVoxelShape.add.up();
       LightGradient.aoOffset.y = 0;
     }
-    if (tool.isFaceExposed(VoxelFaces.Bottom)) {
+    if (tool.isFaceExposed(VoxelFaces.Down)) {
       tool
-        .setTexture(this.textures[VoxelFaces.Bottom][modState])
-        .calculateLight(VoxelFaces.Bottom);
-      HalfCubeVoxelShape.add.bottom();
+        .setTexture(this.textures[VoxelFaces.Down][modState])
+        .calculateLight(VoxelFaces.Down);
+      HalfCubeVoxelShape.add.down();
     }
     if (tool.isFaceExposed(VoxelFaces.East)) {
       tool

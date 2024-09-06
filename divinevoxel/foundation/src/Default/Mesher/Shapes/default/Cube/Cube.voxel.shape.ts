@@ -26,7 +26,7 @@ const uvs: QuadUVData = [
 ];
 
 const Quads: Record<DirectionNames, Quad> = {
-  top: Quad.Create(
+  up: Quad.Create(
     [
       [0, 1, 0],
       [1, 1, 1],
@@ -35,7 +35,7 @@ const Quads: Record<DirectionNames, Quad> = {
     false,
     0
   ),
-  bottom: Quad.Create(
+  down: Quad.Create(
     [
       [0, 0, 0],
       [1, 0, 1],
@@ -115,21 +115,21 @@ class CubeVoxelShapeClass extends VoxelShapeBase {
       this.numberId,
       VoxelShapeManager.getMappedId("#dve_half_cube"),
       (data) => {
-        if (data.neighborVoxel.getShapeState() == HalfCubeStates.Top) {
-          if (data.face == VoxelFaces.Top) {
+        if (data.neighborVoxel.getShapeState() == HalfCubeStates.Up) {
+          if (data.face == VoxelFaces.Up) {
             return true;
           }
-          if (data.face == VoxelFaces.Bottom) {
+          if (data.face == VoxelFaces.Down) {
             return false;
           }
           return true;
         }
 
-        if (data.neighborVoxel.getShapeState() == HalfCubeStates.Bottom) {
-          if (data.face == VoxelFaces.Top) {
+        if (data.neighborVoxel.getShapeState() == HalfCubeStates.Down) {
+          if (data.face == VoxelFaces.Up) {
             return false;
           }
-          if (data.face == VoxelFaces.Bottom) {
+          if (data.face == VoxelFaces.Down) {
             return true;
           }
           return true;
@@ -143,21 +143,21 @@ class CubeVoxelShapeClass extends VoxelShapeBase {
       this.numberId,
       VoxelShapeManager.getMappedId("#dve_half_cube"),
       (data) => {
-        if (data.neighborVoxel.getShapeState() == HalfCubeStates.Top) {
-          if (data.face == VoxelFaces.Top) {
+        if (data.neighborVoxel.getShapeState() == HalfCubeStates.Up) {
+          if (data.face == VoxelFaces.Up) {
             return false;
           }
-          if (data.face == VoxelFaces.Bottom) {
+          if (data.face == VoxelFaces.Down) {
             return true;
           }
           return true;
         }
 
-        if (data.neighborVoxel.getShapeState() == HalfCubeStates.Bottom) {
-          if (data.face == VoxelFaces.Top) {
+        if (data.neighborVoxel.getShapeState() == HalfCubeStates.Down) {
+          if (data.face == VoxelFaces.Up) {
             return true;
           }
-          if (data.face == VoxelFaces.Bottom) {
+          if (data.face == VoxelFaces.Down) {
             return false;
           }
           if (data.currentVoxel.y == data.neighborVoxel.y) {
@@ -192,23 +192,23 @@ class CubeVoxelShapeClass extends VoxelShapeBase {
     );
   }
   add = {
-    top() {
-      Quads.top.flip = ShapeTool.data.isFaceFlipped();
+    up() {
+      Quads.up.flip = ShapeTool.data.isFaceFlipped();
       if (ShapeTool.data.voxel.getSubstnaceData().isWindAffected()) {
         ShapeTool.data
           .getAnimationData()
           .setAll(VoxelShaderData.AnimationStates.WindAffected.Box);
       }
-      VoxelGeometry.addQuad(ShapeTool.data, ShapeTool.origin, Quads.top);
+      VoxelGeometry.addQuad(ShapeTool.data, ShapeTool.origin, Quads.up);
     },
-    bottom() {
-      Quads.bottom.flip = ShapeTool.data.isFaceFlipped();
+    down() {
+      Quads.down.flip = ShapeTool.data.isFaceFlipped();
       if (ShapeTool.data.voxel.getSubstnaceData().isWindAffected()) {
         ShapeTool.data
           .getAnimationData()
           .setAll(VoxelShaderData.AnimationStates.WindAffected.Box);
       }
-      VoxelGeometry.addQuad(ShapeTool.data, ShapeTool.origin, Quads.bottom);
+      VoxelGeometry.addQuad(ShapeTool.data, ShapeTool.origin, Quads.down);
     },
     north() {
       Quads.north.flip = ShapeTool.data.isFaceFlipped();
@@ -256,7 +256,7 @@ const CubeCullFunctions: Record<
   VoxelFaces,
   (data: FaceDataOverride) => boolean
 > = {
-  [VoxelFaces.Top]: (data) => {
+  [VoxelFaces.Up]: (data) => {
     if (
       data.currentVoxel.getSubstnaceData().cullDense() &&
       data.neighborVoxel.loadInAt(
@@ -276,7 +276,7 @@ const CubeCullFunctions: Record<
     }
     return data.default;
   },
-  [VoxelFaces.Bottom]: (data) => {
+  [VoxelFaces.Down]: (data) => {
     if (
       data.currentVoxel.getSubstnaceData().cullDense() &&
       data.neighborVoxel.loadInAt(

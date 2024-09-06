@@ -88,6 +88,8 @@ export class DVEBRClassicMaterial extends URIMaterial<
 
     this._material.fogEnabled = true;
 
+ // shaderMaterial.wireframe = true;
+
     if (data.stencil) {
       shaderMaterial.stencil.enabled = true;
       shaderMaterial.stencil.func = Engine.NOTEQUAL;

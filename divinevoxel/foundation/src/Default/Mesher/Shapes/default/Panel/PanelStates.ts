@@ -3,6 +3,6 @@ export enum PanelStates {
     North,
     East,
     West,
-    Bottom,
-    Top,
+    Down,
+    Up,
   }

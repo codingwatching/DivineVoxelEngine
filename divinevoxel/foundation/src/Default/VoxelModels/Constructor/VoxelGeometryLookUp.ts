@@ -18,7 +18,7 @@ export class VoxelGeometryLookUp {
     this.dataTool.setDimension(dimension);
   }
 
-  static stop() {
+  static sup() {
     this.stateCache.length = 0;
     this.geometryCache.length = 0;
   }

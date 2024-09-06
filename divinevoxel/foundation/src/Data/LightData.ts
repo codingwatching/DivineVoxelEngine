@@ -241,7 +241,7 @@ export const LightData = {
 
     return sl1 + this.SRS < sl2;
   },
-  /**# Is Less Than For Sun Add Down
+  /**# Is Less Than For Sun AddDown
    *
    * Used to calculate sun light addition.
    * Used to check only the down neighbor.
@@ -335,7 +335,7 @@ export const LightData = {
     let s2 = this.getS(sl);
     return s1 >= s2;
   },
-  /**# Sun Light Compare For Down Sun Remove
+  /**# Sun Light Compare ForDown Sun Remove
    * ---
    * Compares two encoded light values sun light values.
    * Used for sun light removal in the downward direction only.

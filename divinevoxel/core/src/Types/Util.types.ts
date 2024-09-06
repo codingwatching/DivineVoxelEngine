@@ -1,8 +1,8 @@
 import { CompassDirectionNames } from "../Math/Math.types";
 
 export type DirectionNames =
- | "top"
- | "bottom"
+ | "up"
+ | "down"
  | Exclude<
     CompassDirectionNames,
     "north-west" | "north-east" | "south-west" | "south-east"

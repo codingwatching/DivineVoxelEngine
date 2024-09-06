@@ -143,5 +143,5 @@ export function RunWorldSun(tasks: WorldSunTaskRequest) {
     }
   }
 
-  tasks.stop();
+  tasks.sup();
 }

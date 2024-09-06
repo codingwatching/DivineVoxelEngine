@@ -1,4 +1,4 @@
-import { OcclusionPlaneResults } from "../Classes/OcclusionPlane";
+import { OcclusionQuadResults } from "../Classes/OcclusionQuad";
 import {
   VoxelFaceNameArray,
   VoxelFaceNameDirectionsRecord,
@@ -13,7 +13,7 @@ export function BuildOcclusionRules(
   main.occlusionPlane.setOffset(0, 0, 0);
   
   for (const offsetDirection of VoxelFaceNameArray) {
-    const results = new OcclusionPlaneResults<boolean>();
+    const results = new OcclusionQuadResults<boolean>();
     other.occlusionPlane.setOffset(
       ...VoxelFaceNameDirectionsRecord[offsetDirection]
     );

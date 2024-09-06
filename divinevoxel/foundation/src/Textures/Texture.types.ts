@@ -74,12 +74,12 @@ export type TextureData = {
   * The name of the texture must be default with the folder being its ID.
   * Variations allow you to add variations to the same texture.
   *
-  * If you add a variation of "grassy-top" you must you include in the
-  * folder of the texture one with the name 'grassy-top'.
+  * If you add a variation of "grassy-up" you must you include in the
+  * folder of the texture one with the name 'grassy-up'.
   *
   * So the files in that folder would be for a texture with the ID **dreamstone**
   * - dreamstone/default.png
-  * - dreamstone/grassy-top.png
+  * - dreamstone/grassy-up.png
   */
  variations?: Record<string, TextureAnimationData & TextureDataBase>;
 } & TextureAnimationData &

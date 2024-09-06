@@ -100,8 +100,8 @@ export class VoxelMesherDataTool extends MesherDataTool {
   }
 
   clearCalculatedData() {
-    this.dataCalculated[VoxelFaces.Top] = false;
-    this.dataCalculated[VoxelFaces.Bottom] = false;
+    this.dataCalculated[VoxelFaces.Up] = false;
+    this.dataCalculated[VoxelFaces.Down] = false;
     this.dataCalculated[VoxelFaces.North] = false;
     this.dataCalculated[VoxelFaces.South] = false;
     this.dataCalculated[VoxelFaces.East] = false;

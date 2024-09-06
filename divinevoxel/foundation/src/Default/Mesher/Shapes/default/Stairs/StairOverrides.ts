@@ -21,7 +21,7 @@ import {
 enum FaceType {
   Box,
   Side,
-  Top,
+  Up,
   Front,
 }
 
@@ -42,8 +42,8 @@ const sideFaces = [
 ];
 
 const DefaultStair: StairShapeState = {
-  [VoxelFaces.Top]: FaceType.Top,
-  [VoxelFaces.Bottom]: FaceType.Box,
+  [VoxelFaces.Up]: FaceType.Up,
+  [VoxelFaces.Down]: FaceType.Box,
   [VoxelFaces.North]: FaceType.Box,
   [VoxelFaces.South]: FaceType.Front,
   [VoxelFaces.West]: FaceType.Side,
@@ -51,8 +51,8 @@ const DefaultStair: StairShapeState = {
 };
 
 const DefaultConnectedStair: StairShapeState = {
-  [VoxelFaces.Top]: FaceType.Top,
-  [VoxelFaces.Bottom]: FaceType.Box,
+  [VoxelFaces.Up]: FaceType.Up,
+  [VoxelFaces.Down]: FaceType.Box,
   [VoxelFaces.North]: FaceType.Box,
   [VoxelFaces.South]: FaceType.Front,
   [VoxelFaces.West]: FaceType.Front,
@@ -69,8 +69,8 @@ const createRototation = (
 ) => {
   const newData = structuredClone(data);
   if (upsideDown) {
-    newData[VoxelFaces.Top] = data[VoxelFaces.Bottom];
-    newData[VoxelFaces.Bottom] = data[VoxelFaces.Top];
+    newData[VoxelFaces.Up] = data[VoxelFaces.Down];
+    newData[VoxelFaces.Down] = data[VoxelFaces.Up];
   }
 
   for (const face of sideFaces) {
@@ -88,36 +88,36 @@ const createRototation = (
  * final
  */
 const StairShapeStates: Record<StairStates, StairShapeState> = {
-  [StairStates.BottomNorth]: createRototation(0, DefaultStair),
-  [StairStates.BottomSouth]: createRototation(deg180, DefaultStair),
-  [StairStates.BottomEast]: createRototation(deg90, DefaultStair),
-  [StairStates.BottomWest]: createRototation(deg270, DefaultStair),
-  [StairStates.TopNorth]: createRototation(0, DefaultStair, true),
-  [StairStates.TopSouth]: createRototation(deg180, DefaultStair, true),
-  [StairStates.TopEast]: createRototation(deg90, DefaultStair, true),
-  [StairStates.TopWest]: createRototation(deg270, DefaultStair, true),
-  [StairStates.BottomNorthEast]: createRototation(0, DefaultConnectedStair),
-  [StairStates.BottomSouthWest]: createRototation(
+  [StairStates.DownNorth]: createRototation(0, DefaultStair),
+  [StairStates.DownSouth]: createRototation(deg180, DefaultStair),
+  [StairStates.DownEast]: createRototation(deg90, DefaultStair),
+  [StairStates.DownWest]: createRototation(deg270, DefaultStair),
+  [StairStates.UpNorth]: createRototation(0, DefaultStair, true),
+  [StairStates.UpSouth]: createRototation(deg180, DefaultStair, true),
+  [StairStates.UpEast]: createRototation(deg90, DefaultStair, true),
+  [StairStates.UpWest]: createRototation(deg270, DefaultStair, true),
+  [StairStates.DownNorthEast]: createRototation(0, DefaultConnectedStair),
+  [StairStates.DownSouthWest]: createRototation(
     deg180,
     DefaultConnectedStair
   ),
-  [StairStates.BottomSouthEast]: createRototation(deg90, DefaultConnectedStair),
-  [StairStates.BottomNorthWest]: createRototation(
+  [StairStates.DownSouthEast]: createRototation(deg90, DefaultConnectedStair),
+  [StairStates.DownNorthWest]: createRototation(
     deg270,
     DefaultConnectedStair
   ),
-  [StairStates.TopNorthEast]: createRototation(0, DefaultConnectedStair, true),
-  [StairStates.TopSouthWest]: createRototation(
+  [StairStates.UpNorthEast]: createRototation(0, DefaultConnectedStair, true),
+  [StairStates.UpSouthWest]: createRototation(
     deg180,
     DefaultConnectedStair,
     true
   ),
-  [StairStates.TopSouthEast]: createRototation(
+  [StairStates.UpSouthEast]: createRototation(
     deg90,
     DefaultConnectedStair,
     true
   ),
-  [StairStates.TopNorthWest]: createRototation(
+  [StairStates.UpNorthWest]: createRototation(
     deg270,
     DefaultConnectedStair,
     true
@@ -141,7 +141,7 @@ export class StairOverrides {
         const opositeFaceType = StairOverrides.getStairState(
           data.neighborVoxel.getShapeState()
         )[VoxelFaceOpositeDirectionMap[data.face]];
-        if (faceType == FaceType.Top) return true;
+        if (faceType == FaceType.Up) return true;
         if (faceType == FaceType.Box && opositeFaceType == FaceType.Box)
           return false;
         if (faceType == FaceType.Side && opositeFaceType == FaceType.Side)
@@ -156,7 +156,7 @@ export class StairOverrides {
         const faceType = StairOverrides.getStairState(
           data.currentVoxel.getShapeState()
         )[data.face];
-        if (faceType == FaceType.Top) return true;
+        if (faceType == FaceType.Up) return true;
         if (faceType == FaceType.Box) return false;
         return true;
       }
@@ -169,11 +169,11 @@ export class StairOverrides {
         const faceType = StairOverrides.getStairState(
           data.currentVoxel.getShapeState()
         )[data.face];
-        if (state == HalfCubeStates.Bottom) {
+        if (state == HalfCubeStates.Down) {
           return true;
         }
-        if (state == HalfCubeStates.Top) {
-          if (faceType == FaceType.Top) return false;
+        if (state == HalfCubeStates.Up) {
+          if (faceType == FaceType.Up) return false;
         }
         return true;
       }
@@ -186,7 +186,7 @@ export class StairOverrides {
         const faceType = StairOverrides.getStairState(
           data.currentVoxel.getShapeState()
         )[data.face];
-        if (state == HalfCubeStates.Bottom) {
+        if (state == HalfCubeStates.Down) {
           if(data.neighborVoxel.y < data.currentVoxel.y) return false;
           if (faceType == FaceType.Front) return false;
           return true;
@@ -200,7 +200,7 @@ export class StairOverrides {
       (data) => {
         const state = data.currentVoxel.getShapeState();
 
-        if (state == HalfCubeStates.Bottom) {
+        if (state == HalfCubeStates.Down) {
           if (data.currentVoxel.y == data.neighborVoxel.y) return false;
           return data.default;
         }
@@ -219,7 +219,7 @@ export class StairOverrides {
       HalfCubeVoxelShape.numberId,
       (data) => {
         const state = data.currentVoxel.getShapeState();
-        if (state == HalfCubeStates.Top) {
+        if (state == HalfCubeStates.Up) {
           return true;
         }
         return false;

@@ -9,11 +9,11 @@ class StairVoxelShapeClass extends VoxelShapeBase {
     StairOverrides.init();
   }
   add = {
-    top() {
-      addStairQuads(VoxelFaces.Top);
+    up() {
+      addStairQuads(VoxelFaces.Up);
     },
-    bottom() {
-      addStairQuads(VoxelFaces.Bottom);
+    down() {
+      addStairQuads(VoxelFaces.Down);
     },
     north() {
       addStairQuads(VoxelFaces.North);

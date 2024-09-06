@@ -28,19 +28,19 @@ const isAllEqual = (
   return num == v1 && v1 == v2 && v2 == v3;
 };
 const shouldSunFlip = (face: VoxelFaces) => {
-  const topRight = LD.getS(LightValue.vertices[QuadVerticies.TopRight]);
-  const topLeft = LD.getS(LightValue.vertices[QuadVerticies.TopLeft]);
-  const bottomLeft = LD.getS(LightValue.vertices[QuadVerticies.BottomLeft]);
-  const bottomRight = LD.getS(LightValue.vertices[QuadVerticies.BottomRight]);
-  if (isAllEqual(topRight, topLeft, bottomLeft, bottomRight)) return false;
+  const upRight = LD.getS(LightValue.vertices[QuadVerticies.TopRight]);
+  const upLeft = LD.getS(LightValue.vertices[QuadVerticies.TopLeft]);
+  const downLeft = LD.getS(LightValue.vertices[QuadVerticies.BottomLeft]);
+  const downRight = LD.getS(LightValue.vertices[QuadVerticies.BottomRight]);
+  if (isAllEqual(upRight, upLeft, downLeft, downRight)) return false;
   const t1 =
-    bottomLeft > topLeft && bottomLeft > topRight && bottomLeft > bottomRight;
+    downLeft > upLeft && downLeft > upRight && downLeft > downRight;
   const t2 =
-    topRight > topLeft && topRight > bottomLeft && topRight > bottomRight;
+    upRight > upLeft && upRight > downLeft && upRight > downRight;
   const t3 =
-    topLeft < bottomLeft && topLeft < topRight && topLeft < bottomRight;
+    upLeft < downLeft && upLeft < upRight && upLeft < downRight;
   const t4 =
-    bottomRight < topLeft && bottomRight < topRight && bottomRight < topLeft;
+    downRight < upLeft && downRight < upRight && downRight < upLeft;
   if (t1 && !t2) return true;
   if (t2 && !t1) return true;
   if (t3) return true;
@@ -49,19 +49,19 @@ const shouldSunFlip = (face: VoxelFaces) => {
 };
 
 const shouldRGBFlip = (face: VoxelFaces) => {
-  const topRight = LD.getRGB(LightValue.vertices[QuadVerticies.TopRight]);
-  const topLeft = LD.getRGB(LightValue.vertices[QuadVerticies.TopLeft]);
-  const bottomLeft = LD.getRGB(LightValue.vertices[QuadVerticies.BottomLeft]);
-  const bottomRight = LD.getRGB(LightValue.vertices[QuadVerticies.BottomRight]);
-  if (isAllEqual(topRight, topLeft, bottomLeft, bottomRight)) return false;
+  const upRight = LD.getRGB(LightValue.vertices[QuadVerticies.TopRight]);
+  const upLeft = LD.getRGB(LightValue.vertices[QuadVerticies.TopLeft]);
+  const downLeft = LD.getRGB(LightValue.vertices[QuadVerticies.BottomLeft]);
+  const downRight = LD.getRGB(LightValue.vertices[QuadVerticies.BottomRight]);
+  if (isAllEqual(upRight, upLeft, downLeft, downRight)) return false;
   const t1 =
-    bottomLeft > topLeft && bottomLeft > topRight && bottomLeft > bottomRight;
+    downLeft > upLeft && downLeft > upRight && downLeft > downRight;
   const t2 =
-    topRight > topLeft && topRight > bottomLeft && topRight > bottomRight;
+    upRight > upLeft && upRight > downLeft && upRight > downRight;
   const t3 =
-    topLeft < bottomLeft && topLeft < topRight && topLeft < bottomRight;
+    upLeft < downLeft && upLeft < upRight && upLeft < downRight;
   const t4 =
-    bottomRight < topLeft && bottomRight < topRight && bottomRight < topLeft;
+    downRight < upLeft && downRight < upRight && downRight < upLeft;
   if (t1 && !t2) return true;
   if (t2 && !t1) return true;
   if (t3) return true;
@@ -83,14 +83,14 @@ const shouldAOFlip = (face: VoxelFaces) => {
   ) {
     return false;
   }
-  const topRight = AOValue.vertices[QuadVerticies.TopRight];
-  const topLeft = AOValue.vertices[QuadVerticies.TopLeft];
-  const bottomRight = AOValue.vertices[QuadVerticies.BottomRight];
-  const bottomLeft = AOValue.vertices[QuadVerticies.BottomLeft];
+  const upRight = AOValue.vertices[QuadVerticies.TopRight];
+  const upLeft = AOValue.vertices[QuadVerticies.TopLeft];
+  const downRight = AOValue.vertices[QuadVerticies.BottomRight];
+  const downLeft = AOValue.vertices[QuadVerticies.BottomLeft];
 
-  if (isAllEqual(topRight, topLeft, bottomLeft, bottomRight)) return false;
-  const t1 = isMax(topRight, topLeft, bottomRight);
-  const t2 = isMax(bottomLeft, topLeft, bottomRight);
+  if (isAllEqual(upRight, upLeft, downLeft, downRight)) return false;
+  const t1 = isMax(upRight, upLeft, downRight);
+  const t2 = isMax(downLeft, upLeft, downRight);
   if (t1 || t2) return true;
   return false;
 };
@@ -165,7 +165,7 @@ export const LightGradient = {
       }
     }
 
-    if (face == VoxelFaces.Top) {
+    if (face == VoxelFaces.Up) {
       if (tool.nVoxel.isRenderable() && !tool.nVoxel.isLightSource()) {
         tool.faceDataOverride.face = face;
         tool.faceDataOverride.default = false;

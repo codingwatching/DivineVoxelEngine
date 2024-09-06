@@ -85,7 +85,7 @@ export class ChunkProcessor {
       this.heightMapTool.chunk.setY(y).setHasVoxels(foundVoxels);
       this.heightMapTool.chunk.setY(y).setDirty(false);
     }
-    VoxelGeometryLookUp.stop();
+    VoxelGeometryLookUp.sup();
 
     const chunks = <SetChunkMeshTask>[location, [], priority];
     const trasnfers: any[] = [];

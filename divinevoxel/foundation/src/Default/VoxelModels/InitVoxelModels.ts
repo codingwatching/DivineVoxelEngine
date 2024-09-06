@@ -8,7 +8,7 @@ import {
   halfCube,
   pillarCube,
   quaterCubeSouthNorth,
-  quaterCubeTopBottom,
+  quaterCubeUpDown,
   quaterCubeWestEast,
   simpleCube,
   stair,
@@ -34,12 +34,14 @@ export function InitVoxelModels(data: {
   models?: VoxelModelData[];
   voxels: VoxelData[];
 }) {
+
+  
   const t1 = performance.now();
   VoxelModelRuleBuilder.registerGeometry(
     cube,
  /*    halfCube,
     quaterCubeSouthNorth,
-    quaterCubeTopBottom,
+    quaterCubeUpDown,
     quaterCubeWestEast,
     eighthCube,
     fencePost,

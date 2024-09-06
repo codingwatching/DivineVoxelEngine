@@ -18,7 +18,7 @@ const vertexLevel = new QuadScalarVertexData();
 
 enum FlowStates {
   None = 0,
-  Down = 1,
+ Down = 1,
   Up = 2,
 }
 
@@ -53,71 +53,71 @@ const getFlowAngle = (): CompassAngles | 0 => {
     flowAnimationState = FlowStates.None;
     return 0;
   }
-  const topRight = vertexLevel.vertices[QuadVerticies.TopRight];
-  const topLeft = vertexLevel.vertices[QuadVerticies.TopLeft];
-  const bottomLeft = vertexLevel.vertices[QuadVerticies.BottomLeft];
-  const bottomRight = vertexLevel.vertices[QuadVerticies.BottomRight];
+  const upRight = vertexLevel.vertices[QuadVerticies.TopRight];
+  const upLeft = vertexLevel.vertices[QuadVerticies.TopLeft];
+  const downLeft = vertexLevel.vertices[QuadVerticies.BottomLeft];
+  const downRight = vertexLevel.vertices[QuadVerticies.BottomRight];
 
-  const topEqual = topRight == topLeft;
-  const bottomEqual = bottomRight == bottomLeft;
-  const rightEqual = topRight == bottomRight;
-  const leftEqual = topLeft == bottomLeft;
+  const upEqual = upRight == upLeft;
+  const downEqual = downRight == downLeft;
+  const rightEqual = upRight == downRight;
+  const leftEqual = upLeft == downLeft;
 
-  if (topEqual && bottomEqual) {
-    if (topRight < bottomRight) {
+  if (upEqual && downEqual) {
+    if (upRight < downRight) {
       flowAnimationState = FlowStates.Up;
       return CompassAngles.North;
     }
-    if (topRight > bottomRight) {
+    if (upRight > downRight) {
       flowAnimationState = FlowStates.Up;
       return CompassAngles.South;
     }
   }
 
   if (rightEqual && leftEqual) {
-    if (topRight < topLeft) {
+    if (upRight < upLeft) {
       flowAnimationState = FlowStates.Up;
       return CompassAngles.East;
     }
-    if (topRight > topLeft) {
+    if (upRight > upLeft) {
       flowAnimationState = FlowStates.Up;
       return CompassAngles.West;
     }
   }
 
   if (
-    (bottomRight < topRight &&
-      bottomRight < topLeft &&
-      bottomRight < bottomLeft) ||
-    (topLeft > topRight && topLeft > bottomRight && topLeft > bottomLeft)
+    (downRight < upRight &&
+      downRight < upLeft &&
+      downRight < downLeft) ||
+    (upLeft > upRight && upLeft > downRight && upLeft > downLeft)
   ) {
     flowAnimationState = FlowStates.Up;
     return CompassAngles.SouthEast;
   }
 
   if (
-    (topLeft < topRight && topLeft < bottomRight && topLeft < bottomLeft) ||
-    (bottomRight > topRight &&
-      bottomRight > topLeft &&
-      bottomRight > bottomLeft)
+    (upLeft < upRight && upLeft < downRight && upLeft < downLeft) ||
+    (downRight > upRight &&
+      downRight > upLeft &&
+      downRight > downLeft)
   ) {
     flowAnimationState = FlowStates.Up;
     return CompassAngles.NorthWest;
   }
 
   if (
-    (topRight < bottomRight && topRight < topLeft && topRight < bottomLeft) ||
-    (bottomLeft > bottomRight && bottomLeft > topLeft && bottomLeft > topRight)
+    (upRight < downRight && upRight < upLeft && upRight < downLeft) ||
+    (downLeft > downRight && downLeft > upLeft && downLeft > upRight)
   ) {
     flowAnimationState = FlowStates.Up;
     return CompassAngles.NorthEast;
   }
 
   if (
-    (bottomLeft < bottomRight &&
-      bottomLeft < topLeft &&
-      bottomLeft < topRight) ||
-    (topRight > bottomRight && topRight > topLeft && topRight > bottomLeft)
+    (downLeft < downRight &&
+      downLeft < upLeft &&
+      downLeft < upRight) ||
+    (upRight > downRight && upRight > upLeft && upRight > downLeft)
   ) {
     flowAnimationState = FlowStates.Up;
     return CompassAngles.SouthWest;
@@ -126,7 +126,7 @@ const getFlowAngle = (): CompassAngles | 0 => {
   return CompassAngles.North;
 };
 
-let topFaceExposed = false;
+let upFaceExposed = false;
 let level = 0;
 
 const uvs: QuadUVData = [
@@ -136,7 +136,7 @@ const uvs: QuadUVData = [
   [1, 0],
 ];
 const Quads: Record<DirectionNames, Quad> = {
-  top: Quad.Create(
+  up: Quad.Create(
     [
       [0, waterHeight, 0],
       [1, waterHeight, 1],
@@ -145,7 +145,7 @@ const Quads: Record<DirectionNames, Quad> = {
     false,
     0
   ),
-  bottom: Quad.Create(
+  down: Quad.Create(
     [
       [0, 0, 0],
       [1, 0, 1],
@@ -200,7 +200,7 @@ class LiquidVoxelShapeClass extends VoxelShapeBase {
       OverrideManager.ANY,
       (data) => {
         if (
-          data.face == VoxelFaces.Top &&
+          data.face == VoxelFaces.Up &&
           data.currentVoxel.getStringId() != data.neighborVoxel.getStringId()
         ) {
           return true;
@@ -210,15 +210,15 @@ class LiquidVoxelShapeClass extends VoxelShapeBase {
     );
   }
   start() {
-    topFaceExposed = false;
+    upFaceExposed = false;
     flowAnimationState = 0;
     vertexLevel.setAll(15);
     vertexValue.setAll(0);
     level = ShapeTool.data.voxel.getLevel();
   }
   add = {
-    top() {
-      topFaceExposed = true;
+    up() {
+      upFaceExposed = true;
       const level = ShapeTool.data.voxel.getLevel();
 
       ShapeTool.data.calculateFlow();
@@ -233,37 +233,37 @@ class LiquidVoxelShapeClass extends VoxelShapeBase {
       const uvAngle = getFlowAngle();
       const uvSet = quadRotations[uvAngle];
 
-      Quads.top.uvs.vertices[QuadVerticies.TopRight].x = uvSet[0][0];
-      Quads.top.uvs.vertices[QuadVerticies.TopRight].y = uvSet[0][1];
+      Quads.up.uvs.vertices[QuadVerticies.TopRight].x = uvSet[0][0];
+      Quads.up.uvs.vertices[QuadVerticies.TopRight].y = uvSet[0][1];
 
-      Quads.top.uvs.vertices[QuadVerticies.TopLeft].x = uvSet[1][0];
-      Quads.top.uvs.vertices[QuadVerticies.TopLeft].y = uvSet[1][1];
+      Quads.up.uvs.vertices[QuadVerticies.TopLeft].x = uvSet[1][0];
+      Quads.up.uvs.vertices[QuadVerticies.TopLeft].y = uvSet[1][1];
 
-      Quads.top.uvs.vertices[QuadVerticies.BottomLeft].x = uvSet[2][0];
-      Quads.top.uvs.vertices[QuadVerticies.BottomLeft].y = uvSet[2][1];
+      Quads.up.uvs.vertices[QuadVerticies.BottomLeft].x = uvSet[2][0];
+      Quads.up.uvs.vertices[QuadVerticies.BottomLeft].y = uvSet[2][1];
 
-      Quads.top.uvs.vertices[QuadVerticies.BottomRight].x = uvSet[3][0];
-      Quads.top.uvs.vertices[QuadVerticies.BottomRight].y = uvSet[3][1];
+      Quads.up.uvs.vertices[QuadVerticies.BottomRight].x = uvSet[3][0];
+      Quads.up.uvs.vertices[QuadVerticies.BottomRight].y = uvSet[3][1];
 
-      Quads.top.positions.vertices[1].y = vertexValue.vertices[1] * waterHeight;
-      Quads.top.positions.vertices[2].y = vertexValue.vertices[2] * waterHeight;
-      Quads.top.positions.vertices[3].y = vertexValue.vertices[3] * waterHeight;
-      Quads.top.positions.vertices[4].y = vertexValue.vertices[4] * waterHeight;
+      Quads.up.positions.vertices[1].y = vertexValue.vertices[1] * waterHeight;
+      Quads.up.positions.vertices[2].y = vertexValue.vertices[2] * waterHeight;
+      Quads.up.positions.vertices[3].y = vertexValue.vertices[3] * waterHeight;
+      Quads.up.positions.vertices[4].y = vertexValue.vertices[4] * waterHeight;
 
       ShapeTool.data.getAnimationData().setAll(flowAnimationState);
-      Quads.top.flip = ShapeTool.data.isFaceFlipped();
-      VoxelGeometry.addQuad(ShapeTool.data, ShapeTool.origin, Quads.top);
+      Quads.up.flip = ShapeTool.data.isFaceFlipped();
+      VoxelGeometry.addQuad(ShapeTool.data, ShapeTool.origin, Quads.up);
     },
 
-    bottom() {
+    down() {
       ShapeTool.data.getAnimationData().setAll(0);
-      CubeVoxelShape.add.bottom();
+      CubeVoxelShape.add.down();
     },
 
     north() {
       ShapeTool.data.getAnimationData().setAll(1);
       Quads.north.flip = ShapeTool.data.isFaceFlipped();
-      if (topFaceExposed) {
+      if (upFaceExposed) {
         Quads.north.positions.vertices[QuadVerticies.TopRight].y =
           vertexValue.vertices[QuadVerticies.TopRight] * waterHeight;
         Quads.north.positions.vertices[QuadVerticies.TopLeft].y =
@@ -283,7 +283,7 @@ class LiquidVoxelShapeClass extends VoxelShapeBase {
     south() {
       Quads.south.flip = ShapeTool.data.isFaceFlipped();
       ShapeTool.data.getAnimationData().setAll(1);
-      if (topFaceExposed) {
+      if (upFaceExposed) {
         Quads.south.positions.vertices[QuadVerticies.TopRight].y =
           vertexValue.vertices[QuadVerticies.BottomRight] * waterHeight;
         Quads.south.positions.vertices[QuadVerticies.TopLeft].y =
@@ -304,7 +304,7 @@ class LiquidVoxelShapeClass extends VoxelShapeBase {
     east() {
       ShapeTool.data.getAnimationData().setAll(1);
       Quads.east.flip = ShapeTool.data.isFaceFlipped();
-      if (topFaceExposed) {
+      if (upFaceExposed) {
         Quads.east.positions.vertices[QuadVerticies.TopRight].y =
           vertexValue.vertices[QuadVerticies.TopRight] * waterHeight;
         Quads.east.positions.vertices[QuadVerticies.TopLeft].y =
@@ -325,7 +325,7 @@ class LiquidVoxelShapeClass extends VoxelShapeBase {
     west() {
       ShapeTool.data.getAnimationData().setAll(1);
       Quads.west.flip = ShapeTool.data.isFaceFlipped();
-      if (topFaceExposed) {
+      if (upFaceExposed) {
         Quads.west.positions.vertices[QuadVerticies.TopRight].y =
           vertexValue.vertices[QuadVerticies.TopLeft] * waterHeight;
         Quads.west.positions.vertices[QuadVerticies.TopLeft].y =

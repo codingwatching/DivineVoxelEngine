@@ -24,8 +24,8 @@ class V3 {
 
 export class Vector3 extends V3 {
  static Zero = new Vector3(0, 0, 0);
- static Top = new Vector3(0, 1, 0);
- static Bottom = new Vector3(0, -1, 0);
+ static Up = new Vector3(0, 1, 0);
+ static Down = new Vector3(0, -1, 0);
  static East = new Vector3(1, 0, 0);
  static West = new Vector3(-1, 0, 0);
  static North = new Vector3(0, 0, 1);

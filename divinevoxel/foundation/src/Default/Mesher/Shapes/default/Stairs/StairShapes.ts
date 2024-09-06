@@ -56,13 +56,13 @@ const fullUVs: QuadUVData = [
   [0, 0],
   [1, 0],
 ];
-const topHalfUVs: QuadUVData = [
+const upHalfUVs: QuadUVData = [
   [1, 1],
   [0, 1],
   [0, 0.5],
   [1, 0.5],
 ];
-const bottomHalfUVs: QuadUVData = [
+const downHalfUVs: QuadUVData = [
   [1, 0.5],
   [0, 0.5],
   [0, 0],
@@ -75,7 +75,7 @@ const upperRightQuaterUvs: QuadUVData = [
   [0.5, 0.5],
   [1, 0.5],
 ];
-const bottomLeftQuaterUvs: QuadUVData = [
+const downLeftQuaterUvs: QuadUVData = [
   [0.5, 0.5],
   [0, 0.5],
   [0, 0],
@@ -93,16 +93,16 @@ const HalfRight: BlendedVerticies = [
 const HalfLeft: BlendedVerticies = [
   [1, QuadVerticies.TopLeft, 1, QuadVerticies.BottomLeft],
 ];
-const CenterTopLeft: BlendedVerticies = [
+const CenterUpLeft: BlendedVerticies = [
   [1, QuadVerticies.TopLeft, 1, QuadVerticies.TopRight],
 ];
-const CenterTopRight: BlendedVerticies = [
+const CenterUpRight: BlendedVerticies = [
   [1, QuadVerticies.TopLeft, 1, QuadVerticies.TopRight],
 ];
-const CenterBottomLeft: BlendedVerticies = [
+const CenterDownLeft: BlendedVerticies = [
   [1, QuadVerticies.BottomLeft, 1, QuadVerticies.BottomRight],
 ];
-const CenterBottomRight: BlendedVerticies = [
+const CenterDownRight: BlendedVerticies = [
   [1, QuadVerticies.BottomLeft, 1, QuadVerticies.BottomRight],
 ];
 const Center: BlendedVerticies = [
@@ -147,7 +147,7 @@ const normalShading = createShading(
   [QuadVerticies.BottomRight, QuadVerticies.BottomRight]
 );
 
-const sideBottomShade = [
+const sideDownShade = [
   createShading(
     [HalfRight, HalfRight],
     [HalfLeft, HalfLeft],
@@ -166,14 +166,14 @@ const sideBottomShade = [
  * starting shapes
  */
 const DefaultStair: StairShapeState = {
-  [VoxelFaces.Top]: [
-    //top split face
+  [VoxelFaces.Up]: [
+    //up split face
     [
       [
         [0, 0.5, 0],
         [1, 0.5, 0.5],
       ],
-      bottomHalfUVs,
+      downHalfUVs,
       [
         createShading(
           [AO.Dark, HalfRight],
@@ -183,8 +183,8 @@ const DefaultStair: StairShapeState = {
         ),
         //90
         createShading(
-          [AO.Dark, CenterBottomRight],
-          [AO.Dark, CenterTopRight],
+          [AO.Dark, CenterDownRight],
+          [AO.Dark, CenterUpRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft]
         ),
@@ -197,8 +197,8 @@ const DefaultStair: StairShapeState = {
         ),
         //270
         createShading(
-          [AO.Dark, CenterTopLeft],
-          [AO.Dark, CenterBottomLeft],
+          [AO.Dark, CenterUpLeft],
+          [AO.Dark, CenterDownLeft],
           [QuadVerticies.BottomRight, QuadVerticies.BottomRight],
           [QuadVerticies.TopRight, QuadVerticies.TopRight]
         ),
@@ -209,7 +209,7 @@ const DefaultStair: StairShapeState = {
         [0, 1, 0.5],
         [1, 1, 1],
       ],
-      topHalfUVs,
+      upHalfUVs,
       [
         createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
@@ -221,8 +221,8 @@ const DefaultStair: StairShapeState = {
         createShading(
           [QuadVerticies.BottomRight, QuadVerticies.BottomRight],
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
-          [AO.None, CenterTopLeft],
-          [AO.None, CenterBottomLeft]
+          [AO.None, CenterUpLeft],
+          [AO.None, CenterDownLeft]
         ),
         //180
         createShading(
@@ -235,14 +235,14 @@ const DefaultStair: StairShapeState = {
         createShading(
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
-          [AO.None, CenterBottomLeft],
-          [AO.None, CenterTopLeft]
+          [AO.None, CenterDownLeft],
+          [AO.None, CenterUpLeft]
         ),
       ],
     ],
   ],
-  [VoxelFaces.Bottom]: [
-    //bottom full face
+  [VoxelFaces.Down]: [
+    //down full face
     [
       [
         [0, 0, 0],
@@ -270,7 +270,7 @@ const DefaultStair: StairShapeState = {
         [0, 0, 0],
         [1, 0.5, 0],
       ],
-      bottomHalfUVs,
+      downHalfUVs,
       [
         createShading(
           [AO.None, HalfRight],
@@ -291,7 +291,7 @@ const DefaultStair: StairShapeState = {
         [0, 0.5, 0.5],
         [1, 1, 0.5],
       ],
-      topHalfUVs,
+      upHalfUVs,
       [
         createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
@@ -315,8 +315,8 @@ const DefaultStair: StairShapeState = {
         [1, 0, 0],
         [1, 0.5, 1],
       ],
-      bottomHalfUVs,
-      sideBottomShade,
+      downHalfUVs,
+      sideDownShade,
     ],
     [
       [
@@ -327,14 +327,14 @@ const DefaultStair: StairShapeState = {
       [
         createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
-          [CenterTopLeft, CenterTopLeft],
+          [CenterUpLeft, CenterUpLeft],
           [Center, Center],
           [HalfRight, HalfRight]
         ),
         createShading(
           [HalfRight, HalfRight],
           [Center, Center],
-          [CenterBottomLeft, CenterBottomLeft],
+          [CenterDownLeft, CenterDownLeft],
           [QuadVerticies.BottomRight, QuadVerticies.BottomRight]
         ),
       ],
@@ -347,18 +347,18 @@ const DefaultStair: StairShapeState = {
         [0, 0, 0],
         [0, 0.5, 1],
       ],
-      bottomHalfUVs,
-      sideBottomShade,
+      downHalfUVs,
+      sideDownShade,
     ],
     [
       [
         [0, 0.5, 0.5],
         [0, 1, 1],
       ],
-      bottomLeftQuaterUvs,
+      downLeftQuaterUvs,
       [
         createShading(
-          [CenterTopRight, CenterTopRight],
+          [CenterUpRight, CenterUpRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [HalfLeft, HalfLeft],
           [Center, Center]
@@ -367,17 +367,17 @@ const DefaultStair: StairShapeState = {
           [Center, Center],
           [HalfLeft, HalfLeft],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
-          [CenterBottomRight, CenterBottomRight]
+          [CenterDownRight, CenterDownRight]
         ),
       ],
     ],
   ],
 };
 
-//bottom north east up right
+//down north east up right
 const DefaultConnectedStair: StairShapeState = {
-  [VoxelFaces.Top]: [
-    //top split face
+  [VoxelFaces.Up]: [
+    //up split face
     [
       [
         [0, 0.5, 0],
@@ -406,8 +406,8 @@ const DefaultConnectedStair: StairShapeState = {
       ),
     ],
   ],
-  [VoxelFaces.Bottom]: [
-    //bottom full face
+  [VoxelFaces.Down]: [
+    //down full face
     [
       [
         [0, 0, 0],
@@ -424,18 +424,18 @@ const DefaultConnectedStair: StairShapeState = {
         [0, 0, 1],
         [1, 0.5, 1],
       ],
-      bottomHalfUVs,
-      sideBottomShade,
+      downHalfUVs,
+      sideDownShade,
     ],
     [
       [
         [0.5, 0.5, 1],
         [1, 1, 1],
       ],
-      bottomHalfUVs,
+      downHalfUVs,
       [
         createShading(
-          [CenterTopRight, CenterTopRight],
+          [CenterUpRight, CenterUpRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [HalfLeft, HalfLeft],
           [Center, Center]
@@ -444,7 +444,7 @@ const DefaultConnectedStair: StairShapeState = {
           [Center, Center],
           [HalfLeft, Center],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomLeft],
-          [CenterBottomRight, CenterBottomRight]
+          [CenterDownRight, CenterDownRight]
         ),
       ],
     ],
@@ -456,7 +456,7 @@ const DefaultConnectedStair: StairShapeState = {
         [0, 0, 0],
         [1, 0.5, 0],
       ],
-      bottomHalfUVs,
+      downHalfUVs,
       [
         createShading(
           [AO.None, HalfRight],
@@ -481,14 +481,14 @@ const DefaultConnectedStair: StairShapeState = {
       [
         createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
-          [CenterTopLeft, CenterTopLeft],
+          [CenterUpLeft, CenterUpLeft],
           [AO.Dark, Center],
           [AO.Dark, HalfRight]
         ),
         createShading(
           [AO.Dark, HalfRight],
           [AO.Dark, Center],
-          [CenterBottomLeft, CenterBottomLeft],
+          [CenterDownLeft, CenterDownLeft],
           [QuadVerticies.BottomRight, QuadVerticies.BottomRight]
         ),
       ],
@@ -501,8 +501,8 @@ const DefaultConnectedStair: StairShapeState = {
         [1, 0, 0],
         [1, 0.5, 1],
       ],
-      bottomHalfUVs,
-      sideBottomShade,
+      downHalfUVs,
+      sideDownShade,
     ],
     [
       [
@@ -513,14 +513,14 @@ const DefaultConnectedStair: StairShapeState = {
       [
         createShading(
           [QuadVerticies.TopRight, QuadVerticies.TopRight],
-          [CenterTopLeft, CenterTopLeft],
+          [CenterUpLeft, CenterUpLeft],
           [Center, Center],
           [HalfRight, HalfRight]
         ),
         createShading(
           [HalfRight, HalfRight],
           [Center, Center],
-          [CenterBottomLeft, CenterBottomLeft],
+          [CenterDownLeft, CenterDownLeft],
           [QuadVerticies.BottomRight, QuadVerticies.BottomRight]
         ),
       ],
@@ -533,7 +533,7 @@ const DefaultConnectedStair: StairShapeState = {
         [0, 0, 0],
         [0, 0.5, 1],
       ],
-      bottomHalfUVs,
+      downHalfUVs,
       [
         createShading(
           [AO.None, HalfRight],
@@ -554,19 +554,19 @@ const DefaultConnectedStair: StairShapeState = {
         [0.5, 0.5, 0.5],
         [0.5, 1, 1],
       ],
-      bottomLeftQuaterUvs,
+      downLeftQuaterUvs,
       [
         createShading(
-          [CenterTopRight, CenterTopRight],
+          [CenterUpRight, CenterUpRight],
           [QuadVerticies.TopLeft, QuadVerticies.TopLeft],
           [AO.Dark, HalfLeft],
-          [AO.Dark, CenterTopRight]
+          [AO.Dark, CenterUpRight]
         ),
         createShading(
           [AO.Dark, HalfLeft],
           [AO.Dark, Center],
           [QuadVerticies.BottomLeft, QuadVerticies.BottomRight],
-          [CenterBottomRight, CenterBottomRight]
+          [CenterDownRight, CenterDownRight]
         ),
       ],
     ],
@@ -621,7 +621,7 @@ const applyMatrix = (
   return points;
 };
 
-const orderTop = (
+const orderUp = (
   rotation: number,
   shade: QuadVertexData<QuadShadeData>[]
 ): QuadVertexData<QuadShadeData> => {
@@ -642,8 +642,8 @@ const createRototation = (
   const matrix = Matrix3x3Like.RotationY(rotation + (upsideDown ? 0 : 0));
   data = structuredClone(data);
   const newData: StairShapeState = {
-    [VoxelFaces.Top]: [],
-    [VoxelFaces.Bottom]: data[VoxelFaces.Bottom],
+    [VoxelFaces.Up]: [],
+    [VoxelFaces.Down]: data[VoxelFaces.Down],
     [VoxelFaces.North]: [],
     [VoxelFaces.South]: [],
     [VoxelFaces.East]: [],
@@ -651,17 +651,17 @@ const createRototation = (
   };
 
   if (!upsideDown) {
-    newData[VoxelFaces.Bottom] = data[VoxelFaces.Bottom];
-    newData[VoxelFaces.Top] = data[VoxelFaces.Top].map((_) => [
+    newData[VoxelFaces.Down] = data[VoxelFaces.Down];
+    newData[VoxelFaces.Up] = data[VoxelFaces.Up].map((_) => [
       applyMatrix(Quad.CalculateQuadPoints(..._[0]).points, null, [
         null,
         matrix,
       ]) as any,
       _[1],
-      Array.isArray(_[2]) ? orderTop(rotation, _[2] as any) : _[2],
+      Array.isArray(_[2]) ? orderUp(rotation, _[2] as any) : _[2],
     ]);
   } else {
-    newData[VoxelFaces.Top] = data[VoxelFaces.Bottom].map((_) => [
+    newData[VoxelFaces.Up] = data[VoxelFaces.Down].map((_) => [
       Quad.OrderQuadVertices(
         applyMatrix(
           Quad.CalculateQuadPoints(..._[0]).points,
@@ -674,13 +674,13 @@ const createRototation = (
       _[2],
     ]);
 
-    newData[VoxelFaces.Bottom] = data[VoxelFaces.Top].map((_) => [
+    newData[VoxelFaces.Down] = data[VoxelFaces.Up].map((_) => [
       applyMatrix(Quad.CalculateQuadPoints(..._[0]).points, upsideDownMatrix, [
         "up",
         matrix,
       ]) as any,
       _[1],
-      Array.isArray(_[2]) ? orderTop(rotation, _[2] as any) : _[2],
+      Array.isArray(_[2]) ? orderUp(rotation, _[2] as any) : _[2],
     ]);
   }
 
@@ -702,8 +702,8 @@ const createRototation = (
   }
 
   return {
-    [VoxelFaces.Top]: mapQuads(newData[VoxelFaces.Top], 0),
-    [VoxelFaces.Bottom]: mapQuads(newData[VoxelFaces.Bottom], 1),
+    [VoxelFaces.Up]: mapQuads(newData[VoxelFaces.Up], 0),
+    [VoxelFaces.Down]: mapQuads(newData[VoxelFaces.Down], 1),
     [VoxelFaces.North]: mapQuads(newData[VoxelFaces.North], 1),
     [VoxelFaces.South]: mapQuads(newData[VoxelFaces.South], 0),
     [VoxelFaces.East]: mapQuads(newData[VoxelFaces.East], 0),
@@ -796,36 +796,36 @@ const updateShaded = (
  * final
  */
 const StairShapeStates: Record<StairStates, FinalStairShapeState> = {
-  [StairStates.BottomNorth]: createRototation(0, DefaultStair),
-  [StairStates.BottomSouth]: createRototation(deg180, DefaultStair),
-  [StairStates.BottomEast]: createRototation(deg90, DefaultStair),
-  [StairStates.BottomWest]: createRototation(deg270, DefaultStair),
-  [StairStates.TopNorth]: createRototation(0, DefaultStair, true),
-  [StairStates.TopSouth]: createRototation(deg180, DefaultStair, true),
-  [StairStates.TopEast]: createRototation(deg90, DefaultStair, true),
-  [StairStates.TopWest]: createRototation(deg270, DefaultStair, true),
-  [StairStates.BottomNorthEast]: createRototation(0, DefaultConnectedStair),
-  [StairStates.BottomSouthWest]: createRototation(
+  [StairStates.DownNorth]: createRototation(0, DefaultStair),
+  [StairStates.DownSouth]: createRototation(deg180, DefaultStair),
+  [StairStates.DownEast]: createRototation(deg90, DefaultStair),
+  [StairStates.DownWest]: createRototation(deg270, DefaultStair),
+  [StairStates.UpNorth]: createRototation(0, DefaultStair, true),
+  [StairStates.UpSouth]: createRototation(deg180, DefaultStair, true),
+  [StairStates.UpEast]: createRototation(deg90, DefaultStair, true),
+  [StairStates.UpWest]: createRototation(deg270, DefaultStair, true),
+  [StairStates.DownNorthEast]: createRototation(0, DefaultConnectedStair),
+  [StairStates.DownSouthWest]: createRototation(
     deg180,
     DefaultConnectedStair
   ),
-  [StairStates.BottomSouthEast]: createRototation(deg90, DefaultConnectedStair),
-  [StairStates.BottomNorthWest]: createRototation(
+  [StairStates.DownSouthEast]: createRototation(deg90, DefaultConnectedStair),
+  [StairStates.DownNorthWest]: createRototation(
     deg270,
     DefaultConnectedStair
   ),
-  [StairStates.TopNorthEast]: createRototation(0, DefaultConnectedStair, true),
-  [StairStates.TopSouthWest]: createRototation(
+  [StairStates.UpNorthEast]: createRototation(0, DefaultConnectedStair, true),
+  [StairStates.UpSouthWest]: createRototation(
     deg180,
     DefaultConnectedStair,
     true
   ),
-  [StairStates.TopSouthEast]: createRototation(
+  [StairStates.UpSouthEast]: createRototation(
     deg90,
     DefaultConnectedStair,
     true
   ),
-  [StairStates.TopNorthWest]: createRototation(
+  [StairStates.UpNorthWest]: createRototation(
     deg270,
     DefaultConnectedStair,
     true

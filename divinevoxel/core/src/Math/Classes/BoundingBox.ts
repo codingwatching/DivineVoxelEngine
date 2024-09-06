@@ -1,16 +1,16 @@
 import { Plane } from "./Plane.js";
 
 export type BoundingBoxData = {
- topPlane: Plane;
- bottomPlane: Plane;
+ upPlane: Plane;
+ downPlane: Plane;
  northPlane: Plane;
  southPlane: Plane;
  eastPlane: Plane;
  westPlane: Plane;
 };
 export class BoundingBox {
- topPlane: Plane;
- bottomPlane: Plane;
+ upPlane: Plane;
+ downPlane: Plane;
  northPlane: Plane;
  southPlane: Plane;
  eastPlane: Plane;
@@ -24,10 +24,10 @@ export class BoundingBox {
   maxY : -Infinity,
  };
  constructor(data: BoundingBoxData) {
-  this.topPlane = data.topPlane;
-  this._doMinMaxCheck(this.topPlane);
-  this.bottomPlane = data.bottomPlane;
-  this._doMinMaxCheck(this.bottomPlane);
+  this.upPlane = data.upPlane;
+  this._doMinMaxCheck(this.upPlane);
+  this.downPlane = data.downPlane;
+  this._doMinMaxCheck(this.downPlane);
   this.northPlane = data.northPlane;
   this._doMinMaxCheck(this.northPlane);
   this.southPlane = data.southPlane;

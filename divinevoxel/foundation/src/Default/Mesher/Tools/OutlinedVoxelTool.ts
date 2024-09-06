@@ -53,7 +53,7 @@ const uvsSets: Record<string, Record<number, number>> = {
   },
 };
 
-const topAndBottom: Record<string, Vec3Array[]> = {
+const topAndDown: Record<string, Vec3Array[]> = {
   north: [
     [0, 0, 1],
     [1, 0, 1],
@@ -96,8 +96,8 @@ const northAndSouth: Record<string, Vec3Array[]> = {
   left: [[-1, 0, 0]],
 };
 const CheckSets: Record<VoxelFaces, Record<string, Vec3Array[]>> = {
-  [VoxelFaces.Top]: topAndBottom,
-  [VoxelFaces.Bottom]: topAndBottom,
+  [VoxelFaces.Up]: topAndDown,
+  [VoxelFaces.Down]: topAndDown,
   [VoxelFaces.East]: eastAndWest,
   [VoxelFaces.West]: eastAndWest,
   [VoxelFaces.North]: northAndSouth,
@@ -150,8 +150,8 @@ export class OutlinedVoxelTool {
 
   static addTo = {
     top: (tool: VoxelMesherDataTool) => {
-      const normal = VoxelFaceDirections[VoxelFaces.Top];
-      const set = CheckSets[VoxelFaces.Top];
+      const normal = VoxelFaceDirections[VoxelFaces.Up];
+      const set = CheckSets[VoxelFaces.Up];
       tool
         .getOverlayTextures()
         .set(
@@ -162,8 +162,8 @@ export class OutlinedVoxelTool {
         );
     },
     bottom: (tool: VoxelMesherDataTool) => {
-      const normal = VoxelFaceDirections[VoxelFaces.Bottom];
-      const set = CheckSets[VoxelFaces.Bottom];
+      const normal = VoxelFaceDirections[VoxelFaces.Down];
+      const set = CheckSets[VoxelFaces.Down];
       tool
         .getOverlayTextures()
         .set(

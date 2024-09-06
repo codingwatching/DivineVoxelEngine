@@ -11,7 +11,7 @@ import { LightGradient } from "../../../../Calc/Light/LightGradient.js";
 
 export type SimpleHalfCubeVoxelConstructorData =
   | ConstructorTextureData
-  | { sides: ConstructorTextureData; bottomAndTop: ConstructorTextureData };
+  | { sides: ConstructorTextureData; downAndUp: ConstructorTextureData };
 export class SimpleHalfCubeVoxelConstructor extends VoxelConstructor {
   textures: number[] = [];
   constructor(
@@ -25,15 +25,15 @@ export class SimpleHalfCubeVoxelConstructor extends VoxelConstructor {
     tool.getOverlayTextures().setAll(0);
     const shapeState = tool.voxel.getShapeState();
 
-    if (tool.isFaceExposed(VoxelFaces.Top)) {
-      if (shapeState == HalfCubeStates.Bottom) LightGradient.aoOffset.y = -1;
-      tool.setTexture(this.textures[1]).calculateLight(VoxelFaces.Top);
+    if (tool.isFaceExposed(VoxelFaces.Up)) {
+      if (shapeState == HalfCubeStates.Down) LightGradient.aoOffset.y = -1;
+      tool.setTexture(this.textures[1]).calculateLight(VoxelFaces.Up);
       LightGradient.aoOffset.y = 0;
-      HalfCubeVoxelShape.add.top();
+      HalfCubeVoxelShape.add.up();
     }
-    if (tool.isFaceExposed(VoxelFaces.Bottom)) {
-      tool.setTexture(this.textures[1]).calculateLight(VoxelFaces.Bottom);
-      HalfCubeVoxelShape.add.bottom();
+    if (tool.isFaceExposed(VoxelFaces.Down)) {
+      tool.setTexture(this.textures[1]).calculateLight(VoxelFaces.Down);
+      HalfCubeVoxelShape.add.down();
     }
     if (tool.isFaceExposed(VoxelFaces.East)) {
       tool.setTexture(this.textures[0]).calculateLight(VoxelFaces.East);
@@ -65,6 +65,6 @@ export class SimpleHalfCubeVoxelConstructor extends VoxelConstructor {
     }
 
     this.textures.push(textureManager.getTextureUV(textures.sides));
-    this.textures.push(textureManager.getTextureUV(textures.bottomAndTop));
+    this.textures.push(textureManager.getTextureUV(textures.downAndUp));
   }
 }

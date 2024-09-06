@@ -224,28 +224,28 @@ class TXTBuilderBase extends Mesher {
       }
     }
     for (let y = 0; y < height; y++) {
-      let topFace: Vec2Array | null = null;
-      let bottomFace: Vec2Array | null = null;
+      let upFace: Vec2Array | null = null;
+      let downFace: Vec2Array | null = null;
 
       for (let x = 0; x < width; x++) {
-        let topFaceExposed = true;
-        let bottomFaceExposed = true;
+        let upFaceExposed = true;
+        let downFaceExposed = true;
 
         if (!isSolid(x, y)) {
-          topFaceExposed = false;
-          bottomFaceExposed = false;
+          upFaceExposed = false;
+          downFaceExposed = false;
         }
         if (isSolid(x, y + 1)) {
-          topFaceExposed = false;
+          upFaceExposed = false;
         }
         if (isSolid(x, y - 1)) {
-          bottomFaceExposed = false;
+          downFaceExposed = false;
         }
 
-        if (topFace && !topFaceExposed) {
+        if (upFace && !upFaceExposed) {
           const newQuad = Quad.Create(
             [
-              [topFace[0] * factor, y * factor + factor, 0],
+              [upFace[0] * factor, y * factor + factor, 0],
               [x * factor, y * factor + factor, factor],
             ],
             Quad.FullUVs as any,
@@ -253,18 +253,18 @@ class TXTBuilderBase extends Mesher {
             0
           );
           GeometryBuilder.addQuad(tool, origin, newQuad);
-          let [sx, sy] = topFace;
+          let [sx, sy] = upFace;
           let [ex, ey] = [x, y];
 
           ey += 1;
           addUvs(sx, sy, ex, ey);
-          topFace = null;
+          upFace = null;
         }
 
-        if (bottomFace && !bottomFaceExposed) {
+        if (downFace && !downFaceExposed) {
           const newQuad = Quad.Create(
             [
-              [bottomFace[0] * factor, y * factor, 0],
+              [downFace[0] * factor, y * factor, 0],
               [x * factor, y * factor, factor],
             ],
             Quad.FullUVs as any,
@@ -272,19 +272,19 @@ class TXTBuilderBase extends Mesher {
             1
           );
           GeometryBuilder.addQuad(tool, origin, newQuad);
-          let [sx, sy] = bottomFace;
+          let [sx, sy] = downFace;
           let [ex, ey] = [x, y];
           ey += 1;
           addUvs(sx, sy, ex, ey);
-          bottomFace = null;
+          downFace = null;
         }
 
         const isPixel = isSolid(x, y);
-        if (!isSolid(x, y + 1) && !topFace && isPixel) {
-          topFace = [x, y];
+        if (!isSolid(x, y + 1) && !upFace && isPixel) {
+          upFace = [x, y];
         }
-        if (!isSolid(x, y - 1) && !bottomFace && isPixel) {
-          bottomFace = [x, y];
+        if (!isSolid(x, y - 1) && !downFace && isPixel) {
+          downFace = [x, y];
         }
       }
     }

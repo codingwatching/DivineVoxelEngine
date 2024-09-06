@@ -59,7 +59,7 @@ class Request<T, Q> {
     WorldRegister.instance.cache.enable();
     return this;
   }
-  stop() {
+  sup() {
     WorldRegister.instance.cache.disable();
     return this;
   }

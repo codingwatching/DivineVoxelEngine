@@ -18,13 +18,13 @@ export class SimpleLiquidConstructor extends VoxelConstructor {
  process(tool: VoxelMesherDataTool) {
   LiquidVoxelShape.start();
   tool.getOverlayTextures().setAll(0);
-  if (tool.isFaceExposed(VoxelFaces.Top)) {
-   tool.setTexture(this.textures[0]).calculateLight(VoxelFaces.Top,true);
-   LiquidVoxelShape.add.top();
+  if (tool.isFaceExposed(VoxelFaces.Up)) {
+   tool.setTexture(this.textures[0]).calculateLight(VoxelFaces.Up,true);
+   LiquidVoxelShape.add.up();
   }
-  if (tool.isFaceExposed(VoxelFaces.Bottom)) {
-   tool.setTexture(this.textures[0]).calculateLight(VoxelFaces.Bottom,true);
-   LiquidVoxelShape.add.bottom();
+  if (tool.isFaceExposed(VoxelFaces.Down)) {
+   tool.setTexture(this.textures[0]).calculateLight(VoxelFaces.Down,true);
+   LiquidVoxelShape.add.down();
   }
   if (tool.isFaceExposed(VoxelFaces.East)) {
    tool.setTexture(this.textures[0]).calculateLight(VoxelFaces.East,true);

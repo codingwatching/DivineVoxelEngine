@@ -1,16 +1,16 @@
 import { CompassDirections, Vec3Array } from "@amodx/math";
 
 export type VoxelFaceNames =
-  | "top"
-  | "bottom"
+  | "up"
+  | "down"
   | "north"
   | "south"
   | "east"
   | "west";
 
 export const VoxelFaceNameArray: VoxelFaceNames[] = [
-  "top",
-  "bottom",
+  "up",
+  "down",
   "north",
   "south",
   "east",
@@ -21,8 +21,8 @@ export const VoxelFaceNameOppoisteRecord: Record<
   VoxelFaceNames,
   VoxelFaceNames
 > = {
-  top: "bottom",
-  bottom: "top",
+  up: "down",
+  down: "up",
   north: "south",
   south: "north",
   east: "west",
@@ -31,16 +31,16 @@ export const VoxelFaceNameOppoisteRecord: Record<
 
 export const VoxelFaceNameDirectionsRecord: Record<VoxelFaceNames, Vec3Array> =
   {
-    top: [0, 1, 0],
-    bottom: [0, -1, 0],
+    up: [0, 1, 0],
+    down: [0, -1, 0],
     north: [0, 0, 1],
     south: [0, 0, -1],
     east: [1, 0, 0],
     west: [-1, 0, 0],
   };
 export enum VoxelFaces {
-  Top,
-  Bottom,
+  Up,
+  Down,
   North,
   South,
   East,
@@ -48,8 +48,8 @@ export enum VoxelFaces {
 }
 
 export const VoxelFacesArray = Object.freeze([
-  VoxelFaces.Top,
-  VoxelFaces.Bottom,
+  VoxelFaces.Up,
+  VoxelFaces.Down,
   VoxelFaces.North,
   VoxelFaces.South,
   VoxelFaces.East,
@@ -58,8 +58,8 @@ export const VoxelFacesArray = Object.freeze([
 
 export const VoxelFaceDirections: Readonly<Record<VoxelFaces, Vec3Array>> =
   Object.freeze({
-    [VoxelFaces.Top]: [0, 1, 0],
-    [VoxelFaces.Bottom]: [0, -1, 0],
+    [VoxelFaces.Up]: [0, 1, 0],
+    [VoxelFaces.Down]: [0, -1, 0],
     [VoxelFaces.North]: [0, 0, 1],
     [VoxelFaces.South]: [0, 0, -1],
     [VoxelFaces.East]: [1, 0, 0],
@@ -67,8 +67,8 @@ export const VoxelFaceDirections: Readonly<Record<VoxelFaces, Vec3Array>> =
   });
 
 export const VoxelFaceOpositeDirectionMap: Record<VoxelFaces, VoxelFaces> = {
-  [VoxelFaces.Top]: VoxelFaces.Bottom,
-  [VoxelFaces.Bottom]: VoxelFaces.Top,
+  [VoxelFaces.Up]: VoxelFaces.Down,
+  [VoxelFaces.Down]: VoxelFaces.Up,
   [VoxelFaces.North]: VoxelFaces.South,
   [VoxelFaces.South]: VoxelFaces.North,
   [VoxelFaces.East]: VoxelFaces.West,
@@ -79,8 +79,8 @@ export const VoxelFaceCompassDirectionMap: Record<
   VoxelFaces,
   CompassDirections
 > = {
-  [VoxelFaces.Top]: CompassDirections.North,
-  [VoxelFaces.Bottom]: CompassDirections.South,
+  [VoxelFaces.Up]: CompassDirections.North,
+  [VoxelFaces.Down]: CompassDirections.South,
   [VoxelFaces.North]: CompassDirections.North,
   [VoxelFaces.South]: CompassDirections.South,
   [VoxelFaces.East]: CompassDirections.East,
@@ -95,23 +95,23 @@ export const CompassDirectionVoxelFaceMap: Record<
   [CompassDirections.South]: VoxelFaces.South,
   [CompassDirections.West]: VoxelFaces.West,
   [CompassDirections.East]: VoxelFaces.East,
-  [CompassDirections.NorthEast]: VoxelFaces.Top,
-  [CompassDirections.NorthWest]: VoxelFaces.Top,
-  [CompassDirections.SouthEast]: VoxelFaces.Top,
-  [CompassDirections.SouthWest]: VoxelFaces.Top,
+  [CompassDirections.NorthEast]: VoxelFaces.Up,
+  [CompassDirections.NorthWest]: VoxelFaces.Up,
+  [CompassDirections.SouthEast]: VoxelFaces.Up,
+  [CompassDirections.SouthWest]: VoxelFaces.Up,
 };
 
 export const VoxelFaceNameRecord: Record<VoxelFaceNames, VoxelFaces> = {
-  top: VoxelFaces.Top,
-  bottom: VoxelFaces.Bottom,
+  up: VoxelFaces.Up,
+  down: VoxelFaces.Down,
   north: VoxelFaces.North,
   south: VoxelFaces.South,
   east: VoxelFaces.East,
   west: VoxelFaces.West,
 };
 export const VoxelFaceNameMap: Record<VoxelFaces, VoxelFaceNames> = {
-  [VoxelFaces.Top]: "top",
-  [VoxelFaces.Bottom]: "bottom",
+  [VoxelFaces.Up]: "up",
+  [VoxelFaces.Down]: "down",
   [VoxelFaces.North]: "north",
   [VoxelFaces.South]: "south",
   [VoxelFaces.East]: "east",

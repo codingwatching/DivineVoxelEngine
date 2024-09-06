@@ -7,31 +7,35 @@ export const GradientCheckSets: Record<
   Record<QuadVerticies, number[]>
 > = [] as any;
 
-GradientCheckSets[VoxelFaces.Top] = [] as any;
-GradientCheckSets[VoxelFaces.Top][QuadVerticies.TopRight] = [
-  1, 1, 0, 0, 1, 1, 1, 1, 1,
+GradientCheckSets[VoxelFaces.Up] = [] as any;
+GradientCheckSets[VoxelFaces.Up][QuadVerticies.TopRight] = [
+  1, 1, 0, 
+  0, 1, 1, 
+  1, 1, 1,
 ];
-GradientCheckSets[VoxelFaces.Top][QuadVerticies.TopLeft] = [
+GradientCheckSets[VoxelFaces.Up][QuadVerticies.TopLeft] = [
   -1, 1, 0, 0, 1, 1, -1, 1, 1,
 ];
-GradientCheckSets[VoxelFaces.Top][QuadVerticies.BottomLeft] = [
+GradientCheckSets[VoxelFaces.Up][QuadVerticies.BottomLeft] = [
   -1, 1, 0, 0, 1, -1, -1, 1, -1,
 ];
-GradientCheckSets[VoxelFaces.Top][QuadVerticies.BottomRight] = [
+GradientCheckSets[VoxelFaces.Up][QuadVerticies.BottomRight] = [
   1, 1, 0, 0, 1, -1, 1, 1, -1,
 ];
 
-GradientCheckSets[VoxelFaces.Bottom] = [] as any;
-GradientCheckSets[VoxelFaces.Bottom][QuadVerticies.TopRight] = [
-  1, -1, 0, 0, -1, 1, 1, -1, 1,
+GradientCheckSets[VoxelFaces.Down] = [] as any;
+GradientCheckSets[VoxelFaces.Down][QuadVerticies.TopRight] = [
+  1, -1, 0, 
+  0, -1, 1, 
+  1, -1, 1,
 ];
-GradientCheckSets[VoxelFaces.Bottom][QuadVerticies.TopLeft] = [
+GradientCheckSets[VoxelFaces.Down][QuadVerticies.TopLeft] = [
   -1, -1, 0, 0, -1, 1, -1, -1, 1,
 ];
-GradientCheckSets[VoxelFaces.Bottom][QuadVerticies.BottomLeft] = [
+GradientCheckSets[VoxelFaces.Down][QuadVerticies.BottomLeft] = [
   -1, -1, 0, 0, -1, -1, -1, -1, -1,
 ];
-GradientCheckSets[VoxelFaces.Bottom][QuadVerticies.BottomRight] = [
+GradientCheckSets[VoxelFaces.Down][QuadVerticies.BottomRight] = [
   1, -1, 0, 0, -1, -1, 1, -1, -1,
 ];
 
@@ -79,7 +83,9 @@ GradientCheckSets[VoxelFaces.South][QuadVerticies.BottomRight] = [
 
 GradientCheckSets[VoxelFaces.North] = [] as any;
 GradientCheckSets[VoxelFaces.North][QuadVerticies.TopRight] = [
-  1, 0, 1, 0, 1, 1, 1, 1, 1,
+  1, 0, 1, 
+  0, 1, 1, 
+  1, 1, 1,
 ];
 GradientCheckSets[VoxelFaces.North][QuadVerticies.TopLeft] = [
   -1, 0, 1, 0, 1, 1, -1, 1, 1,
@@ -122,13 +128,13 @@ for (const face of VoxelFacesArray) {
 console.warn(GeometryCheckSetIndexes);
 
 /* const t = {
-  [VoxelFaces.Top]: {
+  [VoxelFaces.Up]: {
     [QuadVerticies.TopRight]: [1, 1, 0, 0, 1, 1, 1, 1, 1],
     [QuadVerticies.TopLeft]: [-1, 1, 0, 0, 1, 1, -1, 1, 1],
     [QuadVerticies.BottomLeft]: [-1, 1, 0, 0, 1, -1, -1, 1, -1],
     [QuadVerticies.BottomRight]: [1, 1, 0, 0, 1, -1, 1, 1, -1],
   },
-  [VoxelFaces.Bottom]: {
+  [VoxelFaces.Down]: {
     [QuadVerticies.TopRight]: [1, -1, 0, 0, -1, 1, 1, -1, 1],
     [QuadVerticies.TopLeft]: [-1, -1, 0, 0, -1, 1, -1, -1, 1],
     [QuadVerticies.BottomLeft]: [-1, -1, 0, 0, -1, -1, -1, -1, -1],

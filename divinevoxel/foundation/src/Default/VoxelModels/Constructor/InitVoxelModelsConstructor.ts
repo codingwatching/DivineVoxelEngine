@@ -7,6 +7,8 @@ import { VoxelModelConstructorRegister } from "./Register/VoxelModelConstructorR
 import { VoxelGeometryLookUp } from "./VoxelGeometryLookUp";
 
 export default function (DVEC: DivineVoxelEngineConstructor) {
+  VoxelGeometryLookUp.init();
+
   DVEC.TC.registerTasks<ConstructorVoxelModelSyncData>(
     "sync-voxel-model-data",
     (data) => {
@@ -16,7 +18,6 @@ export default function (DVEC: DivineVoxelEngineConstructor) {
       VoxelModelConstructorRegister.registerGeometry(data.geometry);
       VoxelModelConstructorRegister.registerModels(data.models);
 
-      VoxelGeometryLookUp.init();
 
       for (const voxel of data.voxels) {
         VoxelConstructorsRegister.registerVoxel(

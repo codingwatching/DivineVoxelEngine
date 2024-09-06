@@ -12,10 +12,7 @@ import { VoxelGeometryLookUp } from "../VoxelGeometryLookUp";
 import { GeoemtryNode } from "./GeometryNode";
 import { VoxelGeometryConstructor } from "../Register/VoxelGeometryConstructor";
 import { GeometryCheckSetIndexes } from "../../../Mesher/Calc/CalcConstants";
-import {
-  QuadVerticies,
-  QuadVerticiesArray,
-} from "@amodx/meshing/Geometry.types";
+import { QuadVerticiesArray } from "@amodx/meshing/Geometry.types";
 
 const mapUvs = (uvs: Vec4Array, quad: Quad) => {
   quad.uvs.vertices[1].x = uvs[2];
@@ -42,19 +39,23 @@ export class BoxVoxelGometryNode extends GeoemtryNode {
     this.faceCount = 6;
     this.vertexIndex = this.faceCount * 4;
 
-    this.quads[VoxelFaces.Top] = Quad.Create(
+    this.quads[VoxelFaces.Up] = Quad.Create(
       [
-        [start.x, end.y, start.z],
         [end.x, end.y, end.z],
+        [start.x, end.y, end.z],
+        [start.x, end.y, start.z],
+        [end.x, end.y, start.z],
       ],
       undefined,
       false,
       0
     );
 
-    this.quads[VoxelFaces.Bottom] = Quad.Create(
+    this.quads[VoxelFaces.Down] = Quad.Create(
       [
+        [start.x, start.y, end.z],
         [start.x, start.y, start.z],
+        [end.x, start.y, start.z],
         [end.x, start.y, end.z],
       ],
       undefined,
@@ -64,18 +65,21 @@ export class BoxVoxelGometryNode extends GeoemtryNode {
 
     this.quads[VoxelFaces.North] = Quad.Create(
       [
+        [start.x, end.y, end.z],
         [start.x, start.y, end.z],
+        [end.x, start.y, end.z],
         [end.x, end.y, end.z],
       ],
       undefined,
-      false,
-      1
+      false
     );
 
     this.quads[VoxelFaces.South] = Quad.Create(
       [
-        [start.x, start.y, start.z],
         [end.x, end.y, start.z],
+        [start.x, end.y, start.z],
+        [start.x, start.y, start.z],
+        [end.x, start.y, start.z],
       ],
       undefined,
       false,
@@ -84,8 +88,10 @@ export class BoxVoxelGometryNode extends GeoemtryNode {
 
     this.quads[VoxelFaces.East] = Quad.Create(
       [
-        [end.x, start.y, start.z],
         [end.x, end.y, end.z],
+        [end.x, end.y, start.z],
+        [end.x, start.y, start.z],
+        [end.x, start.y, end.z],
       ],
       undefined,
       false,
@@ -94,7 +100,9 @@ export class BoxVoxelGometryNode extends GeoemtryNode {
 
     this.quads[VoxelFaces.West] = Quad.Create(
       [
+        [start.x, end.y, start.z],
         [start.x, start.y, start.z],
+        [start.x, start.y, end.z],
         [start.x, end.y, end.z],
       ],
       undefined,
@@ -168,32 +176,36 @@ export class BoxVoxelGometryNode extends GeoemtryNode {
     origin: Vector3Like,
     args: BoxVoxelGometryArgs
   ) {
+    const worldAO = tool.getWorldAO();
+
     if (
-      args[VoxelFaces.Top][ArgIndexes.Enabled] &&
-      this.isExposed(VoxelFaces.Top, origin)
+      args[VoxelFaces.Up][ArgIndexes.Enabled] &&
+      this.isExposed(VoxelFaces.Up, origin)
     ) {
-      tool.calculateFaceData(VoxelFaces.Top);
-      this.determineShading(tool, VoxelFaces.Top);
-      const faceArgs = args[VoxelFaces.Top];
-      const quad = this.quads[VoxelFaces.Top];
+      tool.calculateFaceData(VoxelFaces.Up);
+      this.determineShading(tool, VoxelFaces.Up);
+      const faceArgs = args[VoxelFaces.Up];
+      const quad = this.quads[VoxelFaces.Up];
       quad.flip = faceArgs[ArgIndexes.Fliped];
       tool.setTexture(faceArgs[ArgIndexes.Texture]);
       mapUvs(faceArgs[ArgIndexes.UVs], quad);
       VoxelGeometry.addQuad(tool, origin, quad);
+      worldAO.setAll(0);
     }
 
     if (
-      args[VoxelFaces.Bottom][ArgIndexes.Enabled] &&
-      this.isExposed(VoxelFaces.Bottom, origin)
+      args[VoxelFaces.Down][ArgIndexes.Enabled] &&
+      this.isExposed(VoxelFaces.Down, origin)
     ) {
-      tool.calculateFaceData(VoxelFaces.Bottom);
-      this.determineShading(tool, VoxelFaces.Bottom);
-      const faceArgs = args[VoxelFaces.Bottom];
-      const quad = this.quads[VoxelFaces.Bottom];
+      tool.calculateFaceData(VoxelFaces.Down);
+      this.determineShading(tool, VoxelFaces.Down);
+      const faceArgs = args[VoxelFaces.Down];
+      const quad = this.quads[VoxelFaces.Down];
       quad.flip = faceArgs[ArgIndexes.Fliped];
       tool.setTexture(faceArgs[ArgIndexes.Texture]);
       mapUvs(faceArgs[ArgIndexes.UVs], quad);
       VoxelGeometry.addQuad(tool, origin, quad);
+      worldAO.setAll(0);
     }
 
     if (
@@ -208,6 +220,7 @@ export class BoxVoxelGometryNode extends GeoemtryNode {
       tool.setTexture(faceArgs[ArgIndexes.Texture]);
       mapUvs(faceArgs[ArgIndexes.UVs], quad);
       VoxelGeometry.addQuad(tool, origin, quad);
+      worldAO.setAll(0);
     }
 
     if (
@@ -222,6 +235,7 @@ export class BoxVoxelGometryNode extends GeoemtryNode {
       tool.setTexture(faceArgs[ArgIndexes.Texture]);
       mapUvs(faceArgs[ArgIndexes.UVs], quad);
       VoxelGeometry.addQuad(tool, origin, quad);
+      worldAO.setAll(0);
     }
 
     if (
@@ -236,6 +250,7 @@ export class BoxVoxelGometryNode extends GeoemtryNode {
       tool.setTexture(faceArgs[ArgIndexes.Texture]);
       mapUvs(faceArgs[ArgIndexes.UVs], quad);
       VoxelGeometry.addQuad(tool, origin, quad);
+      worldAO.setAll(0);
     }
 
     if (
@@ -250,9 +265,8 @@ export class BoxVoxelGometryNode extends GeoemtryNode {
       tool.setTexture(faceArgs[ArgIndexes.Texture]);
       mapUvs(faceArgs[ArgIndexes.UVs], quad);
       VoxelGeometry.addQuad(tool, origin, quad);
+      worldAO.setAll(0);
     }
-
-    const worldAO = tool.getWorldAO();
 
     worldAO.setAll(0);
   }

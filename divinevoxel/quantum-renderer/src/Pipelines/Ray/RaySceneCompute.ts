@@ -11,7 +11,7 @@ type RaySceneComputeInitData = {
   textures: Texture[];
   sampler: TextureSampler[];
   code: {
-    top: string;
+    up: string;
     beforeMain: string;
   };
 };
@@ -67,7 +67,7 @@ export class RaySceneCompute {
     }
     const device = this.pipeline.engine.device;
     const shaderCode = /* wgsl */ `
-      ${data.code.top}
+      ${data.code.up}
       ${this.bindGroup.createGroupCode()}
 
       ${data.code.beforeMain}

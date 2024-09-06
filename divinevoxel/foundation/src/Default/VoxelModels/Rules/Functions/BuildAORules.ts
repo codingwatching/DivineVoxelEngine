@@ -1,4 +1,4 @@
-import { OcclusionPlaneResults } from "../Classes/OcclusionPlane";
+import { OcclusionQuadResults } from "../Classes/OcclusionQuad";
 import { VoxelRuleGeometry } from "../Classes/VoxelRulesGeometry";
 import { VoxelFaceNameArray } from "@divinevoxel/core/Math";
 import { VoxelGeometryAOIndex } from "../../Indexing/VoxelGeometryAOIndex";
@@ -12,7 +12,7 @@ export function BuildAORules(
   for (let y = -1; y < 2; y++) {
     for (let nx = -1; nx < 2; nx++) {
       for (let nz = -1; nz < 2; nz++) {
-        const results = new OcclusionPlaneResults<boolean[]>();
+        const results = new OcclusionQuadResults<boolean[]>();
         other.occlusionPlane.setOffset(nx, y, nz);
         for (const planeDirection of VoxelFaceNameArray) {
           const mainPlanes = main.occlusionPlane.planes[planeDirection];
@@ -26,7 +26,9 @@ export function BuildAORules(
               let touching = false;
               for (const dir of VoxelFaceNameArray) {
                 const otherPlanes = other.occlusionPlane.planes[dir];
+                
                 for (const otherPlane of otherPlanes) {
+                  if (otherPlane.direction == currentPlane.direction) continue;
                   if (otherPlane.isPointOnPlane(...points[v])) touching = true;
                   if (touching) break;
                 }
@@ -38,7 +40,7 @@ export function BuildAORules(
             results.planes[planeDirection][i] = result;
           }
         }
-    
+
         main.addOutsideAOResult(
           other.id,
           VoxelGeometryAOIndex.getIndex(nx, y, nz),
@@ -47,6 +49,4 @@ export function BuildAORules(
       }
     }
   }
-
-  
 }

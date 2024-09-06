@@ -12,8 +12,8 @@ import { VoxelGeometry } from "../../../Geometry/VoxelGeometry.js";
 const animationState = new QuadScalarVertexData();
 
 export enum HalfCubeStates {
-  Bottom = 0,
-  Top = 1,
+  Down = 0,
+  Up = 1,
   North = 2,
   Sourth = 3,
   East = 4,
@@ -34,7 +34,7 @@ const halfUvs: QuadUVData = [
 ];
 
 const Quads: Record<DirectionNames, Quad> = {
-  top: Quad.Create(
+  up: Quad.Create(
     [
       [0, 0.5, 0],
       [1, 0.5, 1],
@@ -43,7 +43,7 @@ const Quads: Record<DirectionNames, Quad> = {
     false,
     0
   ),
-  bottom: Quad.Create(
+  down: Quad.Create(
     [
       [0, 0, 0],
       [1, 0, 1],
@@ -105,21 +105,21 @@ class HalfCubeVoxelShapeClass extends VoxelShapeBase {
       this.numberId,
       VoxelShapeManager.getMappedId("#dve_cube"),
       (data) => {
-        if (data.currentVoxel.getShapeState() == HalfCubeStates.Top) {
-          if (data.face == VoxelFaces.Top) {
+        if (data.currentVoxel.getShapeState() == HalfCubeStates.Up) {
+          if (data.face == VoxelFaces.Up) {
             return false;
           }
-          if (data.face == VoxelFaces.Bottom) {
+          if (data.face == VoxelFaces.Down) {
             return true;
           }
           return true;
         }
 
-        if (data.currentVoxel.getShapeState() == HalfCubeStates.Bottom) {
-          if (data.face == VoxelFaces.Top) {
+        if (data.currentVoxel.getShapeState() == HalfCubeStates.Down) {
+          if (data.face == VoxelFaces.Up) {
             return true;
           }
-          if (data.face == VoxelFaces.Bottom) {
+          if (data.face == VoxelFaces.Down) {
             return false;
           }
           return true;
@@ -133,50 +133,50 @@ class HalfCubeVoxelShapeClass extends VoxelShapeBase {
       this.numberId,
       (data) => {
         if (
-          data.currentVoxel.getShapeState() == HalfCubeStates.Top &&
-          data.neighborVoxel.getShapeState() == HalfCubeStates.Top
+          data.currentVoxel.getShapeState() == HalfCubeStates.Up &&
+          data.neighborVoxel.getShapeState() == HalfCubeStates.Up
         ) {
-          if (data.face == VoxelFaces.Top) {
+          if (data.face == VoxelFaces.Up) {
             return true;
           }
-          if (data.face == VoxelFaces.Bottom) {
+          if (data.face == VoxelFaces.Down) {
             return true;
           }
           return false;
         }
 
         if (
-          data.currentVoxel.getShapeState() == HalfCubeStates.Bottom &&
-          data.neighborVoxel.getShapeState() == HalfCubeStates.Bottom
+          data.currentVoxel.getShapeState() == HalfCubeStates.Down &&
+          data.neighborVoxel.getShapeState() == HalfCubeStates.Down
         ) {
-          if (data.face == VoxelFaces.Top) {
+          if (data.face == VoxelFaces.Up) {
             return true;
           }
-          if (data.face == VoxelFaces.Bottom) {
+          if (data.face == VoxelFaces.Down) {
             return true;
           }
           return false;
         }
         if (
-          data.currentVoxel.getShapeState() == HalfCubeStates.Top &&
-          data.neighborVoxel.getShapeState() == HalfCubeStates.Bottom
+          data.currentVoxel.getShapeState() == HalfCubeStates.Up &&
+          data.neighborVoxel.getShapeState() == HalfCubeStates.Down
         ) {
-          if (data.face == VoxelFaces.Top) {
+          if (data.face == VoxelFaces.Up) {
             return false;
           }
-          if (data.face == VoxelFaces.Bottom) {
+          if (data.face == VoxelFaces.Down) {
             return true;
           }
           return true;
         }
         if (
-          data.currentVoxel.getShapeState() == HalfCubeStates.Bottom &&
-          data.neighborVoxel.getShapeState() == HalfCubeStates.Top
+          data.currentVoxel.getShapeState() == HalfCubeStates.Down &&
+          data.neighborVoxel.getShapeState() == HalfCubeStates.Up
         ) {
-          if (data.face == VoxelFaces.Top) {
+          if (data.face == VoxelFaces.Up) {
             return true;
           }
-          if (data.face == VoxelFaces.Bottom) {
+          if (data.face == VoxelFaces.Down) {
             return false;
           }
           return true;
@@ -201,27 +201,27 @@ class HalfCubeVoxelShapeClass extends VoxelShapeBase {
     );
     OverrideManager.AO.register(this.numberId, this.numberId, (data) => {
       if (
-        data.currentVoxel.getShapeState() == HalfCubeStates.Top &&
-        data.neighborVoxel.getShapeState() == HalfCubeStates.Top
+        data.currentVoxel.getShapeState() == HalfCubeStates.Up &&
+        data.neighborVoxel.getShapeState() == HalfCubeStates.Up
       ) {
         return false;
       }
 
       if (
-        data.currentVoxel.getShapeState() == HalfCubeStates.Bottom &&
-        data.neighborVoxel.getShapeState() == HalfCubeStates.Bottom
+        data.currentVoxel.getShapeState() == HalfCubeStates.Down &&
+        data.neighborVoxel.getShapeState() == HalfCubeStates.Down
       ) {
         return false;
       }
       if (
-        data.currentVoxel.getShapeState() == HalfCubeStates.Top &&
-        data.neighborVoxel.getShapeState() == HalfCubeStates.Bottom
+        data.currentVoxel.getShapeState() == HalfCubeStates.Up &&
+        data.neighborVoxel.getShapeState() == HalfCubeStates.Down
       ) {
         return true;
       }
       if (
-        data.currentVoxel.getShapeState() == HalfCubeStates.Bottom &&
-        data.neighborVoxel.getShapeState() == HalfCubeStates.Top
+        data.currentVoxel.getShapeState() == HalfCubeStates.Down &&
+        data.neighborVoxel.getShapeState() == HalfCubeStates.Up
       ) {
         return true;
       }
@@ -232,13 +232,13 @@ class HalfCubeVoxelShapeClass extends VoxelShapeBase {
       this.numberId,
       VoxelShapeManager.getMappedId("#dve_cube"),
       (data) => {
-        if (data.currentVoxel.getShapeState() == HalfCubeStates.Top) {
+        if (data.currentVoxel.getShapeState() == HalfCubeStates.Up) {
           if(data.neighborVoxel.y == data.currentVoxel.y - 1) return false;
           return data.default;
         }
 
         if (
-          data.currentVoxel.getShapeState() == HalfCubeStates.Bottom &&
+          data.currentVoxel.getShapeState() == HalfCubeStates.Down &&
           data.currentVoxel.y < data.neighborVoxel.y
         ) {
           return false;
@@ -251,29 +251,29 @@ class HalfCubeVoxelShapeClass extends VoxelShapeBase {
 
   start() {
     const state = ShapeTool.data.voxel.getShapeState();
-    if (state == HalfCubeStates.Top) {
+    if (state == HalfCubeStates.Up) {
       ShapeTool.origin.y += 0.5;
     }
   }
   add = {
-    top() {
-      Quads.top.flip = ShapeTool.data.isFaceFlipped();
+    up() {
+      Quads.up.flip = ShapeTool.data.isFaceFlipped();
       if (ShapeTool.data.voxel.getSubstnaceData().isWindAffected()) {
         ShapeTool.data
           .getAnimationData()
           .setAll(VoxelShaderData.AnimationStates.WindAffected.Box);
       }
 
-      VoxelGeometry.addQuad(ShapeTool.data, ShapeTool.origin, Quads.top);
+      VoxelGeometry.addQuad(ShapeTool.data, ShapeTool.origin, Quads.up);
     },
-    bottom() {
-      Quads.bottom.flip = ShapeTool.data.isFaceFlipped();
+    down() {
+      Quads.down.flip = ShapeTool.data.isFaceFlipped();
       if (ShapeTool.data.voxel.getSubstnaceData().isWindAffected()) {
         ShapeTool.data
           .getAnimationData()
           .setAll(VoxelShaderData.AnimationStates.WindAffected.Box);
       }
-      VoxelGeometry.addQuad(ShapeTool.data, ShapeTool.origin, Quads.bottom);
+      VoxelGeometry.addQuad(ShapeTool.data, ShapeTool.origin, Quads.down);
     },
     north() {
       Quads.north.flip = ShapeTool.data.isFaceFlipped();

@@ -3,17 +3,17 @@ import { VoxelGeometryData, VoxelModelData } from "./VoxelModel.types";
 export const cube: VoxelGeometryData = {
   id: "dve_cube",
   arguments: {
-    topTex: {
+    upTex: {
       type: "texture",
     },
-    topUvs: {
+    upUvs: {
       type: "box-uv",
       defualt: [0, 0, 1, 1],
     },
-    bottomTex: {
+    downTex: {
       type: "texture",
     },
-    bottomUvs: {
+    downUvs: {
       type: "box-uv",
       defualt: [0, 0, 1, 1],
     },
@@ -54,13 +54,13 @@ export const cube: VoxelGeometryData = {
         [1, 1, 1],
       ],
       faces: {
-        top: {
-          texture: "@topTex",
-          uv: "@topUvs",
+        up: {
+          texture: "@upTex",
+          uv: "@upUvs",
         },
-        bottom: {
-          texture: "@bottomTex",
-          uv: "@bottomUvs",
+        down: {
+          texture: "@downTex",
+          uv: "@downUvs",
         },
         north: {
           texture: "@northTex",
@@ -85,17 +85,17 @@ export const cube: VoxelGeometryData = {
 export const halfCube: VoxelGeometryData = {
   id: "dve_half_cube",
   arguments: {
-    topTex: {
+    upTex: {
       type: "texture",
     },
-    topUvs: {
+    upUvs: {
       type: "box-uv",
       defualt: [0, 0, 1, 1],
     },
-    bottomTex: {
+    downTex: {
       type: "texture",
     },
-    bottomUvs: {
+    downUvs: {
       type: "box-uv",
       defualt: [0, 0, 1, 1],
     },
@@ -136,13 +136,13 @@ export const halfCube: VoxelGeometryData = {
         [1, 0.5, 1],
       ],
       faces: {
-        top: {
-          texture: "@topTex",
-          uv: "@topUvs",
+        up: {
+          texture: "@upTex",
+          uv: "@upUvs",
         },
-        bottom: {
-          texture: "@bottomTex",
-          uv: "@bottomUvs",
+        down: {
+          texture: "@downTex",
+          uv: "@downUvs",
         },
         north: {
           texture: "@northTex",
@@ -164,20 +164,23 @@ export const halfCube: VoxelGeometryData = {
     },
   ],
 };
+
+
+
 export const quaterCubeWestEast: VoxelGeometryData = {
   id: "dve_quater_cube_west_east",
   arguments: {
-    topTex: {
+    upTex: {
       type: "texture",
     },
-    topUvs: {
+    upUvs: {
       type: "box-uv",
       defualt: [0, 0, 1, 1],
     },
-    bottomTex: {
+    downTex: {
       type: "texture",
     },
-    bottomUvs: {
+    downUvs: {
       type: "box-uv",
       defualt: [0, 0, 1, 1],
     },
@@ -218,13 +221,13 @@ export const quaterCubeWestEast: VoxelGeometryData = {
         [1, 0.5, 0.5],
       ],
       faces: {
-        top: {
-          texture: "@topTex",
-          uv: "@topUvs",
+        up: {
+          texture: "@upTex",
+          uv: "@upUvs",
         },
-        bottom: {
-          texture: "@bottomTex",
-          uv: "@bottomUvs",
+        down: {
+          texture: "@downTex",
+          uv: "@downUvs",
         },
         north: {
           texture: "@northTex",
@@ -249,17 +252,17 @@ export const quaterCubeWestEast: VoxelGeometryData = {
 export const quaterCubeSouthNorth: VoxelGeometryData = {
   id: "dve_quater_cube_south_north",
   arguments: {
-    topTex: {
+    upTex: {
       type: "texture",
     },
-    topUvs: {
+    upUvs: {
       type: "box-uv",
       defualt: [0, 0, 1, 1],
     },
-    bottomTex: {
+    downTex: {
       type: "texture",
     },
-    bottomUvs: {
+    downUvs: {
       type: "box-uv",
       defualt: [0, 0, 1, 1],
     },
@@ -300,13 +303,13 @@ export const quaterCubeSouthNorth: VoxelGeometryData = {
         [0.5, 0.5, 1],
       ],
       faces: {
-        top: {
-          texture: "@topTex",
-          uv: "@topUvs",
+        up: {
+          texture: "@upTex",
+          uv: "@upUvs",
         },
-        bottom: {
-          texture: "@bottomTex",
-          uv: "@bottomUvs",
+        down: {
+          texture: "@downTex",
+          uv: "@downUvs",
         },
         north: {
           texture: "@northTex",
@@ -328,20 +331,22 @@ export const quaterCubeSouthNorth: VoxelGeometryData = {
     },
   ],
 };
-export const quaterCubeTopBottom: VoxelGeometryData = {
-  id: "dve_quater_cube_top_bottom",
+
+
+export const quaterCubeUpDown: VoxelGeometryData = {
+  id: "dve_quater_cube_up_down",
   arguments: {
-    topTex: {
+    upTex: {
       type: "texture",
     },
-    topUvs: {
+    upUvs: {
       type: "box-uv",
       defualt: [0, 0, 1, 1],
     },
-    bottomTex: {
+    downTex: {
       type: "texture",
     },
-    bottomUvs: {
+    downUvs: {
       type: "box-uv",
       defualt: [0, 0, 1, 1],
     },
@@ -382,13 +387,13 @@ export const quaterCubeTopBottom: VoxelGeometryData = {
         [0.5, 1, 0.5],
       ],
       faces: {
-        top: {
-          texture: "@topTex",
-          uv: "@topUvs",
+        up: {
+          texture: "@upTex",
+          uv: "@upUvs",
         },
-        bottom: {
-          texture: "@bottomTex",
-          uv: "@bottomUvs",
+        down: {
+          texture: "@downTex",
+          uv: "@downUvs",
         },
         north: {
           texture: "@northTex",
@@ -410,13 +415,16 @@ export const quaterCubeTopBottom: VoxelGeometryData = {
     },
   ],
 };
+
+
+
 export const eighthCube: VoxelGeometryData = {
   id: "dve_eighth_cube",
   arguments: {
-    topTex: {
+    upTex: {
       type: "texture",
     },
-    bottomTex: {
+    downTex: {
       type: "texture",
     },
     northTex: {
@@ -440,12 +448,12 @@ export const eighthCube: VoxelGeometryData = {
         [0.5, 0.5, 0.5],
       ],
       faces: {
-        top: {
-          texture: "@topTex",
+        up: {
+          texture: "@upTex",
           uv: [0, 0, 1, 1],
         },
-        bottom: {
-          texture: "@bottomTex",
+        down: {
+          texture: "@downTex",
           uv: [0, 0, 1, 1],
         },
         north: {
@@ -472,10 +480,10 @@ export const eighthCube: VoxelGeometryData = {
 export const fencePost: VoxelGeometryData = {
   id: "dve_fence_post",
   arguments: {
-    topTex: {
+    upTex: {
       type: "texture",
     },
-    bottomTex: {
+    downTex: {
       type: "texture",
     },
     northTex: {
@@ -499,11 +507,11 @@ export const fencePost: VoxelGeometryData = {
         [0.5625, 1, 0.5625],
       ],
       faces: {
-        top: {
+        up: {
           texture: "@tex",
           uv: [0, 0, 1, 1],
         },
-        bottom: {
+        down: {
           texture: "@tex",
           uv: [0, 0, 1, 1],
         },
@@ -527,13 +535,16 @@ export const fencePost: VoxelGeometryData = {
     },
   ],
 };
+
+
+
 export const fenceEastWest: VoxelGeometryData = {
   id: "dve_fence_east_west",
   arguments: {
-    topTex: {
+    upTex: {
       type: "texture",
     },
-    bottomTex: {
+    downTex: {
       type: "texture",
     },
     northTex: {
@@ -557,11 +568,11 @@ export const fenceEastWest: VoxelGeometryData = {
         [0.5625, 1, 0.5625],
       ],
       faces: {
-        top: {
+        up: {
           texture: "@tex",
           uv: [0, 0, 1, 1],
         },
-        bottom: {
+        down: {
           texture: "@tex",
           uv: [0, 0, 1, 1],
         },
@@ -585,13 +596,16 @@ export const fenceEastWest: VoxelGeometryData = {
     },
   ],
 };
+
+
+
 export const fenceNorthsouth: VoxelGeometryData = {
   id: "dve_fence_north_south",
   arguments: {
-    topTex: {
+    upTex: {
       type: "texture",
     },
-    bottomTex: {
+    downTex: {
       type: "texture",
     },
     northTex: {
@@ -615,11 +629,11 @@ export const fenceNorthsouth: VoxelGeometryData = {
         [0.5625, 1, 0.5625],
       ],
       faces: {
-        top: {
+        up: {
           texture: "@tex",
           uv: [0, 0, 1, 1],
         },
-        bottom: {
+        down: {
           texture: "@tex",
           uv: [0, 0, 1, 1],
         },
@@ -680,8 +694,8 @@ export const simpleCube: VoxelModelData = {
         id: "cube",
         geometryId: "dve_cube",
         inputs: {
-          "@topTex": "@texture",
-          "@bottomTex": "@texture",
+          "@upTex": "@texture",
+          "@downTex": "@texture",
           "@northTex": "@texture",
           "@southTex": "@texture",
           "@eastTex": "@texture",
@@ -697,7 +711,7 @@ export const pillarCube: VoxelModelData = {
   id: "dve_pillar_cube",
   relationsScehma: [
     {
-      name: "same-bottom",
+      name: "same-down",
       conditions: [
         {
           type: "same-voxel",
@@ -706,7 +720,7 @@ export const pillarCube: VoxelModelData = {
       ],
     },
     {
-      name: "same-top",
+      name: "same-up",
       conditions: [
         {
           type: "same-voxel",
@@ -755,7 +769,7 @@ export const pillarCube: VoxelModelData = {
     {
       name: "direction",
       values: {
-        0: "bottom-top",
+        0: "down-up",
         1: "south-north",
         2: "west-east",
       },
@@ -768,29 +782,29 @@ export const pillarCube: VoxelModelData = {
     sideDisconnectedTex: {
       type: "texture",
     },
-    sideTopTex: {
+    sideUpTex: {
       type: "texture",
     },
-    sideBottomTex: {
+    sideDownTex: {
       type: "texture",
     },
-    topTex: {
+    upTex: {
       type: "texture",
     },
-    bottomTex: {
+    downTex: {
       type: "texture",
     },
   },
   shapeStatesConditonalNodes: {},
   shapeStatesOverrides: {
-    "direction=bottom-top,same-bottom=false,same-top=false": [
+    "direction=down-up,same-down=false,same-up=false": [
       {
         id: "cube",
         data: {
           inputs: {
-            "@topTex": "@topTex",
-            "@topUvs": [0, 0, 0.5, 0.5],
-            "@bottomTex": "@bottomTex",
+            "@upTex": "@upTex",
+            "@upUvs": [0, 0, 0.5, 0.5],
+            "@downTex": "@downTex",
             "@northTex": "@sideDisconnectedTex",
             "@southTex": "@sideDisconnectedTex",
             "@eastTex": "@sideDisconnectedTex",
@@ -799,13 +813,13 @@ export const pillarCube: VoxelModelData = {
         },
       },
     ],
-    "direction=bottom-top,same-bottom=true,same-top=false": [
+    "direction=down-up,same-down=true,same-up=false": [
       {
         id: "cube",
         data: {
           inputs: {
-            "@topTex": "@topTex",
-            "@bottomTex": "@bottomTex",
+            "@upTex": "@upTex",
+            "@downTex": "@downTex",
             "@northTex": "@sideDisconnectedTex",
             "@southTex": "@sideDisconnectedTex",
             "@eastTex": "@sideDisconnectedTex",
@@ -814,13 +828,13 @@ export const pillarCube: VoxelModelData = {
         },
       },
     ],
-    "direction=bottom-top,same-bottom=false,same-top=true": [
+    "direction=down-up,same-down=false,same-up=true": [
       {
         id: "cube",
         data: {
           inputs: {
-            "@topTex": "@topTex",
-            "@bottomTex": "@bottomTex",
+            "@upTex": "@upTex",
+            "@downTex": "@downTex",
             "@northTex": "@sideDisconnectedTex",
             "@southTex": "@sideDisconnectedTex",
             "@eastTex": "@sideDisconnectedTex",
@@ -829,13 +843,13 @@ export const pillarCube: VoxelModelData = {
         },
       },
     ],
-    "direction=bottom-top,same-bottom=true,same-top=true": [
+    "direction=down-up,same-down=true,same-up=true": [
       {
         id: "cube",
         data: {
           inputs: {
-            "@topTex": "@topTex",
-            "@bottomTex": "@bottomTex",
+            "@upTex": "@upTex",
+            "@downTex": "@downTex",
             "@northTex": "@sideDisconnectedTex",
             "@southTex": "@sideDisconnectedTex",
             "@eastTex": "@sideDisconnectedTex",
@@ -907,10 +921,10 @@ export const stair: VoxelModelData = {
     westTex: {
       type: "texture",
     },
-    topTex: {
+    upTex: {
       type: "texture",
     },
-    bottomTex: {
+    downTex: {
       type: "texture",
     },
   },
@@ -922,8 +936,8 @@ export const stair: VoxelModelData = {
         id: "base",
         geometryId: "dve_half_cube",
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -931,12 +945,12 @@ export const stair: VoxelModelData = {
         },
       },
       {
-        id: "top",
+        id: "up",
         geometryId: "dve_quater_cube_west_east",
         position: [0, 0.5, 0.5],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -949,8 +963,8 @@ export const stair: VoxelModelData = {
         id: "base",
         geometryId: "dve_half_cube",
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -958,12 +972,12 @@ export const stair: VoxelModelData = {
         },
       },
       {
-        id: "top",
+        id: "up",
         geometryId: "dve_quater_cube_west_east",
         position: [0.5, 0.5, 0],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -976,8 +990,8 @@ export const stair: VoxelModelData = {
         id: "base",
         geometryId: "dve_half_cube",
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -985,12 +999,12 @@ export const stair: VoxelModelData = {
         },
       },
       {
-        id: "top",
+        id: "up",
         geometryId: "dve_quater_cube_south_north",
         position: [0, 0.5, 0],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1003,8 +1017,8 @@ export const stair: VoxelModelData = {
         id: "base",
         geometryId: "dve_half_cube",
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1012,12 +1026,12 @@ export const stair: VoxelModelData = {
         },
       },
       {
-        id: "top",
+        id: "up",
         geometryId: "dve_quater_cube_south_north",
         position: [0.5, 0.5, 0],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1031,8 +1045,8 @@ export const stair: VoxelModelData = {
         geometryId: "dve_half_cube",
         position: [0, 0.5, 0],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1040,11 +1054,11 @@ export const stair: VoxelModelData = {
         },
       },
       {
-        id: "top",
+        id: "up",
         geometryId: "dve_quater_cube_west_east",
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1058,8 +1072,8 @@ export const stair: VoxelModelData = {
         geometryId: "dve_half_cube",
         position: [0, 0.5, 0],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1067,12 +1081,12 @@ export const stair: VoxelModelData = {
         },
       },
       {
-        id: "top",
+        id: "up",
         geometryId: "dve_quater_cube_west_east",
         position: [0, 0, 0.5],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1086,8 +1100,8 @@ export const stair: VoxelModelData = {
         geometryId: "dve_half_cube",
         position: [0, 0.5, 0],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1095,12 +1109,12 @@ export const stair: VoxelModelData = {
         },
       },
       {
-        id: "top",
+        id: "up",
         geometryId: "dve_quater_cube_south_north",
         position: [0.5, 0, 0],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1114,8 +1128,8 @@ export const stair: VoxelModelData = {
         geometryId: "dve_half_cube",
         position: [0, 0.5, 0],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1123,12 +1137,12 @@ export const stair: VoxelModelData = {
         },
       },
       {
-        id: "top",
+        id: "up",
         geometryId: "dve_quater_cube_south_north",
         position: [0.5, 0, 0],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1194,10 +1208,10 @@ export const fence: VoxelModelData = {
     westTex: {
       type: "texture",
     },
-    topTex: {
+    upTex: {
       type: "texture",
     },
-    bottomTex: {
+    downTex: {
       type: "texture",
     },
   },
@@ -1207,8 +1221,8 @@ export const fence: VoxelModelData = {
         id: "fence_post",
         geometryId: "dve_fence_north_south",
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1222,8 +1236,8 @@ export const fence: VoxelModelData = {
         geometryId: "dve_fence_north_south",
         position: [0, 0, 0.5],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1236,8 +1250,8 @@ export const fence: VoxelModelData = {
         id: "fence_post",
         geometryId: "dve_fence_east_west",
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
@@ -1251,8 +1265,8 @@ export const fence: VoxelModelData = {
         geometryId: "dve_fence_east_west",
         position: [0.5, 0, 0],
         inputs: {
-          "@topTex": "@topTex",
-          "@bottomTex": "@bottomTex",
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
           "@northTex": "@northTex",
           "@southTex": "@southTex",
           "@eastTex": "@eastTex",
