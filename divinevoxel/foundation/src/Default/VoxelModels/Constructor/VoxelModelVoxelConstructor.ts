@@ -4,23 +4,44 @@ import { VoxelMesherDataTool } from "../../Mesher/Tools/VoxelMesherDataTool";
 import { VoxelModelConstructor } from "./Register/VoxelModelsConstructor";
 import { VoxelInputsSyncData } from "../VoxelModelRules.types";
 import { VoxelModelConstructorRegister } from "./Register/VoxelModelConstructorRegister";
-import { ShapeTool } from "../../../Default/Mesher/Shapes/ShapeTool";
+import { ShapeTool } from "../../Mesher/Shapes/ShapeTool";
+import { VoxelGeometryLookUp } from "./VoxelGeometryLookUp";
+import { VoxelFaces } from "@divinevoxel/core/Math";
 
-export class VoxelMoelVoxelConstructor extends VoxelConstructor {
+export class VoxelModelVoxelConstructor extends VoxelConstructor {
+  isModel: true = true;
+
+  geometries: number[][] = [
+
+  ]
   constructor(
     public id: string,
     public model: VoxelModelConstructor,
     public inputMap: VoxelInputsSyncData["voxelInputMap"]
   ) {
     super();
+
+
+
   }
 
-  process(tool: VoxelMesherDataTool) {
-    console.warn("BUILDING VOXEL MODEL", this.id);
-    const shapeState = tool.voxel.getShapeState();
-    const treeState = this.model.shapeStateTree.getState(shapeState);
+  getState(shapeState: number) {
+    return this.model.shapeStateTree.getState(shapeState);
+  }
 
-    const geometries = this.model.getShapeStateGeometry(treeState);
+
+  getGeometryNodes() {
+    
+  }
+  process(tool: VoxelMesherDataTool) {
+ 
+    const treeState = VoxelGeometryLookUp.getConstructorState(
+      tool.voxel.x,
+      tool.voxel.y,
+      tool.voxel.z
+    );
+
+    const geometries = this.model.getShapeStateLocalGeometry(treeState);
     const geometriesLength = geometries.length;
 
     const inputs = this.inputMap[treeState];
@@ -36,6 +57,8 @@ export class VoxelMoelVoxelConstructor extends VoxelConstructor {
         geomtry.nodes[k].add(tool, ShapeTool.origin, geoInputs[k]);
       }
     }
+
+    tool.clearCalculatedData();
   }
 
   onTexturesRegistered(textureManager: typeof TextureRegister): void {}

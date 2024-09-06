@@ -1,24 +1,26 @@
 import { DivineVoxelEngineConstructor } from "@divinevoxel/core/Contexts/Constructor";
-import { VoxelConstructors } from "../../Mesher/Constructors/Voxel/VoxelConstructors";
+import { VoxelConstructorsRegister } from "../../Mesher/Constructors/Voxel/VoxelConstructorsRegister";
 
-import { VoxelMoelVoxelConstructor } from "./VoxelMoelVoxelConstructor";
+import { VoxelModelVoxelConstructor } from "./VoxelModelVoxelConstructor";
 import { ConstructorVoxelModelSyncData } from "../VoxelModelRules.types";
 import { VoxelModelConstructorRegister } from "./Register/VoxelModelConstructorRegister";
+import { VoxelGeometryLookUp } from "./VoxelGeometryLookUp";
 
 export default function (DVEC: DivineVoxelEngineConstructor) {
   DVEC.TC.registerTasks<ConstructorVoxelModelSyncData>(
     "sync-voxel-model-data",
     (data) => {
-      console.log("got the data!!!", data);
 
       VoxelModelConstructorRegister.setGeometryPalette(data.geometryPalette);
 
       VoxelModelConstructorRegister.registerGeometry(data.geometry);
       VoxelModelConstructorRegister.registerModels(data.models);
 
+      VoxelGeometryLookUp.init();
+
       for (const voxel of data.voxels) {
-        VoxelConstructors.registerVoxel(
-          new VoxelMoelVoxelConstructor(
+        VoxelConstructorsRegister.registerVoxel(
+          new VoxelModelVoxelConstructor(
             voxel.id,
             VoxelModelConstructorRegister.models.get(voxel.modelId)!,
             voxel.voxelInputMap

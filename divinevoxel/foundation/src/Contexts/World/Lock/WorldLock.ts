@@ -5,20 +5,19 @@ import { WorldRegister } from "../../../Data/World/WorldRegister.js";
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 import { DataLoaderTool } from "../../../Default/DataLoader/World/Tools/DataLoaderTool.js";
 import { SafeInterval } from "@amodx/core/Intervals/SafeInterval.js";
-import { UtilMap } from "../../../Util/UtilMap.js";
 
 export const WorldLock = {
-  locks: new UtilMap<string, WorldLockTasks>(),
+  locks: new Map<string, WorldLockTasks>(),
   dataLoader: <DataLoaderTool>{},
   init(dataLoaderTool: DataLoaderTool) {
     this.dataLoader = dataLoaderTool;
   },
 
-  _loadMap: new UtilMap<string, boolean>(),
+  _loadMap: new Map<string, boolean>(),
 
   addLock(data: WorldLockTasks) {
     return new Promise(async (resolve) => {
-      this.locks.add([[data.toString(), data]]);
+      this.locks.set(data.toString(), data);
       const [dim, [ssx, ssy, ssz], [esx, esy, esz]] = data;
       const [a, sx, sy, sz] = WorldSpaces.column.getLocationXYZ(ssx, ssy, ssz);
       const [b, ex, ey, ez] = WorldSpaces.column.getLocationXYZ(esx, esy, esz);
@@ -49,7 +48,7 @@ export const WorldLock = {
                 success = await this.dataLoader.loadIfExists(location);
               }
 
-              this._loadMap.remove(key);
+              this._loadMap.delete(key);
               if (WorldRegister.instance.column.get(location)) return;
               if (!success) {
                 WorldRegister.instance.column.fill(location);
@@ -74,13 +73,13 @@ export const WorldLock = {
   },
 
   removeLock(data: WorldLockTasks) {
-    this.locks.remove(data.toString());
+    this.locks.delete(data.toString());
   },
 
   isLocked([sdim, x, y, z]: LocationData) {
     let locked = false;
 
-    for (const [key, [dim, [sx, sy, sz], [ex, ey, ez]]] of this.locks._map) {
+    for (const [key, [dim, [sx, sy, sz], [ex, ey, ez]]] of this.locks) {
       if (dim != sdim) continue;
       if (x >= sx && y >= sy && z >= sz && x <= ex && y <= ey && z <= ez)
         continue;

@@ -9,7 +9,10 @@ import { VoxelRuleGeometry } from "../Classes/VoxelRulesGeometry";
 import { VoxelGeometryCulledIndex } from "../../Indexing/VoxelGeometryCulledIndex";
 import { StringPalette } from "@divinevoxel/core/Interfaces/Data/StringPalette";
 
-export function BuildOcclusionRulesIndex(geo: VoxelRuleGeometry,geoPalette: StringPalette) {
+export function BuildOcclusionRulesIndex(
+  geo: VoxelRuleGeometry,
+  geoPalette: StringPalette
+) {
   //12 byte header for all direction indexes
   const headerSize = 2 * 6;
   const faceIndexes: Record<VoxelFaceNames, number> = {
@@ -48,11 +51,8 @@ export function BuildOcclusionRulesIndex(geo: VoxelRuleGeometry,geoPalette: Stri
     headerSize,
   });
 
-
-  for (let otherId = 0; otherId < geoPalette._palette.length; otherId++) {
-    const id = geoPalette._palette[otherId];
-
-    const rules = geo.outsideOcculedRules.get(id)!;
+  for (let otherId = 0; otherId < geoPalette.size; otherId++) {
+    const rules = geo.outsideOcculedRules.get(geoPalette._palette[otherId])!;
     for (const [otherDir, results] of rules) {
       for (const planeDir of VoxelFaceNameArray) {
         const planes = results.planes[planeDir];
@@ -62,7 +62,7 @@ export function BuildOcclusionRulesIndex(geo: VoxelRuleGeometry,geoPalette: Stri
             VoxelFaceNameRecord[otherDir],
             VoxelFaceNameRecord[planeDir],
             f,
-            1
+            planes[f] ? 0 : 1
           );
         }
       }

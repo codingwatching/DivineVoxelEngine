@@ -4,7 +4,19 @@ export function RegisterFragmentSnippets(builder: typeof URIShaderBuilder) {
   id: "standard_color",
   body: {
    GLSL: () => /* glsl */`
-  vec4 rgb = getBaseColor(vec2(0.,0.));
+
+/*   
+  vec4 rgb = vec4(1.);
+
+  rgb = getAO(rgb);
+
+  FragColor = vec4(rgb.rgb , rgb.a );
+
+  if (FragColor.a < 0.5) { 
+    discard;
+  }
+  */
+vec4 rgb = getBaseColor(vec2(0.,0.));
 
 
   rgb = getColor(rgb);

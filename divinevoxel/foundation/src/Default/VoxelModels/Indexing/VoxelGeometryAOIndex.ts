@@ -27,30 +27,30 @@ export class VoxelGeometryAOIndex {
     );
   }
 
-  isExposed(
+  isShaded(
     otherId: number,
     index: number,
     faceDirection: VoxelFaces,
-    faceIndex: number
+    vertexIndex: number
   ) {
     return BinaryArrays.getBitArrayIndex(
       this.view,
       this.getByteIndex(otherId, index, faceDirection),
-      faceIndex
+      vertexIndex
     );
   }
 
-  setIsExposed(
+  setIShaded(
     otherId: number,
     index: number,
     faceDirection: VoxelFaces,
-    faceIndex: number,
+    vertexIndex: number,
     value = 1
   ) {
     BinaryArrays.setBitArrayIndex(
       this.view,
       this.getByteIndex(otherId, index, faceDirection),
-      faceIndex,
+      vertexIndex,
       value
     );
   }

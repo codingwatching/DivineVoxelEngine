@@ -43,7 +43,9 @@ export class VoxelModelRuleBuilder {
       for (const geoLinkNode of nodes) {
         const geo = this.geometry.get(geoLinkNode.geometryId);
         if (!geo)
-          throw new Error(`Geometry ${geoLinkNode.geometryId} is not registered.`);
+          throw new Error(
+            `Geometry ${geoLinkNode.geometryId} is not registered.`
+          );
         const newId = getGeometryLinkId(geoLinkNode);
 
         if (this.geometry.has(newId)) continue;
@@ -53,22 +55,12 @@ export class VoxelModelRuleBuilder {
         if (geoLinkNode.position) {
           for (const node of newData.nodes) {
             if (node.type == "box") {
-              console.log(
-                "UPDATING POINTS",
-                structuredClone(node.points),
-                geoLinkNode.position
-              );
               node.points[0][0] += geoLinkNode.position[0];
               node.points[0][1] += geoLinkNode.position[1];
               node.points[0][2] += geoLinkNode.position[2];
               node.points[1][0] += geoLinkNode.position[0];
               node.points[1][1] += geoLinkNode.position[1];
               node.points[1][2] += geoLinkNode.position[2];
-              console.log(
-                "UPDATING POINTS DONE",
-                structuredClone(node.points),
-                geoLinkNode.position
-              );
             }
           }
         }
@@ -78,9 +70,9 @@ export class VoxelModelRuleBuilder {
           new VoxelRuleGeometry(
             newId,
             newData,
-            structuredClone(geo.position),
-            structuredClone(geo.scale),
-            structuredClone(geo.rotation)
+            structuredClone(geoLinkNode.position),
+            structuredClone(geoLinkNode.scale),
+            structuredClone(geoLinkNode.rotation)
           )
         );
         continue;

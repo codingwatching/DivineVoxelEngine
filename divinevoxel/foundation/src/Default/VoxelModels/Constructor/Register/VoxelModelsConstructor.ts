@@ -6,12 +6,14 @@ export class VoxelModelConstructor {
   schema: ShapeStateSchema;
   shapeStateTree: StateTreeReader;
   constructor(public data: VoxelModelSyncData) {
-   
     this.schema = new ShapeStateSchema(data.schema);
     this.shapeStateTree = new StateTreeReader(this.schema, data.shapeStateTree);
   }
 
-  getShapeStateGeometry(treeState: number) {
+  getShapeStateLocalGeometry(treeState: number) {
     return this.data.shapeStateMap[treeState];
+  }
+  getShapeStateGeometry(treeState: number) {
+    return this.data.shapeStateGeometryMap[treeState];
   }
 }

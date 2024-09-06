@@ -1,5 +1,5 @@
 import { LocationData } from "@divinevoxel/core/Math/index.js";
-import { VoxelConstructors } from "./Constructors/Voxel/VoxelConstructors.js";
+import { VoxelConstructorsRegister } from "./Constructors/Voxel/VoxelConstructorsRegister.js";
 import { ChunkProcessor } from "./Processors/ChunkProcessor.js";
 import { OverrideManager } from "./Rules/Overrides/OverridesManager.js";
 import { RenderedSubstances } from "./Rules/RenderedSubstances.js";
@@ -18,9 +18,9 @@ export type DVEDefaultMesherInitData = {
 export class DVEDefaultMesher extends DVEMesher {
   static instance: DVEDefaultMesher;
   static get defaults() {
-    return VoxelConstructors.defaults;
+    return VoxelConstructorsRegister.defaults;
   }
-  constructors = VoxelConstructors;
+  constructors = VoxelConstructorsRegister;
   textureManager = TextureRegister;
   chunkProcessor = new ChunkProcessor();
   nodes = MesherManager;
@@ -46,7 +46,7 @@ export class DVEDefaultMesher extends DVEMesher {
       "sync-texuture-index",
       (data: any) => {
         this.textureManager.setTextureIndex(data);
-        this.constructors.constructors._map.forEach((_) => {
+        this.constructors.constructors.forEach((_) => {
           _.onTexturesRegistered(this.textureManager);
         });
         this.observers.texturesRegistered.notify(this.textureManager);

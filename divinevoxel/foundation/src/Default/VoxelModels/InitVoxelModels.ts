@@ -6,10 +6,11 @@ import {
   fenceNorthsouth,
   fencePost,
   halfCube,
-  pillarBox,
+  pillarCube,
   quaterCubeSouthNorth,
   quaterCubeTopBottom,
   quaterCubeWestEast,
+  simpleCube,
   stair,
 } from "./Examples";
 import { VoxelModelRuleBuilder } from "./Rules/VoxelModelManager";
@@ -36,20 +37,21 @@ export function InitVoxelModels(data: {
   const t1 = performance.now();
   VoxelModelRuleBuilder.registerGeometry(
     cube,
-    halfCube,
+ /*    halfCube,
     quaterCubeSouthNorth,
     quaterCubeTopBottom,
     quaterCubeWestEast,
     eighthCube,
     fencePost,
     fenceEastWest,
-    fenceNorthsouth,
+    fenceNorthsouth, */
     ...(data.geometry || [])
   );
   VoxelModelRuleBuilder.registerModels(
-    pillarBox,
+    simpleCube,
+/*     pillarCube,
     stair,
-    fence,
+    fence, */
     ...(data.models || [])
   );
   const geoPalette = new StringPalette();
@@ -97,6 +99,9 @@ export function InitVoxelModels(data: {
       schema: stateData.schema,
       geoLinkMap: stateData.geometryLinkStateMap,
       shapeStateMap: stateData.shapeStatePalette,
+      shapeStateGeometryMap: stateData.shapeStatePalette.map((_) =>
+        _.map((id) => stateData.geometryLinkStateMap[id])
+      ),
       shapeStateTree: stateData.shapeStateTree,
     });
   }

@@ -43,7 +43,7 @@ export class VoxelGeometryCulledIndex {
     otherDirection: VoxelFaces,
     faceDirection: VoxelFaces,
     faceIndex: number,
-    value = 1
+    value: number
   ) {
     BinaryArrays.setBitArrayIndex(
       this.view,

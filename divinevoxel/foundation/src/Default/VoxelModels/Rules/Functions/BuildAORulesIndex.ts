@@ -74,12 +74,26 @@ export function BuildAORulesIndex(
       for (const planeDir of VoxelFaceNameArray) {
         const results = aoResults.planes[planeDir];
         for (let v = 0; v < results.length; v++) {
-          index.setIsExposed(
+          console.log(
+            planeDir,
             otherId,
             i,
             VoxelFaceNameRecord[planeDir],
             v,
             results[v] ? 1 : 0
+          );
+
+          index.setIShaded(
+            otherId,
+            i,
+            VoxelFaceNameRecord[planeDir],
+            v,
+            results[v] ? 1 : 0
+          );
+
+          console.log(
+            "done",
+            index.isShaded(otherId, i, VoxelFaceNameRecord[planeDir], v)
           );
         }
       }

@@ -3,16 +3,18 @@ import type { VoxelMesherDataTool } from "../../Tools/VoxelMesherDataTool";
 import { OverrideManager } from "../../Rules/Overrides/OverridesManager.js";
 import { LightData } from "../../../../Data/LightData";
 
-import { QuadScalarVertexData } from "@amodx/meshing/Classes/QuadVertexData";
+import { QuadScalarVertexData, QuadVec3ArrayVertexData } from "@amodx/meshing/Classes/QuadVertexData";
 import { SubstanceRules } from "../../Rules/SubstanceRules.js";
 import { QuadVerticies } from "@amodx/meshing/Geometry.types";
 import { VoxelFaces, VoxelFaceDirections } from "@divinevoxel/core/Math";
 import { Vector3Like } from "@amodx/math";
+import { GradientCheckSets } from "../CalcConstants";
 
 const LD = LightData;
 const LightValue = new QuadScalarVertexData();
 
 const AOValue = new QuadScalarVertexData();
+const AOGeometryValues = new QuadVec3ArrayVertexData();
 
 const isMax = (num: number, v1: number, v2: number): boolean => {
   return num >= v1 && num >= v2;
@@ -109,44 +111,7 @@ const flipCheck = (face: VoxelFaces) => {
 
 
  */
-const checkSets: Record<VoxelFaces, Record<QuadVerticies, number[]>> = {
-  [VoxelFaces.Top]: {
-    [QuadVerticies.TopRight]: [1, 1, 0, 0, 1, 1, 1, 1, 1],
-    [QuadVerticies.TopLeft]: [-1, 1, 0, 0, 1, 1, -1, 1, 1],
-    [QuadVerticies.BottomLeft]: [-1, 1, 0, 0, 1, -1, -1, 1, -1],
-    [QuadVerticies.BottomRight]: [1, 1, 0, 0, 1, -1, 1, 1, -1],
-  },
-  [VoxelFaces.Bottom]: {
-    [QuadVerticies.TopRight]: [1, -1, 0, 0, -1, 1, 1, -1, 1],
-    [QuadVerticies.TopLeft]: [-1, -1, 0, 0, -1, 1, -1, -1, 1],
-    [QuadVerticies.BottomLeft]: [-1, -1, 0, 0, -1, -1, -1, -1, -1],
-    [QuadVerticies.BottomRight]: [1, -1, 0, 0, -1, -1, 1, -1, -1],
-  },
-  [VoxelFaces.East]: {
-    [QuadVerticies.TopRight]: [1, 0, 1, 1, 1, 0, 1, 1, 1],
-    [QuadVerticies.TopLeft]: [1, 0, -1, 1, 1, 0, 1, 1, -1],
-    [QuadVerticies.BottomLeft]: [1, 0, -1, 1, -1, 0, 1, -1, -1],
-    [QuadVerticies.BottomRight]: [1, 0, 1, 1, -1, 0, 1, -1, 1],
-  },
-  [VoxelFaces.West]: {
-    [QuadVerticies.TopRight]: [-1, 0, 1, -1, 1, 0, -1, 1, 1],
-    [QuadVerticies.TopLeft]: [-1, 0, -1, -1, 1, 0, -1, 1, -1],
-    [QuadVerticies.BottomLeft]: [-1, 0, -1, -1, -1, 0, -1, -1, -1],
-    [QuadVerticies.BottomRight]: [-1, 0, 1, -1, -1, 0, -1, -1, 1],
-  },
-  [VoxelFaces.South]: {
-    [QuadVerticies.TopRight]: [1, 0, -1, 0, 1, -1, 1, 1, -1],
-    [QuadVerticies.TopLeft]: [-1, 0, -1, 0, 1, -1, -1, 1, -1],
-    [QuadVerticies.BottomLeft]: [-1, 0, -1, 0, -1, -1, -1, -1, -1],
-    [QuadVerticies.BottomRight]: [1, 0, -1, 0, -1, -1, 1, -1, -1],
-  },
-  [VoxelFaces.North]: {
-    [QuadVerticies.TopRight]: [1, 0, 1, 0, 1, 1, 1, 1, 1],
-    [QuadVerticies.TopLeft]: [-1, 0, 1, 0, 1, 1, -1, 1, 1],
-    [QuadVerticies.BottomLeft]: [-1, 0, 1, 0, -1, 1, -1, -1, 1],
-    [QuadVerticies.BottomRight]: [1, 0, 1, 0, -1, 1, 1, -1, 1],
-  },
-};
+
 const states = { ignoreAO: false };
 const newRGBValues: number[] = [];
 const RGBValues = { r: 0, g: 0, b: 0 };
@@ -216,7 +181,7 @@ export const LightGradient = {
       }
     }
     for (let vertex: QuadVerticies = <QuadVerticies>1; vertex <= 4; vertex++) {
-      const checkSet = checkSets[face][vertex];
+      const checkSet = GradientCheckSets[face][vertex];
 
       if (this.settings.doRGB || this.settings.doSun) {
         const values = LD.getLightValues(light);
@@ -232,6 +197,7 @@ export const LightGradient = {
 
       AOValues.a = 0;
 
+      let checkSetIndex = 0;
       for (let i = 0; i < 9; i += 3) {
         if (this.settings.doRGB || this.settings.doSun) {
           if (
@@ -321,7 +287,10 @@ export const LightGradient = {
             }
           }
         }
+
+        checkSetIndex++;
       }
+
 
       /*
    Light End

@@ -86,6 +86,7 @@ export const VoxelFaceCompassDirectionMap: Record<
   [VoxelFaces.East]: CompassDirections.East,
   [VoxelFaces.West]: CompassDirections.West,
 };
+
 export const CompassDirectionVoxelFaceMap: Record<
   CompassDirections,
   VoxelFaces
@@ -107,4 +108,12 @@ export const VoxelFaceNameRecord: Record<VoxelFaceNames, VoxelFaces> = {
   south: VoxelFaces.South,
   east: VoxelFaces.East,
   west: VoxelFaces.West,
+};
+export const VoxelFaceNameMap: Record<VoxelFaces, VoxelFaceNames> = {
+  [VoxelFaces.Top]: "top",
+  [VoxelFaces.Bottom]: "bottom",
+  [VoxelFaces.North]: "north",
+  [VoxelFaces.South]: "south",
+  [VoxelFaces.East]: "east",
+  [VoxelFaces.West]: "west",
 };

@@ -15,15 +15,16 @@ import { SimplePanelVoxelConstructor } from "./Classes/Panel/SimplePanel.constru
 import { SimpleStairVoxelConstructor } from "./Classes/Stair/SimpleStair.constructor.js";
 import { VoxelConstructor } from "./Classes/VoxelConstructor.js";
 import { SimpleCrossedPanelVoxelConstructor } from "./Classes/Panel/SimpleCrossedPanel.constructor.js";
-import { UtilMap } from "../../../../Util/UtilMap";
 import { ModCubeVoxelConstructor } from "./Classes/Cube/ModCube.constructor";
 import { VoxelFaces } from "@divinevoxel/core/Math";
 import { SimpleHalfCubeVoxelConstructor } from "./Classes/HalfCube/SimpleHalfCube.constructor";
 import { ModHalfCubeVoxelConstructor } from "./Classes/HalfCube/ModHalfCube.constructor";
 import { ModStairVoxelConstructor } from "./Classes/Stair/ModStair.constructor";
+import { VoxelPalette } from "@divinevoxel/core/Data/Voxel/VoxelPalette";
 
-export class VoxelConstructors {
-  static constructors = new UtilMap<string, VoxelConstructor>();
+export class VoxelConstructorsRegister {
+  static constructorsPaltte: VoxelConstructor[] = [];
+  static constructors = new Map<string, VoxelConstructor>();
   static get(id: string): VoxelConstructor {
     return <VoxelConstructor>this.constructors.get(id);
   }
@@ -31,9 +32,11 @@ export class VoxelConstructors {
     if (Array.isArray(voxel)) {
       for (const vox of voxel) {
         this.constructors.set(vox.id, vox);
+        this.constructorsPaltte[VoxelPalette.ids.getNumberId(vox.id)] = vox;
       }
       return;
     }
+    this.constructorsPaltte[VoxelPalette.ids.getNumberId(voxel.id)] = voxel;
     this.constructors.set(voxel.id, voxel);
   }
 

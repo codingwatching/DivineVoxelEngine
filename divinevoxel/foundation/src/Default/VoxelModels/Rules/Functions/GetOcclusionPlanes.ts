@@ -32,20 +32,20 @@ export function GetOcclusionPlanes(data: VoxelGeometryNodes[]) {
         );
       }
 
-      if (node.faces.north) {
+      if (node.faces.south) {
         planes.addPlane(
           new OcclusionPlane(
-            "north",
+            "south",
             [start.x, start.y, start.z],
             [end.x, end.y, start.z]
           )
         );
       }
 
-      if (node.faces.south) {
+      if (node.faces.north) {
         planes.addPlane(
           new OcclusionPlane(
-            "south",
+            "north",
             [start.x, start.y, end.z],
             [end.x, end.y, end.z]
           )

@@ -96,7 +96,7 @@ export const LightData = {
    * Give an array of light values it will return an encoded light number.
    * @param values
    */
-  setLightValues(values: number[]) {
+  setLightValues(values: ArrayLike<number>) {
     let value = this.setS(values[0], 0);
     value = this.setR(values[1], value);
     value = this.setG(values[2], value);

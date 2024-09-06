@@ -1,21 +1,18 @@
 //types
 import type { LocationData } from "@divinevoxel/core/Math/index.js";
 import type { SetChunkMeshTask } from "@divinevoxel/core/Contexts/Render/Tasks/RenderTasks.types.js";
-
 //objects
-import { SubstanceRules } from "../Rules/SubstanceRules.js";
 import { RenderedSubstances } from "../Rules/RenderedSubstances.js";
 import { DivineVoxelEngineConstructor } from "@divinevoxel/core/Contexts/Constructor/DivineVoxelEngineConstructor.js";
 
 //data
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
-import { WorldRegister } from "../../../Data//World/WorldRegister.js";
 
 //tools
 import { HeightMapTool } from "../../Tools/Data/WorldData/HeightMapTool.js";
 import { BuilderDataTool } from "../Tools/BuilderDataTool.js";
 import { ShapeTool } from "../Shapes/ShapeTool.js";
-import { WorldBounds } from "@divinevoxel/core/Data/World/WorldBounds.js";
+import { VoxelGeometryLookUp } from "../../VoxelModels/Constructor/VoxelGeometryLookUp.js";
 
 export class ChunkProcessor {
   mDataTool = new BuilderDataTool();
@@ -71,6 +68,7 @@ export class ChunkProcessor {
     let [minY, maxY] = this.heightMapTool.chunk.getMinMax();
 
     if (Math.abs(minY) == Infinity && Math.abs(maxY) == Infinity) return;
+    VoxelGeometryLookUp.start(dimension);
 
     for (let y = minY; y <= maxY; y++) {
       let foundVoxels = false;
@@ -87,10 +85,11 @@ export class ChunkProcessor {
       this.heightMapTool.chunk.setY(y).setHasVoxels(foundVoxels);
       this.heightMapTool.chunk.setY(y).setDirty(false);
     }
+    VoxelGeometryLookUp.stop();
 
     const chunks = <SetChunkMeshTask>[location, [], priority];
     const trasnfers: any[] = [];
-    for (const [substance, mesher] of RenderedSubstances.meshers._map) {
+    for (const [substance, mesher] of RenderedSubstances.meshers) {
       if (mesher.getAttribute("position").length == 0) {
         chunks[1].push([substance, false]);
         mesher.resetAll();

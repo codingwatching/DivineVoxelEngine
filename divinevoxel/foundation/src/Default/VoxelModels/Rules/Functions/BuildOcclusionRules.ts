@@ -11,8 +11,7 @@ export function BuildOcclusionRules(
   other: VoxelRuleGeometry
 ) {
   main.occlusionPlane.setOffset(0, 0, 0);
-
-  //build outside rules
+  
   for (const offsetDirection of VoxelFaceNameArray) {
     const results = new OcclusionPlaneResults<boolean>();
     other.occlusionPlane.setOffset(

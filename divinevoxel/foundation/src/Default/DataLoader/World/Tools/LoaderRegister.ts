@@ -1,10 +1,9 @@
-import { Thread, ThreadPool } from "@amodx/threads/";
+import {  ThreadPool } from "@amodx/threads/";
 import { LocationData } from "@divinevoxel/core/Math";
-import { UtilMap } from "../../../../Util/UtilMap.js";
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 
 export const LoaderRegister = {
-  load: new UtilMap<string, Function[]>(),
+  load: new Map<string, Function[]>(),
   dataComm: <ThreadPool>{},
   $INIT(dataComm: ThreadPool) {
     this.dataComm = dataComm;
@@ -29,6 +28,6 @@ export const LoaderRegister = {
     const run = this.load.get(key);
     if (!run) return false;
     run.forEach((_) => _(data));
-    this.load.remove(key);
+    this.load.delete(key);
   },
 };

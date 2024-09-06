@@ -16,8 +16,9 @@ export interface VoxelModelSyncData {
   id: string;
   schema: (ShapeStateSchemaData)[];
   geoLinkMap: number[];
-  shapeStateTree: number[];
+  shapeStateTree: any[];
   shapeStateMap: number[][];
+  shapeStateGeometryMap: number[][];
 }
 
 export interface VoxelInputsSyncData {

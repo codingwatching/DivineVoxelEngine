@@ -643,8 +643,58 @@ export const fenceNorthsouth: VoxelGeometryData = {
     },
   ],
 };
-export const pillarBox: VoxelModelData = {
-  id: "dve_pillar_box",
+
+
+export const simpleCube: VoxelModelData = {
+  id: "dve_simple_cube",
+  relationsScehma: [],
+  shapeStateSchema: [
+    {
+      name: "direction",
+      values: {
+        0: "south",
+        1: "north",
+        2: "east",
+        3: "west",
+      },
+    },
+    {
+      name: "upsidedown",
+      values: {
+        0: "false",
+        1: "true",
+      },
+    },
+  ],
+  arguments: {
+    texture: {
+      type: "texture",
+    },
+  },
+  shapeStatesConditonalNodes: {},
+  shapeStatesOverrides: {},
+
+  shapeStatesNodes: {
+    "direction=south,upsidedown=false": [
+      {
+        id: "cube",
+        geometryId: "dve_cube",
+        inputs: {
+          "@topTex": "@texture",
+          "@bottomTex": "@texture",
+          "@northTex": "@texture",
+          "@southTex": "@texture",
+          "@eastTex": "@texture",
+          "@westTex": "@texture",
+        },
+      },
+    ],
+  },
+};
+
+
+export const pillarCube: VoxelModelData = {
+  id: "dve_pillar_cube",
   relationsScehma: [
     {
       name: "same-bottom",

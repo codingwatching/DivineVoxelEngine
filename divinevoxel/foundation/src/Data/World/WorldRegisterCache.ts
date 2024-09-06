@@ -1,26 +1,14 @@
 import { Chunk, Column } from "./Classes/index.js";
 import { WorldBounds } from "@divinevoxel/core/Data/World/WorldBounds.js";
-import {
-  Flat3DIndex,
-  Vec3Array,
-  Vector3Like,
-} from "@amodx/math";
-import {
-
-  type LocationData,
-} from "@divinevoxel/core/Math";
+import { Flat3DIndex, Vector3Like } from "@amodx/math";
+import { type LocationData } from "@divinevoxel/core/Math";
 import { EngineSettings } from "@divinevoxel/core/Data/Settings/EngineSettings.js";
-function vector3Hash(x: number, y: number, z: number) {
-  const xHash = Math.abs(x * 73856093) | 0;
-  const yHash = Math.abs(y * 19349663) | 0;
-  const zHash = Math.abs(z * 83492791) | 0;
-  return xHash ^ yHash ^ zHash;
-}
+import { Observable } from "@amodx/core/Observers/Observable.js";
 
 export class WorldRegisterCache {
   _cacheOn = false;
-  _chunkCache = new Map<number, Chunk>();
-  _columnCache = new Map<number, Column>();
+  _chunkCache: Chunk[] = [];
+  _columnCache: Column[] = [];
 
   chunkSpaceIndex = Flat3DIndex.GetXZYOrder();
   columnSpaceIndex = Flat3DIndex.GetXZYOrder();
@@ -73,34 +61,34 @@ export class WorldRegisterCache {
 
   enable() {
     this._cacheOn = true;
-    this._chunkCache.clear();
-    this._columnCache.clear();
+    this._chunkCache.length = 0;
+    this._columnCache.length = 0;
   }
 
   disable() {
     this._cacheOn = false;
-    this._chunkCache.clear();
-    this._columnCache.clear();
+    this._chunkCache.length = 0;
+    this._columnCache.length = 0;
   }
 
   addChunk(key: number, data: Chunk) {
-    this._chunkCache.set(key, data);
+    this._chunkCache[key] = data;
   }
 
   addColumn(key: number, data: Column) {
-    this._columnCache.set(key, data);
+    this._columnCache[key] = data;
   }
 
   getChunk(key: number) {
-    return this._chunkCache.get(key);
+    return this._chunkCache[key];
   }
 
   getColumn(key: number) {
-    return this._columnCache.get(key);
+    return this._columnCache[key];
   }
 
   getChunkIndex(location: LocationData) {
-    return vector3Hash(
+    return Vector3Like.HashXYZ(
       ((location[1] >> this.chunkSizePower.x) << this.chunkSizePower.x) /
         this.chunkSize.x,
 
@@ -113,7 +101,7 @@ export class WorldRegisterCache {
   }
 
   getColumnIndex(location: LocationData) {
-    return vector3Hash(
+    return Vector3Like.HashXYZ(
       ((location[1] >> this.columnSizePower.x) << this.columnSizePower.x) /
         this.columnSize.x,
       ((location[2] >> this.columnSizePower.y) << this.columnSizePower.y) /
@@ -124,7 +112,7 @@ export class WorldRegisterCache {
   }
 
   clear() {
-    this._chunkCache.clear();
-    this._columnCache.clear();
+    this._chunkCache.length = 0;
+    this._columnCache.length = 0;
   }
 }

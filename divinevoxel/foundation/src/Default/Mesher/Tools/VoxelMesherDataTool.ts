@@ -10,15 +10,29 @@ import { BuilderDataTool } from "./BuilderDataTool.js";
 import { MesherDataTool } from "@amodx/meshing/Tools/MesherDataTools";
 
 //data
-import { QuadScalarVertexData } from "@amodx/meshing/Classes/QuadVertexData";
+import {
+  QuadScalarVertexData,
+  QuadVector3VertexData,
+} from "@amodx/meshing/Classes/QuadVertexData";
 import { VoxelTemplateDataTool } from "./VoxelTemplateDataTool.js";
 import { BinaryNumberTypes } from "@amodx/binary";
-import { VoxelFaces, VoxelFaceDirections } from "@divinevoxel/core/Math";
+import {
+  VoxelFaces,
+  VoxelFaceDirections,
+  VoxelFacesArray,
+} from "@divinevoxel/core/Math";
+import { QuadVerticies } from "@amodx/meshing/Geometry.types";
+import { FaceDataCalc } from "../Calc/Light/FaceDataCalc";
 
 export class VoxelMesherDataTool extends MesherDataTool {
   template = new VoxelTemplateDataTool();
   voxel = new BuilderDataTool();
   nVoxel = new BuilderDataTool();
+
+  dataCalculated: Record<VoxelFaces, boolean>;
+  geometryData: Record<VoxelFaces, Record<QuadVerticies, ([number[],number[],number[]])>>;
+  lightData: Record<VoxelFaces, Record<QuadVerticies, number>>;
+
   faceDataOverride = <FaceDataOverride>{
     face: VoxelFaces.South,
     default: false,
@@ -29,6 +43,29 @@ export class VoxelMesherDataTool extends MesherDataTool {
     super();
     this.faceDataOverride.currentVoxel = this.voxel;
     this.faceDataOverride.neighborVoxel = this.nVoxel;
+
+    this.dataCalculated = [] as any;
+    for (const face of VoxelFacesArray) {
+      this.dataCalculated[face] = false;
+    }
+
+    this.geometryData = [] as any;
+    for (const face of VoxelFacesArray) {
+      this.geometryData[face] = [] as any;
+      this.geometryData[face][QuadVerticies.TopRight] = [[],[],[]];
+      this.geometryData[face][QuadVerticies.TopLeft] = [[],[],[]];
+      this.geometryData[face][QuadVerticies.BottomLeft] = [[],[],[]];
+      this.geometryData[face][QuadVerticies.BottomRight] = [[],[],[]];
+    }
+
+    this.lightData = [] as any;
+    for (const face of VoxelFacesArray) {
+      this.lightData[face] = [] as any;
+      this.lightData[face][QuadVerticies.TopRight] = 0;
+      this.lightData[face][QuadVerticies.TopLeft] = 0;
+      this.lightData[face][QuadVerticies.BottomLeft] = 0;
+      this.lightData[face][QuadVerticies.BottomRight] = 0;
+    }
 
     (
       [
@@ -57,6 +94,20 @@ export class VoxelMesherDataTool extends MesherDataTool {
     ).forEach(([key, data]) => this.vars.set(key, data as any));
   }
 
+  calculateFaceData(direction: VoxelFaces) {
+    if (this.dataCalculated[direction]) return true;
+    FaceDataCalc.calculate(direction, this);
+  }
+
+  clearCalculatedData() {
+    this.dataCalculated[VoxelFaces.Top] = false;
+    this.dataCalculated[VoxelFaces.Bottom] = false;
+    this.dataCalculated[VoxelFaces.North] = false;
+    this.dataCalculated[VoxelFaces.South] = false;
+    this.dataCalculated[VoxelFaces.East] = false;
+    this.dataCalculated[VoxelFaces.West] = false;
+  }
+
   calculateLight(direction: VoxelFaces, ignoreAO = false) {
     /*     if (this.template.isAcive()) {
       this.template._light = this.template._lights[direction];
@@ -73,7 +124,6 @@ export class VoxelMesherDataTool extends MesherDataTool {
     FlowGradient.calculate(this);
   }
 
-  
   getAnimationData() {
     return this.quadVertexData.get("animation")!;
   }
@@ -84,6 +134,7 @@ export class VoxelMesherDataTool extends MesherDataTool {
     }
     return this.quadVertexData.get("light")!;
   }
+
 
   getWorldAO() {
     if (this.template.isAcive()) {
