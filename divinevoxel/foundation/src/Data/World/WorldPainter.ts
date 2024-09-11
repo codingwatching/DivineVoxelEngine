@@ -13,32 +13,41 @@ export class WorldPainter {
   }
 
   dataTool = new DataTool();
-  paintVoxel(location: LocationData, data: AddVoxelData) {
-    let chunk = WorldRegister.instance.chunk.get(location);
+  data: AddVoxelData;
+  dimenion: string = "main";
+
+  paintVoxel(x: number, y: number, z: number) {
+    let chunk = WorldRegister.instance.chunk.get(x, y, z);
     if (!chunk) {
-      let buffer = DataHooks.chunk.onGetSync.pipe({ location, chunk: null });
+      let buffer = DataHooks.chunk.onGetSync.pipe({
+        location: [this.dimenion, x, y, z],
+        chunk: null,
+      });
       if (!buffer.chunk) return;
-      chunk = WorldRegister.instance.chunk.add(location, buffer.chunk);
+      chunk = WorldRegister.instance.chunk.add(x, y, z, buffer.chunk);
     }
 
-    if (!this.dataTool.setLocation(location).loadIn()) return;
-    const id = VoxelPalette.ids.getNumberId(data.id);
+    if (!this.dataTool.setDimension(this.dimenion).setXYZ(x, y, z).loadIn())
+      return;
+    const id = VoxelPalette.ids.getNumberId(this.data.id);
     if (id < 0) return false;
     this.dataTool.setId(id);
 
-    this.dataTool.setShapeState(data.shapeState ? data.shapeState : 0);
+    this.dataTool.setShapeState(
+      this.data.shapeState ? this.data.shapeState : 0
+    );
 
     if (this.dataTool.getSubstnaceData().isLiquid()) {
       this.dataTool.setLevel(7);
     }
-    this.dataTool.setMod(data.mod);
+    this.dataTool.setMod(this.data.mod);
 
     if (
-      data.secondaryVoxelId &&
-      data.secondaryVoxelId != "dve_air" &&
+      this.data.secondaryVoxelId &&
+      this.data.secondaryVoxelId != "dve_air" &&
       this.dataTool.canHaveSecondaryVoxel()
     ) {
-      const vid = VoxelPalette.ids.getNumberId(data.secondaryVoxelId);
+      const vid = VoxelPalette.ids.getNumberId(this.data.secondaryVoxelId);
 
       if (vid > 0) {
         this.dataTool.setSecondary(true);
@@ -54,16 +63,16 @@ export class WorldPainter {
     if (this.dataTool.isRich()) {
       DataHooks.paint.onRichVoxelPaint.notify([
         this.dataTool.getStringId(),
-        location,
+        [this.dimenion, x, y, z],
       ]);
     }
 
     this.dataTool.commit(1);
   }
 
-  eraseVoxel(location: LocationData) {
-    this.dataTool.setLocation(location);
-    if (!this.dataTool.loadIn()) return;
+  eraseVoxel(x: number, y: number, z: number) {
+    this.dataTool.setDimension(this.dimenion);
+    if (!this.dataTool.loadInAt(x, y, z)) return;
     if (!this.dataTool.isRenderable()) return;
     this.dataTool.data.raw[0] = 0;
     this.dataTool.data.raw[1] = 0;

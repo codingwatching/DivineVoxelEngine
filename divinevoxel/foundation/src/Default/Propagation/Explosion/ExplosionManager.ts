@@ -125,6 +125,6 @@ export const ExplosionManager = {
   SunUpdate(tasks);
 
   tasks.runRebuildQueue();
-  tasks.sup();
+  tasks.stop();
  },
 };

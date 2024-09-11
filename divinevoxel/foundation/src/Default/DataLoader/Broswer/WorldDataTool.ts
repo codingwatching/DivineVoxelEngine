@@ -41,7 +41,7 @@ export class WorldDataTool {
       proms.push(
         transication.get(
           this.worldDataBase.columnTimestamp.getKey(
-            WorldSpaces.column.getKeyLocation(location),
+            WorldSpaces.column.getKeyXYZ(location[1],location[2],location[3]),
             this.dataType
           )
         )
@@ -61,7 +61,7 @@ export class WorldDataTool {
   async columnTimestamp(location: LocationData) {
     await this.worldDataBase.setDimension(location[0]);
     const stamp = await this.worldDataBase.columnTimestamp.get(
-      WorldSpaces.column.getKeyLocation(location),
+      WorldSpaces.column.getKeyXYZ(location[1],location[2],location[3]),
       this.dataType
     );
 
@@ -72,7 +72,7 @@ export class WorldDataTool {
   async loadRegionHeader(location: LocationData) {
     await this.worldDataBase.setDimension(location[0]);
     const buffer = await this.worldDataBase.regionHeader.get(
-      WorldSpaces.region.getKeyLocation(location),
+      WorldSpaces.region.getKeyXYZ(location[1],location[2],location[3]),
       this.dataType
     );
     if (!buffer) return new ArrayBuffer(0);
@@ -82,7 +82,7 @@ export class WorldDataTool {
   async loadColumn(location: LocationData) {
     await this.worldDataBase.setDimension(location[0]);
     const buffer = await this.worldDataBase.column.get(
-      WorldSpaces.column.getKeyLocation(location),
+      WorldSpaces.column.getKeyXYZ(location[1],location[2],location[3]),
       this.dataType
     );
     if (!buffer) return new ArrayBuffer(0);
@@ -95,12 +95,12 @@ export class WorldDataTool {
     const compressed = await Compressor.compressArray(new Uint8Array(buffer));
     await this.worldDataBase.setDimension(location[0]);
     await this.worldDataBase.column.set(
-      WorldSpaces.column.getKeyLocation(location),
+      WorldSpaces.column.getKeyXYZ(location[1],location[2],location[3]),
       this.dataType,
       compressed.buffer
     );
     await this.worldDataBase.columnTimestamp.set(
-      WorldSpaces.column.getKeyLocation(location),
+      WorldSpaces.column.getKeyXYZ(location[1],location[2],location[3]),
       this.dataType,
       Date.now()
     );

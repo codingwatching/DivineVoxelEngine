@@ -4,7 +4,7 @@ import type {
   MushRegisterRegion,
   MeshRegisterColumn,
 } from "../Scene/MeshRegister.types.js";
-import {  type LocationData } from "../../../Math/index.js";
+import { type LocationData } from "../../../Math/index.js";
 import { Vector3Like } from "@amodx/math";
 import { WorldSpaces } from "../../../Data/World/WorldSpaces.js";
 import { URIMesh } from "@amodx/uri/Meshes/URIMesh.js";
@@ -80,7 +80,10 @@ export const MeshRegister = {
         dimension = MeshRegister.dimensions.add(location[0]);
       }
       const region = this._getRegionData();
-      dimension.set(WorldSpaces.region.getKeyLocation(location), region);
+      dimension.set(
+        WorldSpaces.region.getKeyXYZ(location[1], location[2], location[3]),
+        region
+      );
       return region;
     },
     remove(location: LocationData) {
@@ -88,7 +91,9 @@ export const MeshRegister = {
       if (!region) return false;
       const dimension = MeshRegister.dimensions.get(location[0]);
       if (!dimension) return false;
-      dimension.delete(WorldSpaces.region.getKeyLocation(location));
+      dimension.delete(
+        WorldSpaces.region.getKeyXYZ(location[1], location[2], location[3])
+      );
       region.columns.forEach((column) => {
         column.chunks.forEach((chunk) => {
           chunk.forEach((chunkMeshes) => {
@@ -106,7 +111,9 @@ export const MeshRegister = {
     get(location: LocationData) {
       const dimension = MeshRegister.dimensions.get(location[0]);
       if (!dimension) return false;
-      const region = dimension.get(WorldSpaces.region.getKeyLocation(location));
+      const region = dimension.get(
+        WorldSpaces.region.getKeyXYZ(location[1], location[2], location[3])
+      );
       if (!region) return false;
       return region;
     },
@@ -118,13 +125,20 @@ export const MeshRegister = {
         region = MeshRegister.region.add(location);
       }
       const column = this._getColumnData(location);
-      region.columns.set(WorldSpaces.column.getIndexLocation(location), column);
+      region.columns.set(
+        WorldSpaces.column.getIndexXYZ(location[1], location[2], location[3]),
+        column
+      );
       return column;
     },
     remove(location: LocationData) {
       let region = MeshRegister.region.get(location);
       if (!region) return false;
-      const index = WorldSpaces.column.getIndexLocation(location);
+      const index = WorldSpaces.column.getIndexXYZ(
+        location[1],
+        location[2],
+        location[3]
+      );
       const column = region.columns.get(index);
       if (!column) return false;
       region.columns.delete(index);
@@ -138,7 +152,11 @@ export const MeshRegister = {
         location: [
           location[0],
           ...Vector3Like.ToArray(
-            WorldSpaces.column.getPositionLocation(location)
+            WorldSpaces.column.getPositionXYZ(
+              location[1],
+              location[2],
+              location[3]
+            )
           ),
         ] as LocationData,
         chunks: new Map(),
@@ -147,20 +165,23 @@ export const MeshRegister = {
     get(location: LocationData) {
       const region = MeshRegister.region.get(location);
       if (!region) return false;
-      return region.columns.get(WorldSpaces.column.getIndexLocation(location));
+
+      return region.columns.get(
+        WorldSpaces.column.getIndexXYZ(location[1], location[2], location[3])
+      );
     },
   },
   chunk: {
-    add(
-      location: LocationData,
-      mesh: URIMesh,
-      substance: string
-    ) {
+    add(location: LocationData, mesh: URIMesh, substance: string) {
       let column = MeshRegister.column.get(location);
       if (!column) {
         column = MeshRegister.column.add(location);
       }
-      const index = WorldSpaces.chunk.getIndexLocation(location);
+      const index = WorldSpaces.chunk.getIndexXYZ(
+        location[1],
+        location[2],
+        location[2]
+      );
       let chunk = column.chunks.get(index);
       if (!chunk) {
         chunk = new Map();
@@ -177,7 +198,11 @@ export const MeshRegister = {
     remove(location: LocationData, substance: string) {
       const column = MeshRegister.column.get(location);
       if (!column) return false;
-      const index = WorldSpaces.chunk.getIndexLocation(location);
+      const index = WorldSpaces.chunk.getIndexXYZ(
+        location[1],
+        location[2],
+        location[3]
+      );
       const chunk = column.chunks.get(index);
       if (!chunk) return false;
       const chunkMesh = chunk.get(substance);
@@ -190,9 +215,10 @@ export const MeshRegister = {
     },
     get(location: LocationData, substance: string) {
       const column = MeshRegister.column.get(location);
+
       if (!column) return false;
       const chunk = column.chunks.get(
-        WorldSpaces.chunk.getIndexLocation(location)
+        WorldSpaces.chunk.getIndexXYZ(location[1], location[2], location[3])
       );
       if (!chunk) return false;
       const chunkMesh = chunk.get(substance);

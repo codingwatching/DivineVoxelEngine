@@ -51,30 +51,49 @@ export class OcclusionQuad {
 
   getPoints(): Vec3Array[] {
     const { start, end } = this;
+
     switch (this.direction) {
       case "up":
+        return [
+          [end.x, end.y, end.z],
+          [start.x, end.y, end.z],
+          [start.x, end.y, start.z],
+          [end.x, end.y, start.z],
+        ];
       case "down":
         return [
-          [start.x, start.y, start.z],
+          [start.x, start.y, end.z],
+          [end.x, start.y, end.z],
           [end.x, start.y, start.z],
+          [start.x, start.y, start.z],
+        ];
+      case "north":
+        return [
+          [start.x, end.y, end.z],
+          [end.x, end.y, end.z],
           [end.x, start.y, end.z],
           [start.x, start.y, end.z],
         ];
-      case "north":
       case "south":
         return [
-          [start.x, start.y, start.z],
-          [end.x, start.y, start.z],
           [end.x, end.y, start.z],
           [start.x, end.y, start.z],
+          [start.x, start.y, start.z],
+          [end.x, start.y, start.z],
         ];
       case "east":
+        return [
+          [end.x, end.y, end.z],
+          [end.x, end.y, start.z],
+          [end.x, start.y, start.z],
+          [end.x, start.y, end.z],
+        ];
       case "west":
         return [
-          [start.x, start.y, start.z],
           [start.x, end.y, start.z],
           [start.x, end.y, end.z],
           [start.x, start.y, end.z],
+          [start.x, start.y, start.z],
         ];
       default:
         return [];

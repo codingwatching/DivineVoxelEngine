@@ -1,7 +1,7 @@
 import { WorldRegister } from "../../../Data/World/WorldRegister.js";
 import { ChunkDataTool } from "../Data/WorldData/ChunkDataTool.js";
 import { Threads } from "@amodx/threads/";
-import type { LocationData } from "@divinevoxel/core/Math";;
+import type { LocationData } from "@divinevoxel/core/Math";
 import { LocationBoundTool } from "../Classes/LocationBoundTool.js";
 import { TaskTool } from "../Tasks/TasksTool.js";
 import type { RemoveChunksOutsideDistance } from "@divinevoxel/core/Contexts/Render/Tasks/RenderTasks.types.js";
@@ -38,7 +38,8 @@ export class MesherTool extends LocationBoundTool {
     return this;
   }
   removeColumn() {
-    const column = WorldRegister.instance.column.get(this.location);
+    WorldRegister.instance.setDimension(this.dimension);
+    const column = WorldRegister.instance.column.get(this.x, this.y, this.z);
     if (!column) return false;
     if (column.chunks.length == 0) return false;
 
@@ -46,7 +47,8 @@ export class MesherTool extends LocationBoundTool {
     return this;
   }
   fillColumn() {
-    WorldRegister.instance.column.fill(this.location);
+    WorldRegister.instance.setDimension(this.dimension);
+    WorldRegister.instance.column.fill(this.x, this.y, this.z);
     return this;
   }
   removeColumnsOutsideRadius(radius: number) {

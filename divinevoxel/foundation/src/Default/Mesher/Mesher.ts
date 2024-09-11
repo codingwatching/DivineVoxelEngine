@@ -51,7 +51,7 @@ export class DVEDefaultMesher extends DVEMesher {
         });
         this.observers.texturesRegistered.notify(this.textureManager);
         this.textureManager.releaseTextureData();
-        SubstanceRules.$BuildRules();
+        SubstanceRules.buildRules();
       }
     );
     DivineVoxelEngineConstructor.instance.TC.registerTasks<BuildNodeMesh>(

@@ -18,7 +18,7 @@ const vertexLevel = new QuadScalarVertexData();
 
 enum FlowStates {
   None = 0,
- Down = 1,
+  Down = 1,
   Up = 2,
 }
 
@@ -86,9 +86,7 @@ const getFlowAngle = (): CompassAngles | 0 => {
   }
 
   if (
-    (downRight < upRight &&
-      downRight < upLeft &&
-      downRight < downLeft) ||
+    (downRight < upRight && downRight < upLeft && downRight < downLeft) ||
     (upLeft > upRight && upLeft > downRight && upLeft > downLeft)
   ) {
     flowAnimationState = FlowStates.Up;
@@ -97,9 +95,7 @@ const getFlowAngle = (): CompassAngles | 0 => {
 
   if (
     (upLeft < upRight && upLeft < downRight && upLeft < downLeft) ||
-    (downRight > upRight &&
-      downRight > upLeft &&
-      downRight > downLeft)
+    (downRight > upRight && downRight > upLeft && downRight > downLeft)
   ) {
     flowAnimationState = FlowStates.Up;
     return CompassAngles.NorthWest;
@@ -114,9 +110,7 @@ const getFlowAngle = (): CompassAngles | 0 => {
   }
 
   if (
-    (downLeft < downRight &&
-      downLeft < upLeft &&
-      downLeft < upRight) ||
+    (downLeft < downRight && downLeft < upLeft && downLeft < upRight) ||
     (upRight > downRight && upRight > upLeft && upRight > downLeft)
   ) {
     flowAnimationState = FlowStates.Up;
@@ -225,10 +219,10 @@ class LiquidVoxelShapeClass extends VoxelShapeBase {
       vertexLevel.setFromQuadData(ShapeTool.data.getWorldLevel());
 
       vertexValue.set(
+        vertexLevel.vertices[0] / 7,
         vertexLevel.vertices[1] / 7,
         vertexLevel.vertices[2] / 7,
-        vertexLevel.vertices[3] / 7,
-        vertexLevel.vertices[4] / 7
+        vertexLevel.vertices[3] / 7
       );
       const uvAngle = getFlowAngle();
       const uvSet = quadRotations[uvAngle];
@@ -245,10 +239,10 @@ class LiquidVoxelShapeClass extends VoxelShapeBase {
       Quads.up.uvs.vertices[QuadVerticies.BottomRight].x = uvSet[3][0];
       Quads.up.uvs.vertices[QuadVerticies.BottomRight].y = uvSet[3][1];
 
+      Quads.up.positions.vertices[0].y = vertexValue.vertices[0] * waterHeight;
       Quads.up.positions.vertices[1].y = vertexValue.vertices[1] * waterHeight;
       Quads.up.positions.vertices[2].y = vertexValue.vertices[2] * waterHeight;
       Quads.up.positions.vertices[3].y = vertexValue.vertices[3] * waterHeight;
-      Quads.up.positions.vertices[4].y = vertexValue.vertices[4] * waterHeight;
 
       ShapeTool.data.getAnimationData().setAll(flowAnimationState);
       Quads.up.flip = ShapeTool.data.isFaceFlipped();

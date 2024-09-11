@@ -67,34 +67,24 @@ export function BuildAORulesIndex(
 
     for (let i = 0; i < maxIndex; i++) {
       const aoResults = rules.get(i)!;
-      if (!aoResults) {
-        console.error(i, maxIndex);
-        continue;
-      }
       for (const planeDir of VoxelFaceNameArray) {
-        const results = aoResults.planes[planeDir];
-        for (let v = 0; v < results.length; v++) {
-          console.log(
-            planeDir,
-            otherId,
-            i,
-            VoxelFaceNameRecord[planeDir],
-            v,
-            results[v] ? 1 : 0
-          );
+        const faceVerticies = aoResults.planes[planeDir];
 
-          index.setIShaded(
-            otherId,
-            i,
-            VoxelFaceNameRecord[planeDir],
-            v,
-            results[v] ? 1 : 0
-          );
-
-          console.log(
-            "done",
-            index.isShaded(otherId, i, VoxelFaceNameRecord[planeDir], v)
-          );
+        for (const face of faceVerticies) {
+    
+          if ((i == 21 || i == 19 || i == 18) && planeDir == "north") {
+            console.warn(i, planeDir,face,faceVerticies.length);
+            face[3]= true;
+          }
+          for (let v = 0; v < face.length; v++) {
+            index.setIShaded(
+              otherId,
+              i,
+              VoxelFaceNameRecord[planeDir],
+              v,
+              face[v] ? 1 : 0
+            );
+          }
         }
       }
     }

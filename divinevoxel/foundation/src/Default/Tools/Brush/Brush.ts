@@ -47,7 +47,7 @@ export class BrushTool extends LocationBoundTool {
   }
 
   setDimension(dimensionId: string) {
-    this.location[0] = dimensionId;
+    this.dimension = dimensionId;
     this._dt.setDimension(dimensionId);
     return this;
   }
@@ -83,9 +83,9 @@ export class BrushTool extends LocationBoundTool {
     this.data.levelState = 0;
     this.data.shapeState = 0;
     this.data.mod = 0;
-    this.location[1] = 0;
-    this.location[2] = 0;
-    this.location[3] = 0;
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
   }
 
   setRaw(data: RawVoxelData) {
@@ -123,12 +123,15 @@ export class BrushTool extends LocationBoundTool {
   }
 
   paint() {
-    this._worldPainter.paintVoxel(this.location, this.data);
+    this._worldPainter.dimenion = this.dimension;
+    this._worldPainter.data = this.data;
+    this._worldPainter.paintVoxel(this.x, this.y, this.z);
     return this;
   }
 
   erase() {
-    this._worldPainter.eraseVoxel(this.location);
+    this._worldPainter.dimenion = this.dimension;
+    this._worldPainter.eraseVoxel(this.x, this.y, this.z);
     return this;
   }
 

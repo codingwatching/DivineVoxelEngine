@@ -27,19 +27,24 @@ export default function (DVEC: DVEFConstrucotrCore) {
   Threads.registerTasks<BuildTasks>(
     ConstructorTasksIds.BuildColumn,
     async (data, onDone) => {
-
-      WorldRegister.instance.cache.enable();
-      const column = WorldRegister.instance.column.get(data[0]);
+      WorldRegister.instance.setDimension(data[0][0]);
+      const column = WorldRegister.instance.column.get(
+        data[0][1],
+        data[0][2],
+        data[0][2]
+      );
       if (!column) {
         console.warn("Tried building a column that does not exists.", data);
         return false;
       }
       if (column.chunks.length == 0) return false;
       const location = data[0];
+      WorldRegister.instance.cache.enable();
       for (let i = 0; i < column.chunks.length; i++) {
         const chunk = column.chunks[i];
         if (!chunk) continue;
-  
+
+
         DVEC.mesher.meshChunk(
           [
             location[0],

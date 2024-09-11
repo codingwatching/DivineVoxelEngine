@@ -1,4 +1,4 @@
-import type { LocationData } from "@divinevoxel/core/Math";;
+import type { LocationData } from "@divinevoxel/core/Math";
 //objects
 import { WorldRegister } from "../../../Data/World/WorldRegister.js";
 import {
@@ -88,7 +88,11 @@ export class DataHanlderWrapper {
   async loadColumn(location: LocationData) {
     this.handler.setDataType("world-data");
     try {
-      if (WorldRegister.instance.column.get(location)) return true;
+      WorldRegister.instance.setDimension(location[0]);
+      if (
+        WorldRegister.instance.column.get(location[1], location[2], location[3])
+      )
+        return true;
       this.handler.setDataType("world-data");
       const column = await this.handler.getColumn(location);
       const data = await this.seralizer.deSerializeColumnAsync(column);
@@ -153,7 +157,11 @@ export class DataHanlderWrapper {
   async columnExists(location: LocationData) {
     this.handler.setDataType("world-data");
     try {
-      if (WorldRegister.instance.column.get(location)) return true;
+      WorldRegister.instance.setDimension(location[0]);
+      if (
+        WorldRegister.instance.column.get(location[1], location[2], location[3])
+      )
+        return true;
       return await this.handler.columnExists(location);
     } catch (error: any) {
       console.error(

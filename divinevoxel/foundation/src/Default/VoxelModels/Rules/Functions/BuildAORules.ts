@@ -37,6 +37,7 @@ export function BuildAORules(
               result[v] = touching;
             }
 
+
             results.planes[planeDirection][i] = result;
           }
         }

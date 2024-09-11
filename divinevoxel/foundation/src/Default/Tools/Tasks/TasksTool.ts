@@ -306,7 +306,6 @@ export class TaskTool {
         DVEConstructorTasksQueues.instance
           .getTasks("world-sun")
           .add([[...location], this._data.queue, this._thread], this._data.queue);
-        WorldRegister.instance.column.fill([...location]);
       },
       run: (onDone: Function) => {
         DVEConstructorTasksQueues.instance

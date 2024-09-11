@@ -1,7 +1,8 @@
 import { URIShaderBuilder } from "@amodx/uri/Shaders/URIShaderBuilder.js";
 import {
+  ShaderAttributeData,
   ShaderConstantData,
-  ShaderDataTypes,
+  ShaderUniformData,
   ShaderVaryingData,
 } from "@amodx/uri/Shaders/Types/ShaderData.types.js";
 
@@ -14,10 +15,10 @@ import { RegisterNoiseFunctions } from "./Code/Functions/UtilShaders.js";
 import { RegisterVoxelSnippets } from "./Code/Snippets/VoxelSnippets.js";
 import { DVEShaderRegister } from "./DVEShaderRegister.js";
 import { URIShader } from "@amodx/uri/Shaders/Classes/URIShader.js";
-export const DVEShaders = {
-  register: new DVEShaderRegister(),
-  builder: URIShaderBuilder,
-  voxelAttributes: <[id: string, type: ShaderDataTypes][]>[
+export class DVEShaders {
+  static register = new DVEShaderRegister();
+  static builder = URIShaderBuilder;
+  static voxelAttributes: ShaderAttributeData[] = [
     ["position", "vec3"],
     ["normal", "vec3"],
     ["indices", "float"],
@@ -26,8 +27,8 @@ export const DVEShaders = {
     ["textureIndex", "vec3"],
     ["uv", "vec2"],
     ["colors", "vec3"],
-  ],
-  voxelSharedUniforms: <[id: string, type: ShaderDataTypes][]>[
+  ];
+  static voxelSharedUniforms: ShaderUniformData[] = [
     ["time", "float"],
     ["fogOptions", "vec4"],
     ["vFogColor", "vec3"],
@@ -39,8 +40,8 @@ export const DVEShaders = {
     ["doColor", "float"],
     ["doEffects", "float"],
     ["mipMapBias", "float"],
-  ],
-  voxelVertexUniforms: <[id: string, type: ShaderDataTypes][]>[
+  ];
+  static voxelVertexUniforms: ShaderUniformData[] = [
     ["world", "mat4"],
     ["viewProjection", "mat4"],
 
@@ -48,13 +49,13 @@ export const DVEShaders = {
     ["cameraPosition", "vec3"],
 
     ["lightGradient", "float", 16],
-  ],
+  ];
 
-  voxelConstants: <ShaderConstantData[]>[
+  static voxelConstants: ShaderConstantData[] = [
     {
-      id:"voxelConstants",
-      body:{ 
-        GLSL:  /* glsl */ `
+      id: "voxelConstants",
+      body: {
+        GLSL: /* glsl */ `
 const uint lightMask = uint(0xf);
 const uint aoMask = uint(0xf);
 const uint animMask = uint(0xfff);
@@ -64,12 +65,13 @@ const uint gVLIndex = uint(8);
 const uint bVLIndex = uint(12);
 const uint aoIndex = uint(16);
 const uint animIndex = uint(20);
-        `
-      }
-    }
-  ],
+const float aoValue =  pow( .2, 2.2);
+        `,
+      },
+    },
+  ];
 
-  voxelVarying: <ShaderVaryingData<any>[]>[
+  static voxelVarying: ShaderVaryingData<any>[] = [
     {
       id: "VOXEL",
       type: "mat4",
@@ -88,7 +90,7 @@ int blueValue = int(((lightMask << bVLIndex) & vUID) >> bVLIndex);
 
 float AOVL = float(((aoMask << aoIndex) & vUID) >> aoIndex);
 if(AOVL > 0.) {
-    AOVL = pow( pow(.45, (AOVL)/15. ), 2.2);
+  AOVL = aoValue;
 } else {
   AOVL = 1.;
 }
@@ -182,13 +184,13 @@ worldPOSNoOrigin =  vec3(temp.x,temp.y,temp.z);`,
         GLSL: () => ``,
       },
     },
-  ],
-  voxelFragFunctions: <string[]>[],
-  voxelVertexFunctions: <string[]>[],
+  ];
+  static voxelFragFunctions: string[] = [];
+  static voxelVertexFunctions: string[] = [];
 
-  _defaultShader: <URIShader>{},
+  static _defaultShader: URIShader = {} as any;
 
-  $INIT() {
+  static init() {
     RegisterVoxelSnippets(URIShaderBuilder);
     RegisterVertexSnippets(URIShaderBuilder);
     RegisterFragmentSnippets(URIShaderBuilder);
@@ -211,14 +213,14 @@ worldPOSNoOrigin =  vec3(temp.x,temp.y,temp.z);`,
     shader.addVarying(this.voxelVarying);
     shader.loadInFunctions(this.voxelFragFunctions, "frag");
     shader.loadInFunctions(this.voxelVertexFunctions, "vertex");
-    shader.addConstants(this.voxelConstants,"vertex")
+    shader.addConstants(this.voxelConstants, "vertex");
     shader.setCodeBody("vertex", `@standard_position`);
     shader.setCodeBody("frag", `@standard_color`);
 
     this._defaultShader = shader;
-  },
+  }
 
-  _addInstances(shader: URIShader) {
+  static _addInstances(shader: URIShader) {
     shader.data.vertexBeforeMain.GLSL = /* glsl */ `
   #ifdef INSTANCES
   //matricies
@@ -229,14 +231,15 @@ worldPOSNoOrigin =  vec3(temp.x,temp.y,temp.z);`,
   //custom attributes
   #endif
 `;
-  },
-  createVoxelShader(id: string) {
+  }
+
+  static createVoxelShader(id: string) {
     const shader = this._defaultShader.clone(id);
     this._addInstances(shader);
     return shader;
-  },
+  }
 
-  createBasicTextureShader(id: string) {
+  static createBasicTextureShader(id: string) {
     const shader = URIShaderBuilder.shaders.create(id);
     this._addInstances(shader);
 
@@ -326,20 +329,19 @@ FragColor = vec4(finalColor.rgb * vBrightness,rgb.a);
 
 
 vec4 rgb = getMainColor(-100.);
-  if (rgb.a < 0.5) { 
-discard;
+if (rgb.a < 0.5) { 
+  discard;
 }
 vec3 finalColor = doFog(rgb);
 FragColor = vec4(finalColor.rgb * vBrightness,rgb.a);
 
-
- `
+`
     );
 
     return shader;
-  },
+  }
 
-  createSkyBoxShader(id: string) {
+  static createSkyBoxShader(id: string) {
     const shader = URIShaderBuilder.shaders.create(id);
     shader.addAttributes([
       ["position", "vec3"],
@@ -397,7 +399,7 @@ worldPOS = vec3(worldPOSTemp.x,worldPOSTemp.y,worldPOSTemp.z);`,
     shader.compile();
 
     return shader;
-  },
-};
+  }
+}
 
-DVEShaders.$INIT();
+DVEShaders.init();

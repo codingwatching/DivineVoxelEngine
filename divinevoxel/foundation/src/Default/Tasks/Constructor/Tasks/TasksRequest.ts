@@ -59,7 +59,7 @@ class Request<T, Q> {
     WorldRegister.instance.cache.enable();
     return this;
   }
-  sup() {
+  stop() {
     WorldRegister.instance.cache.disable();
     return this;
   }
@@ -104,7 +104,7 @@ class Request<T, Q> {
     if (EngineSettings.isServer()) return false;
     if (!this.needsRebuild() && !this.keepTrackOfChunks) return false;
     if (!chunkTool.setDimension(this.origin[0]).loadInAt(x, y, z)) return false;
-    const chunkKey = WorldSpaces.chunk.getKeyLocation(chunkTool.location);
+    const chunkKey = WorldSpaces.chunk.getKeyXYZ(x,y,z);
     if (this.rebuildQueMap.has(chunkKey)) return false;
     this.rebuildQueMap.set(chunkKey, true);
     if (this.keepTrackOfChunks) {

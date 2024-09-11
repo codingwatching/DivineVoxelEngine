@@ -1,10 +1,12 @@
-/**# Light Byte
+type AllLight = [s: number, r: number, g: number, b: number];
+
+/**# Light Data
  * ---
  * Used to decode light color info.
  */
 export const LightData = {
   SRS: 2,
-  _lightValues: <[s: number, r: number, g: number, b: number]>[0, 0, 0, 0],
+  _lightValues: <AllLight>(new Uint16Array([0, 0, 0, 0]) as any),
   getS(value: number) {
     return value & 0xf;
   },
@@ -117,6 +119,13 @@ export const LightData = {
     this._lightValues[2] = this.getG(value);
     this._lightValues[3] = this.getB(value);
     return this._lightValues;
+  },
+  getLightValuesToRef(value: number, values: AllLight) {
+    values[0] = this.getS(value);
+    values[1] = this.getR(value);
+    values[2] = this.getG(value);
+    values[3] = this.getB(value);
+    return values;
   },
   /**# Is Less Than For RGB Remove
    * ---

@@ -2,43 +2,28 @@ import type { LocationData } from "@divinevoxel/core/Math";
 import type { Vec3Array } from "@amodx/math";
 
 export class LocationBoundTool {
-  location: LocationData = ["main", 0, 0, 0];
-
-  get dimension() {
-    return this.location[0];
-  }
-  set dimension(dimension: string) {
-    this.location[0] = dimension;
-  }
-
-  get x() {
-    return this.location[1];
-  }
-  set x(value: number) {
-    this.location[1] = value;
+  private _location: LocationData = ["main", 0, 0, 0];
+  get location(): LocationData {
+    this._location[0] = this.dimension;
+    this._location[1] = this.x;
+    this._location[2] = this.y;
+    this._location[3] = this.z;
+    return this._location;
   }
 
-  get y() {
-    return this.location[2];
-  }
-  set y(value: number) {
-    this.location[2] = value;
-  }
-
-  get z() {
-    return this.location[3];
-  }
-  set z(value: number) {
-    this.location[3] = value;
-  }
+  dimension = "main";
+  x = 0;
+  y = 0;
+  z = 0;
 
   setDimension(dimensionId: string) {
-    this.location[0] = dimensionId;
+    this.dimension = dimensionId;
+    //  this.location[0] = dimensionId;
     return this;
   }
 
   getLocation(): LocationData {
-    return this.location;
+    return [this.dimension, this.x, this.y, this.z];
   }
 
   getXYZAsArray(): Vec3Array {
@@ -57,8 +42,6 @@ export class LocationBoundTool {
     this.z = z;
     return this;
   }
-
-
 
   setLocation(location: LocationData) {
     this.dimension = location[0];

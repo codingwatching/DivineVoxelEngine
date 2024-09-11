@@ -3,7 +3,7 @@ import type {
   RichRegion,
   RichWorldDimensions,
 } from "../../Data/Types/RichWorldData.types";
-import type { LocationData } from "@divinevoxel/core/Math";;
+import type { LocationData } from "@divinevoxel/core/Math";
 import { WorldSpaces } from "@divinevoxel/core/Data/World/WorldSpaces.js";
 
 export class RichDataRegister {
@@ -39,20 +39,29 @@ export class RichDataRegister {
         dimension = this.dimensions.add(location[0]);
       }
       const region = this.region._getRegionData();
-      dimension.set(WorldSpaces.region.getKeyLocation(location), region);
+      dimension.set(
+        WorldSpaces.region.getKeyXYZ(location[1], location[2], location[3]),
+        region
+      );
       return region;
     },
     get: (location: LocationData) => {
       const dimension = this.dimensions.get(location[0]);
       if (!dimension) return false;
-      const region = dimension.get(WorldSpaces.region.getKeyLocation(location));
+      const region = dimension.get(
+        WorldSpaces.region.getKeyXYZ(location[1], location[2], location[3])
+      );
       if (!region) return false;
       return region;
     },
     remove: (location: LocationData) => {
       const dimension = this.dimensions.get(location[0]);
       if (!dimension) return false;
-      const key = WorldSpaces.region.getKeyLocation(location);
+      const key = WorldSpaces.region.getKeyXYZ(
+        location[1],
+        location[2],
+        location[3]
+      );
       const region = dimension.get(key);
       if (!region) return false;
       dimension.delete(key);
@@ -74,14 +83,17 @@ export class RichDataRegister {
       }
 
       const column = this.column._getColumnData();
-      region.columns.set(WorldSpaces.column.getKeyLocation(location), column);
+      region.columns.set(
+        WorldSpaces.column.getKeyXYZ(location[1], location[2], location[3]),
+        column
+      );
       return column;
     },
     get: (location: LocationData) => {
       const region = this.region.get(location);
       if (!region) return false;
       const column = region.columns.get(
-        WorldSpaces.column.getKeyLocation(location)
+        WorldSpaces.column.getKeyXYZ(location[1], location[2], location[3])
       );
       if (!column) return false;
       return column;
@@ -90,15 +102,19 @@ export class RichDataRegister {
       const region = this.region.get(location);
       if (!region) return false;
       const column = region.columns.get(
-        WorldSpaces.column.getKeyLocation(location)
+        WorldSpaces.column.getKeyXYZ(location[1], location[2], location[3])
       );
       if (!column) return false;
       column.data = data;
     },
-    remove:(location: LocationData)=> {
+    remove: (location: LocationData) => {
       const region = this.region.get(location);
       if (!region) return false;
-      const key = WorldSpaces.column.getKeyLocation(location);
+      const key = WorldSpaces.column.getKeyXYZ(
+        location[1],
+        location[2],
+        location[3]
+      );
       const column = region.columns.get(key);
       if (!column) return false;
       region.columns.delete(key);
@@ -109,8 +125,10 @@ export class RichDataRegister {
     },
   };
   getKey(location: LocationData) {
-    return `${WorldSpaces.chunk.getKeyLocation(
-      location
-    )}_${WorldSpaces.voxel.getKeyLocation(location)}`;
+    return `${WorldSpaces.chunk.getKeyXYZ(
+      location[1],
+      location[2],
+      location[3]
+    )}_${WorldSpaces.voxel.getKeyXYZ(location[1], location[2], location[3])}`;
   }
 }

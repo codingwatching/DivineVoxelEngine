@@ -180,7 +180,7 @@ export const LightGradient = {
         }
       }
     }
-    for (let vertex: QuadVerticies = <QuadVerticies>1; vertex <= 4; vertex++) {
+    for (let vertex: QuadVerticies = <QuadVerticies>0; vertex < 4; vertex++) {
       const checkSet = GradientCheckSets[face][vertex];
 
       if (this.settings.doRGB || this.settings.doSun) {

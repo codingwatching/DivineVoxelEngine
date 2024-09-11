@@ -8,7 +8,6 @@ import { VoxelTagIDs } from "@divinevoxel/core/Data/Constants/VoxelTagIds";
 import { Chunk, ChunkData, Column } from "../../../Data/World/Classes";
 import { ArchivedChunkData, ArchivedColumnData } from "../Archive.types";
 import { convertToPaletteBuffer } from "./Palettes";
-import { Flat3DIndex } from "@amodx/math";
 
 type ArchiveChunkState = {
   ids: Uint16Array;
@@ -68,7 +67,6 @@ const getArchiveChunkState = (chunk: ChunkData): ArchiveChunkState => {
     lightAllTheSame: true,
     modAllTheSame: true,
     secondaryAllTheSame: true,
-  
   };
 };
 
@@ -83,7 +81,12 @@ type ArchiveColumnData = {
 export default function ArchiveColumn(
   archiveData: ArchiveColumnData
 ): ArchivedColumnData {
-  const column = WorldRegister.instance.column.get(archiveData.location);
+  WorldRegister.instance.setDimension(archiveData.location[0]);
+  const column = WorldRegister.instance.column.get(
+    archiveData.location[1],
+    archiveData.location[2],
+    archiveData.location[3]
+  );
 
   if (!column)
     throw new Error(

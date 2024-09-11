@@ -1,6 +1,5 @@
 import type { VoxelMesherDataTool } from "../../Tools/VoxelMesherDataTool";
 import { QuadScalarVertexData } from "@amodx/meshing/Classes/QuadVertexData";
-import { QuadVertexes } from "../../Types";
 import { QuadVerticies } from "@amodx/meshing/Geometry.types";
 
 const checkSets = {
@@ -38,7 +37,7 @@ export const FlowGradient = {
     if (!tool.voxel.isSameVoxel(tool.nVoxel)) return -1;
     const level = tool.nVoxel.getLevel();
     const levelState = tool.nVoxel.getLevelState();
-    if(levelState > 0) return 7;
+    if (levelState > 0) return 7;
     return level;
   },
   calculate(tool: VoxelMesherDataTool) {
@@ -50,7 +49,7 @@ export const FlowGradient = {
       log = true;
     }
 
-    for (let vertex = <QuadVertexes>1; vertex <= 4; vertex++) {
+    for (let vertex = <QuadVerticies>0; vertex <= 3; vertex++) {
       const checkSet = checkSets[vertex];
 
       let finalLevel = cl;

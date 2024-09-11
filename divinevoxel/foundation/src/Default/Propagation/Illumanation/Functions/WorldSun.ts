@@ -74,13 +74,20 @@ const heightMapTool = new HeightMapTool();
 export function RunWorldSun(tasks: WorldSunTaskRequest) {
   IM.setDimension(tasks.origin[0]);
   tasks.start();
-  if (!WorldRegister.instance.column.get(tasks.origin)) return false;
+  WorldRegister.instance.setDimension(tasks.origin[0]);
+  if (
+    !WorldRegister.instance.column.get(
+      tasks.origin[1],
+      tasks.origin[2],
+      tasks.origin[2]
+    )
+  )
+    return false;
   const [dimension, cx, cy, cz] = tasks.origin;
 
   IM._sDataTool.setDimension(dimension);
   const RmaxY = heightMapTool.column.getRelative(tasks.origin);
   const AmaxY = heightMapTool.column.getAbsolute(tasks.origin);
-
 
   //fill
   for (let iy = AmaxY; iy < WorldBounds.bounds.MaxY; iy++) {
@@ -194,5 +201,5 @@ export function RunWorldSun(tasks: WorldSunTaskRequest) {
     queue.returnNode(node);
   }
 
-  tasks.sup();
+  tasks.stop();
 }

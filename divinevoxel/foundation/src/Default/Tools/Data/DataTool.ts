@@ -108,7 +108,7 @@ export class DataTool extends DataToolBase {
   }
 
   setDimension(dimensionId: string | number) {
-    this.location[0] =
+    this.dimension =
       DimensionsRegister.instance.getDimensionStringId(dimensionId);
     return this;
   }
@@ -133,11 +133,9 @@ export class DataTool extends DataToolBase {
     return this.data.raw;
   }
 
-  async waitTillCanLoad(
-    locatin: LocationData,
-    maxWaitTime = 60_000
-  ): Promise<boolean> {
-    if (WorldRegister.instance.chunk.get(locatin)) return true;
+  async waitTillCanLoad(maxWaitTime = 60_000): Promise<boolean> {
+    WorldRegister.instance.setDimension(this.dimension);
+    if (WorldRegister.instance.chunk.get(this.x, this.y, this.z)) return true;
     return new SafePromise(
       "wait-till-can-load",
       (resolve, reject, prom) => {
@@ -146,7 +144,8 @@ export class DataTool extends DataToolBase {
         prom.observers.canceled.subscribe(resolve, () => inte.stop());
         prom.observers.finally.subscribe(resolve, () => inte.stop());
         inte.setOnRun(() => {
-          if (WorldRegister.instance.chunk.get(locatin)) {
+          WorldRegister.instance.setDimension(this.dimension);
+          if (WorldRegister.instance.chunk.get(this.x, this.y, this.z)) {
             resolve(true);
           }
         });
@@ -186,9 +185,15 @@ export class DataTool extends DataToolBase {
 
   loadIn() {
     if (this._mode == DataTool.Modes.WORLD) {
-      if (!this._chunkTool.setLocation(this.location).loadIn()) return false;
+      if (
+        !this._chunkTool
+          .setDimension(this.dimension)
+          .setXYZ(this.x, this.y, this.z)
+          .loadIn()
+      )
+        return false;
 
-      const index = WorldSpaces.voxel.getIndexLocation(this.location);
+      const index = WorldSpaces.voxel.getIndexXYZ(this.x, this.y, this.z);
       this._chunkTool.loadInRaw(index, this.data.raw);
       this.__process();
       this._loadedIn = true;
@@ -210,9 +215,13 @@ export class DataTool extends DataToolBase {
   commit(heightMapUpdate = 0) {
     if (!this._loadedIn) return false;
     if (this._mode == DataTool.Modes.WORLD) {
-      const index = WorldSpaces.voxel.getIndexLocation(this.location);
+      const index = WorldSpaces.voxel.getIndexXYZ(this.x, this.y, this.z);
       this._chunkTool.setRaw(index, this.data.raw);
-      if (DataTool._columntool.loadInAtLocation(this.location)) {
+      if (
+        DataTool._columntool
+          .setDimension(this.dimension)
+          .loadInAt(this.x, this.y, this.z)
+      ) {
         DataTool._columntool.markAsNotStored();
       }
       if (heightMapUpdate) {

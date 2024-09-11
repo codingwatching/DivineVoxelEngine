@@ -20,12 +20,12 @@ export class WorldGenBrush extends BrushTool {
   }
   requestsId: "";
 
-  tasks = TasksRequest.getVoxelUpdateRequests(this.location);
+  tasks = TasksRequest.getVoxelUpdateRequests(["main", 0, 0, 0]);
 
   richData = new RichDataTool();
 
   setDimension(dimensionId: string) {
-    this.location[0] = dimensionId;
+    this.dimension = dimensionId;
     this.tasks.origin[0] = dimensionId;
     this._dt.setDimension(dimensionId);
     return this;
@@ -38,20 +38,29 @@ export class WorldGenBrush extends BrushTool {
     this.tasks.keepTrackOfChunks = value;
   }
   paint() {
-    if (!this._dt.loadInAtLocation(this.location)) {
+    if (
+      !this._dt.setDimension(this.dimension).loadInAt(this.x, this.y, this.z)
+    ) {
       if (this.requestsId != "") {
-        WorldGenRegister.addToRequest(this.requestsId, this.location, [
-          ...this.getRaw(),
-        ] as any);
+        WorldGenRegister.addToRequest(
+          this.requestsId,
+          [this.dimension, this.x, this.y, this.z],
+          [...this.getRaw()] as any
+        );
+        return this;
       }
       throw new Error(
-        `Tried painting in an unloaded location ${this.location.toString()}`
+        `Tried painting in an unloaded location ${[
+          this.dimension,
+          this.x,
+          this.y,
+          this.z,
+        ].toString()}`
       );
-      return this;
     }
     if (this._dt.isRenderable()) {
       this.erase();
-      this._dt.loadInAtLocation(this.location);
+      this._dt.setDimension(this.dimension).loadInAt(this.x, this.y, this.z);
     }
 
     const sl = this._dt.getLight();
@@ -65,8 +74,9 @@ export class WorldGenBrush extends BrushTool {
       this.tasks.queues.sun.remove.push(this.x, this.y, this.z);
       Propagation.instance.sunRemove(this.tasks);
     }
-
-    this._worldPainter.paintVoxel(this.location, this.data);
+    this._worldPainter.dimenion = this.dimension;
+    this._worldPainter.data = this.data;
+    this._worldPainter.paintVoxel(this.x, this.y, this.z);
 
     if (this.keepTrackOfChunksToBuild) {
       this.tasks.addNeighborsToRebuildQueue(this.x, this.y, this.z);
@@ -88,7 +98,10 @@ export class WorldGenBrush extends BrushTool {
   }
 
   update() {
-    if (!this._dt.loadInAtLocation(this.location) && this.requestsId != "")
+    if (
+      !this._dt.setDimension(this.dimension).loadInAt(this.x, this.y, this.z) &&
+      this.requestsId != ""
+    )
       return false;
 
     const sl = this._dt.getLight();
@@ -108,10 +121,14 @@ export class WorldGenBrush extends BrushTool {
   }
 
   erase() {
-    if (!this._dt.loadInAtLocation(this.location) && this.requestsId != "")
+    if (
+      !this._dt.setDimension(this.dimension).loadInAt(this.x, this.y, this.z) &&
+      this.requestsId != ""
+    )
       return this;
     const sl = this._dt.getLight();
-    this._worldPainter.eraseVoxel(this.location);
+    this._worldPainter.dimenion = this.dimension;
+    this._worldPainter.eraseVoxel(this.x, this.y, this.z);
     this._dt
       .setAir()
       .setLight(sl > 0 ? sl : 0)
@@ -123,7 +140,6 @@ export class WorldGenBrush extends BrushTool {
     }
 
     if (LightData.hasSunLight(sl)) {
-      console.log("add to sun update erase");
       this.tasks.queues.sun.remove.push(this.x, this.y, this.z);
 
       Propagation.instance.sunRemove(this.tasks);

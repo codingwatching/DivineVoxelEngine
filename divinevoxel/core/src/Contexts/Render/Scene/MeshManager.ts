@@ -85,10 +85,13 @@ export class MeshManager {
     update(data: SetChunkMeshTask) {
       const [location, chunks] = data;
       let i = chunks.length;
+      
+
       while (i--) {
         const chunkData = chunks[i];
         const substance = chunkData[0];
         const remove = !chunkData[1];
+
         if (remove) {
           const mesh = MeshRegister.chunk.remove(location, substance);
           if (mesh) {
@@ -99,6 +102,7 @@ export class MeshManager {
           continue;
         }
         let chunk = MeshRegister.chunk.get(location, substance);
+
         let mesh: URIMesh;
         if (!chunk) {
           mesh = DivineVoxelEngineRender.instance.renderer.nodes.meshes

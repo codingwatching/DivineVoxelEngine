@@ -59,8 +59,7 @@ export class IWGLoadTask extends IWGSingleTask {
           "force quit loading column",
           ran,
           [gen.dimension, x, y, z],
-          gen.columnTool.loadInAt(x, y, z),
-          WorldRegister.instance.column.get([gen.dimension, x, y, z])
+     
         );
         cleared = true;
       }

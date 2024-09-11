@@ -17,17 +17,16 @@ import { VoxelGeometryLookUp } from "../../VoxelModels/Constructor/VoxelGeometry
 export class ChunkProcessor {
   mDataTool = new BuilderDataTool();
   heightMapTool = new HeightMapTool();
-  relative: { x: 0; y: 0; z: 0 };
-  nLocation: LocationData = ["main", 0, 0, 0];
-  _process(doSecondCheck = false): boolean {
-    if (!this.mDataTool.loadInAtLocation(this.nLocation)) return false;
+
+  _process(x: number, y: number, z: number, doSecondCheck = false): boolean {
+    if (!this.mDataTool.loadInAt(x, y, z)) return false;
     if (!this.mDataTool.isRenderable()) return false;
 
     let hasVoxel = false;
     this.mDataTool.setSecondary(doSecondCheck);
     if (!doSecondCheck) {
       if (this.mDataTool.hasSecondaryVoxel()) {
-        hasVoxel = this._process(true);
+        hasVoxel = this._process(x, y, z, true);
       }
     }
     const constructor = this.mDataTool.getConstructor();
@@ -44,15 +43,13 @@ export class ChunkProcessor {
       );
     }
 
-    const voxelPOS = WorldSpaces.voxel
-      .setLocation(this.nLocation)
-      .getPosition();
+    const voxelPOS = WorldSpaces.voxel.getPositionXYZ(x, y, z);
     ShapeTool.origin.x = voxelPOS.x;
     ShapeTool.origin.y = voxelPOS.y;
     ShapeTool.origin.z = voxelPOS.z;
 
-    mesher.voxel.loadInAtLocation(this.nLocation);
-    mesher.nVoxel.loadInAtLocation(this.nLocation);
+    mesher.voxel.loadInAt(x, y, z);
+    mesher.nVoxel.loadInAt(x, y, z);
     ShapeTool.setMesher(mesher);
     constructor.process(mesher);
     mesher.resetVars();
@@ -62,22 +59,20 @@ export class ChunkProcessor {
   build(location: LocationData, priority = 0) {
     this.heightMapTool.chunk.loadInAtLocation(location);
     this.mDataTool.setDimension(location[0]);
-    
+    RenderedSubstances.setDimension(location[0]);
+
     const [dimension, cx, cy, cz] = location;
-    this.nLocation[0] = dimension;
+
     let [minY, maxY] = this.heightMapTool.chunk.getMinMax();
 
     if (Math.abs(minY) == Infinity && Math.abs(maxY) == Infinity) return;
-    VoxelGeometryLookUp.start(dimension);
+    VoxelGeometryLookUp.start(dimension, location[1], location[2], location[3]);
 
     for (let y = minY; y <= maxY; y++) {
       let foundVoxels = false;
       for (let x = 0; x < WorldSpaces.chunk._bounds.x; x++) {
         for (let z = 0; z < WorldSpaces.chunk._bounds.z; z++) {
-          this.nLocation[1] = x + cx;
-          this.nLocation[2] = y + cy;
-          this.nLocation[3] = z + cz;
-          if (this._process()) {
+          if (this._process(x + cx, y + cy, z + cz)) {
             foundVoxels = true;
           }
         }
@@ -85,7 +80,7 @@ export class ChunkProcessor {
       this.heightMapTool.chunk.setY(y).setHasVoxels(foundVoxels);
       this.heightMapTool.chunk.setY(y).setDirty(false);
     }
-    VoxelGeometryLookUp.sup();
+    VoxelGeometryLookUp.stop();
 
     const chunks = <SetChunkMeshTask>[location, [], priority];
     const trasnfers: any[] = [];
@@ -102,7 +97,6 @@ export class ChunkProcessor {
       chunks[1].push([substance, [location, attributes]]);
       mesher.resetAll();
     }
-
 
     DivineVoxelEngineConstructor.instance.core.threads.parent.runTasks<SetChunkMeshTask>(
       "set-chunk",

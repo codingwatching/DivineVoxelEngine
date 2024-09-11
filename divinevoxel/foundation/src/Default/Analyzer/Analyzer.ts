@@ -79,7 +79,7 @@ export class Analyzer extends DVEAnaylzer {
         false
       );
     }
-    tasks.sup();
+    tasks.stop();
   }
 
   async runUpdate(data: AnaylzerTask) {

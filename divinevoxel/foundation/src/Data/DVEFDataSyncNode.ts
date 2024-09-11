@@ -1,4 +1,4 @@
-import type { LocationData } from "@divinevoxel/core/Math";;
+import type { LocationData } from "@divinevoxel/core/Math";
 //objects
 import { Threads } from "@amodx/threads/";
 import { WorldRegister } from "./World/WorldRegister.js";
@@ -8,7 +8,14 @@ import {
   RegionHeaderTags,
 } from "./RegionHeaderRegister.js";
 import { BinaryStructData } from "@amodx/binary/";
-import { Column, Chunk, Region, RegionData, ColumnData, ChunkData } from "./World/Classes/index.js";
+import {
+  Column,
+  Chunk,
+  Region,
+  RegionData,
+  ColumnData,
+  ChunkData,
+} from "./World/Classes/index.js";
 import { WorldDataSync } from "./Types/DataSync.types.js";
 import { DVEFDataSyncIds } from "./Constants/DVEFDataSyncIds.js";
 import { DimensionData } from "./Types/DimensionData.types.js";
@@ -24,28 +31,49 @@ export class DVEFDataSyncNode extends RemoteDataSyncNode {
     chunk: Threads.onDataSync<[LocationData, ChunkData], LocationData>(
       DVEFDataSyncIds.Chunk,
       (data) => {
-        WorldRegister.instance.chunk.add(data[0], data[1]);
+        WorldRegister.instance.setDimension(data[0][0]);
+        WorldRegister.instance.chunk.add(
+          data[0][1],
+          data[0][2],
+          data[0][3],
+          data[1]
+        );
       },
       (data) => {
-        WorldRegister.instance.chunk.remove(data);
+        WorldRegister.instance.setDimension(data[0]);
+        WorldRegister.instance.chunk.remove(data[1], data[2], data[3]);
       }
     ),
     column: Threads.onDataSync<[LocationData, ColumnData], LocationData>(
       DVEFDataSyncIds.Column,
       (data) => {
-        WorldRegister.instance.column.add(data[0], data[1]);
+        WorldRegister.instance.setDimension(data[0][0]);
+        WorldRegister.instance.column.add(
+          data[0][1],
+          data[0][2],
+          data[0][3],
+          data[1]
+        );
       },
       (data) => {
-        WorldRegister.instance.column.remove(data);
+        WorldRegister.instance.setDimension(data[0]);
+        WorldRegister.instance.column.remove(data[1], data[2], data[3]);
       }
     ),
     region: Threads.onDataSync<[LocationData, RegionData], LocationData>(
       DVEFDataSyncIds.Region,
       (data) => {
-        WorldRegister.instance.region.add(data[0], data[1]);
+        WorldRegister.instance.setDimension(data[0][0]);
+        WorldRegister.instance.region.add(
+          data[0][1],
+          data[0][2],
+          data[0][3],
+          data[1]
+        );
       },
       (data) => {
-        WorldRegister.instance.region.remove(data);
+        WorldRegister.instance.setDimension(data[0]);
+        WorldRegister.instance.region.remove(data[1], data[2], data[3]);
       }
     ),
     regionHeader: Threads.onDataSync<WorldDataSync, LocationData>(

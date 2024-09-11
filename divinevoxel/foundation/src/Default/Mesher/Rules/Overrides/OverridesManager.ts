@@ -1,4 +1,3 @@
-import { FaceDataOverride, OverrideTypes } from "../../Types/Override.types";
 import { OverrideBase } from "./OverrideBase";
 
 export class OverrideManager {

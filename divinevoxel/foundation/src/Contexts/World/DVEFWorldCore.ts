@@ -49,14 +49,18 @@ export class DVEFWorldCore extends DVEWorldCore {
     const dimension = WorldRegister.instance.dimensions.get(dimesnionId);
     if (!dimension) return;
     dimension.regions.forEach((region) => {
-
       region.columns.forEach((column, index) => {
         WorldRegister.instance.columnTool.setColumn(column);
         const location = region.getColumnPosition(index);
         const distnace = Distance3D(location[0], 0, location[2], x, 0, z);
         if (distnace > radius) {
           this.dataSync.worldData.column.unSync([origion[0], ...location]);
-          WorldRegister.instance.column.remove([origion[0], ...location]);
+          WorldRegister.instance.setDimension(origion[0]);
+          WorldRegister.instance.column.remove(
+            location[0],
+            location[1],
+            location[2]
+          );
         }
       });
     });

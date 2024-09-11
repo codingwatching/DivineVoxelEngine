@@ -1,20 +1,13 @@
 import { Vector3Like } from "@amodx/math";
 import { Flat3DIndex } from "@amodx/math/Volumes";
-import { LocationData } from "./VoxelSpaces.types";
 
 const alignToPowerOf2 = (value: number, powerOf2: number) => {
   const mask = (1 << powerOf2) - 1;
   return value & ~mask;
 };
 
-export interface VoxelSpaceData {
-  getPosition: (space: VoxelSpace) => Vector3Like;
-  getIndex: (space: VoxelSpace) => number;
-  getPostionFromIndex: (space: VoxelSpace, index: number) => Vector3Like;
-}
-
 //Objects
-export class VoxelSpace {
+export abstract class VoxelSpace {
   static index = Flat3DIndex.GetXZYOrder();
   static simpleCubeHash(space: VoxelSpace) {
     space._position.x = alignToPowerOf2(
@@ -68,20 +61,19 @@ export class VoxelSpace {
     return space._hashedPosition;
   }
 
-  static mapLocationToVec3(location: LocationData, vector: Vector3Like) {
-    location[1] = vector.x;
-    location[2] = vector.y;
-    location[3] = vector.z;
-  }
-
-  _location: LocationData = ["main", 0, 0, 0];
   _position = Vector3Like.Create();
   _hashedPosition = Vector3Like.Create();
   _bounds = Vector3Like.Create();
   _boundsPower2 = Vector3Like.Create();
   _boundsSet = false;
 
-  constructor(public data: VoxelSpaceData) {}
+  constructor() {}
+
+  log = false;
+
+  abstract getPosition(): Vector3Like;
+  abstract getIndex(): number;
+  abstract getPositionFromIndex(index: number): Vector3Like;
 
   getVolume() {
     return this._bounds.x * this._bounds.y * this._bounds.z;
@@ -104,44 +96,18 @@ export class VoxelSpace {
   }
 
   setXYZ(x: number, y: number, z: number) {
+    if (this.log) {
+      console.warn("before", [x, y, z], structuredClone(this._position));
+    }
     this._position.x = x;
     this._position.y = y;
     this._position.z = z;
+
     this.getPosition();
-    VoxelSpace.mapLocationToVec3(this._location, this._position);
-    return this;
-  }
+    if (this.log) {
+      console.warn("after", [x, y, z], structuredClone(this._position));
+    }
 
-  setXZ(x: number, z: number) {
-    this._position.x = x;
-    this._position.z = z;
-    this.getPosition();
-    VoxelSpace.mapLocationToVec3(this._location, this._position);
-    return this;
-  }
-
-  getLocation() {
-    this.data.getPosition(this);
-    VoxelSpace.mapLocationToVec3(this._location, this._position);
-    return this._location;
-  }
-
-  getLocationXYZ(x: number, y: number, z: number) {
-    this.setXYZ(x, y, z);
-    VoxelSpace.mapLocationToVec3(this._location, this._position);
-    return this._location;
-  }
-
-  setLocation(location: LocationData) {
-    this.setXYZ(location[1], location[2], location[3]);
-    return this;
-  }
-
-  updateLoaction(location: LocationData) {
-    this.setXYZ(location[1], location[2], location[3]);
-    location[1] = this._location[1];
-    location[2] = this._location[2];
-    location[3] = this._location[3];
     return this;
   }
 
@@ -166,36 +132,13 @@ export class VoxelSpace {
     return this;
   }
 
-  getPosition() {
-    return this.data.getPosition(this);
-  }
-
   getPositionXYZ(x: number, y: number, z: number) {
-    return this.setXYZ(x, y, z).data.getPosition(this);
-  }
-
-  getPositionLocation(location: LocationData) {
-    return this.setLocation(location).data.getPosition(this);
-  }
-
-  getIndex() {
-    return this.data.getIndex(this);
+    this.setXYZ(x, y, z);
+    return this._position;
   }
 
   getIndexXYZ(x: number, y: number, z: number) {
-    return this.setXYZ(x, y, z).data.getIndex(this);
-  }
-
-  getIndexToXYZ(index: number) {
-    return this.data.getPostionFromIndex(this, index);
-  }
-
-  getIndexLocation(location: LocationData) {
-    return this.setLocation(location).data.getIndex(this);
-  }
-
-  getPositionFromIndex(index: number) {
-    return this.data.getPostionFromIndex(this, index);
+    return this.setXYZ(x, y, z).getIndex();
   }
 
   getKey() {
@@ -204,9 +147,5 @@ export class VoxelSpace {
 
   getKeyXYZ(x: number, y: number, z: number) {
     return this.setXYZ(x, y, z).getKey();
-  }
-
-  getKeyLocation(location: LocationData) {
-    return this.setLocation(location).getKey();
   }
 }

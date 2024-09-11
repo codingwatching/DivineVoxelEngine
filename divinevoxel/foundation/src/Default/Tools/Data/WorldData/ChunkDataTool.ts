@@ -12,8 +12,8 @@ export class ChunkDataTool extends DataToolBase {
   _chunk: Chunk;
 
   loadIn() {
-    WorldSpaces.chunk.updateLoaction(this.location);
-    const chunk = WorldRegister.instance.chunk.get(this.location);
+    WorldRegister.instance.setDimension(this.dimension)
+    const chunk = WorldRegister.instance.chunk.get(this.x,this.y,this.z);
     if (!chunk) return false;
 
     this.struct.setBuffer(chunk.chunkState);

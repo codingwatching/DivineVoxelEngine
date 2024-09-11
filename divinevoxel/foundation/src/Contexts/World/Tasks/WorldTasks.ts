@@ -20,18 +20,33 @@ export class WorldTasks {
   constructor(public DVEW: DVEFWorldCore) {}
 
   loadColumn(location: LocationData, column: ColumnData) {
-    WorldRegister.instance.column.add(location, column);
+    WorldRegister.instance.setDimension(location[0]);
+    WorldRegister.instance.column.add(
+      location[1],
+      location[2],
+      location[3],
+      column
+    );
     DVEFDataSync.instance.worldData.column.sync(location);
   }
-  unLoadColumn(data: LocationData) {
-    if (WorldLock.isLocked(data)) return false;
+  unLoadColumn(location: LocationData) {
+    if (WorldLock.isLocked(location)) return false;
 
-    this.DVEW.dataSync.worldData.column.unSync(data);
-    WorldRegister.instance.column.remove(data);
-    const region = WorldRegister.instance.region.get(data);
+    this.DVEW.dataSync.worldData.column.unSync(location);
+    WorldRegister.instance.setDimension(location[0]);
+    WorldRegister.instance.column.remove(location[1], location[2], location[3]);
+    const region = WorldRegister.instance.region.get(
+      location[1],
+      location[2],
+      location[3]
+    );
     if (region && region.columns.size == 0) {
-      WorldRegister.instance.region.remove(data);
-      this.DVEW.dataSync.worldData.region.unSync(data);
+      WorldRegister.instance.region.remove(
+        location[1],
+        location[2],
+        location[3]
+      );
+      this.DVEW.dataSync.worldData.region.unSync(location);
       return true;
     }
     return false;
@@ -49,30 +64,45 @@ export default function (DVEW: DVEFWorldCore) {
   const loadInMap: Map<string, boolean> = new Map();
 
   Threads.registerTasks("add-chunk", async (location: LocationData) => {
-    const chunk = WorldRegister.instance.chunk.get(location);
+    WorldRegister.instance.setDimension(location[0]);
+    const chunk = WorldRegister.instance.chunk.get(
+      location[1],
+      location[2],
+      location[3]
+    );
 
     if (chunk) {
       DVEW.dataSync.worldData.chunk.sync(location);
       return;
     }
     if (dataLoaderTool.isEnabled()) {
-      WorldSpaces.column.getPositionLocation(location);
+      WorldSpaces.column.getPositionXYZ(location[1], location[2], location[3]);
+      const colunPos = WorldSpaces.column.getPosition();
       const columnLocation = <LocationData>[
-        ...WorldSpaces.column.getLocation(),
+        location[0],
+        colunPos.x,
+        colunPos.y,
+        colunPos.z,
       ];
       if (loadInMap.has(columnLocation.toString())) return;
       loadInMap.set(columnLocation.toString(), true);
       const success = await dataLoaderTool.loadIfExists(columnLocation);
       loadInMap.delete(columnLocation.toString());
       if (!success) {
-        WorldRegister.instance.column.fill(columnLocation);
+        WorldRegister.instance.setDimension(columnLocation[0]);
+        WorldRegister.instance.column.fill(
+          columnLocation[1],
+          columnLocation[2],
+          columnLocation[3]
+        );
       }
 
       return;
     }
 
     if (!chunk) {
-      WorldRegister.instance.column.fill(location);
+      WorldRegister.instance.setDimension(location[0]);
+      WorldRegister.instance.column.fill(location[1], location[2], location[3]);
     }
   });
   Threads.registerTasks<WorldLockTasks>(

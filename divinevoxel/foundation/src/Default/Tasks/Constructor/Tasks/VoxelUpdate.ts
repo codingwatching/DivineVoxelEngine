@@ -43,7 +43,7 @@ export async function EreaseAndUpdate(data: UpdateTasks) {
   if (ES.doFlow() && dataTool.isRenderable()) {
     if (dataTool.getSubstnaceData().isLiquid()) {
       await Propagation.instance.flowRemove(tasks);
-      tasks.sup();
+      tasks.stop();
       return true;
     }
   }
@@ -69,7 +69,7 @@ export async function EreaseAndUpdate(data: UpdateTasks) {
   }
 
   tasks.runRebuildQueue();
-  tasks.sup();
+  tasks.stop();
   return true;
 }
 
@@ -130,7 +130,7 @@ export async function PaintAndUpdate(data: VoxelUpdateTasks) {
   }
 
   tasks.runRebuildQueue();
-  tasks.sup();
+  tasks.stop();
   return;
 }
 
@@ -165,6 +165,6 @@ export async function VoxelUpdate(data: VoxelUpdateTasks) {
   }
 
   tasks.runRebuildQueue();
-  tasks.sup();
+  tasks.stop();
   return;
 }

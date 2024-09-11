@@ -8,7 +8,7 @@ export class SubstanceRules {
 
   static mappedParents = new Map<number, number>();
 
-  static $BuildRules() {
+  static buildRules() {
     const rules = new Map<string, Map<string, boolean>>();
     const parents = new Map<string, string>();
     const substanceTool = new SubstanceDataTool();
@@ -34,7 +34,6 @@ export class SubstanceRules {
         continue;
       }
       parents.set(substnace, substnace);
-
     }
 
     for (const [substanceId, rule] of rules) {
@@ -55,8 +54,6 @@ export class SubstanceRules {
         SubstancePaletteReader.id.numberFromString(parentSubstanceId);
       this.mappedParents.set(substanceNumberId, parentSubstanceNumberId);
     }
-
-
   }
 
   static exposedCheck(subject: number, neightborVoxel: number) {

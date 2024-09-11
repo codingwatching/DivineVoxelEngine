@@ -15,12 +15,20 @@ export const WorldLock = {
 
   _loadMap: new Map<string, boolean>(),
 
-  addLock(data: WorldLockTasks) {
+  addLock(taskData: WorldLockTasks) {
     return new Promise(async (resolve) => {
-      this.locks.set(data.toString(), data);
-      const [dim, [ssx, ssy, ssz], [esx, esy, esz]] = data;
-      const [a, sx, sy, sz] = WorldSpaces.column.getLocationXYZ(ssx, ssy, ssz);
-      const [b, ex, ey, ez] = WorldSpaces.column.getLocationXYZ(esx, esy, esz);
+      this.locks.set(taskData.toString(), taskData);
+      const [dim, [ssx, ssy, ssz], [esx, esy, esz]] = taskData;
+      const {
+        x: sx,
+        y: sy,
+        z: sz,
+      } = WorldSpaces.column.getPositionXYZ(ssx, ssy, ssz);
+      const {
+        x: ex,
+        y: ey,
+        z: ez,
+      } = WorldSpaces.column.getPositionXYZ(esx, esy, esz);
       const run = async () => {
         let allFound = true;
         for (
@@ -30,18 +38,36 @@ export const WorldLock = {
         ) {
           for (let x = sx; x <= ex; x += WorldSpaces.column._bounds.x) {
             for (let z = sz; z <= ez; z += WorldSpaces.column._bounds.z) {
+              const columnPos = WorldSpaces.column.getPositionXYZ(x, y, z);
               const location: LocationData = [
-                ...WorldSpaces.column.getLocationXYZ(x, y, z),
+                taskData[0],
+                columnPos.x,
+                columnPos.y,
+                columnPos.z,
               ] as LocationData;
               location[0] = dim;
-              if (WorldRegister.instance.column.get(location)) continue;
+              WorldRegister.instance.setDimension(location[0]);
+              if (
+                WorldRegister.instance.column.get(
+                  location[1],
+                  location[2],
+                  location[3]
+                )
+              )
+                continue;
               allFound = false;
               const key = location.toString();
               if (this._loadMap.has(key)) continue;
               this._loadMap.set(key, true);
               let success = false;
               if (!this.dataLoader.isEnabled()) {
-                if (WorldRegister.instance.column.get(location)) {
+                if (
+                  WorldRegister.instance.column.get(
+                    location[1],
+                    location[2],
+                    location[3]
+                  )
+                ) {
                   success = true;
                 }
               } else {
@@ -49,9 +75,20 @@ export const WorldLock = {
               }
 
               this._loadMap.delete(key);
-              if (WorldRegister.instance.column.get(location)) return;
+              if (
+                WorldRegister.instance.column.get(
+                  location[1],
+                  location[2],
+                  location[3]
+                )
+              )
+                return;
               if (!success) {
-                WorldRegister.instance.column.fill(location);
+                WorldRegister.instance.column.fill(
+                  location[1],
+                  location[2],
+                  location[3]
+                );
               }
             }
           }

@@ -8,8 +8,14 @@ import { Chunk, Column, Region } from "../../Data/World/Classes/index.js";
 //objects
 import { WorldRegister } from "../../Data/World/WorldRegister.js";
 
-import { ChunkStatStruct, InitalizeChunkTags } from "./Data/Structs/ChunkStruct.js";
-import { ColumnStateStruct, InitalizeColumnTags } from "./Data/Structs/ColumnStruct.js";
+import {
+  ChunkStatStruct,
+  InitalizeChunkTags,
+} from "./Data/Structs/ChunkStruct.js";
+import {
+  ColumnStateStruct,
+  InitalizeColumnTags,
+} from "./Data/Structs/ColumnStruct.js";
 import {
   InitalizeRegionTags,
   RegionStateStruct,
@@ -20,7 +26,7 @@ import { DimensionsRegister } from "../../Data/World/DimensionsRegister.js";
 import { DVEFDataSyncIds } from "../../Data/Constants/DVEFDataSyncIds.js";
 
 export class DVEFDataSync extends DataSync {
-  static  instance: DVEFDataSync; 
+  static instance: DVEFDataSync;
   constructor() {
     super();
     DVEFDataSync.instance = this;
@@ -28,11 +34,10 @@ export class DVEFDataSync extends DataSync {
       InitalizeChunkTags();
       InitalizeColumnTags();
       InitalizeRegionTags();
- 
+
       (dataSync as DVEFDataSync).worldDataTags.chunk.sync();
       (dataSync as DVEFDataSync).worldDataTags.column.sync();
       (dataSync as DVEFDataSync).worldDataTags.region.sync();
-
 
       return dataSync;
     });
@@ -106,7 +111,12 @@ export class DVEFDataSync extends DataSync {
         dataSyncType: DVEFDataSyncIds.Chunk,
         commCheck: (options) => options.worldData,
         getSyncData: (input) => {
-          const chunk = WorldRegister.instance.chunk.get(input);
+          WorldRegister.instance.setDimension(input[0]);
+          const chunk = WorldRegister.instance.chunk.get(
+            input[1],
+            input[2],
+            input[3]
+          );
           if (!chunk) return false;
           return [input, chunk];
         },
@@ -125,7 +135,12 @@ export class DVEFDataSync extends DataSync {
         dataSyncType: DVEFDataSyncIds.Column,
         commCheck: (options) => options.worldData,
         getSyncData: (input) => {
-          const column = WorldRegister.instance.column.get(input);
+          WorldRegister.instance.setDimension(input[0]);
+          const column = WorldRegister.instance.column.get(
+            input[1],
+            input[2],
+            input[3]
+          );
           if (!column) return false;
           return [input, column];
         },
@@ -144,7 +159,12 @@ export class DVEFDataSync extends DataSync {
         dataSyncType: DVEFDataSyncIds.Region,
         commCheck: (options) => options.worldData,
         getSyncData: (input) => {
-          const region = WorldRegister.instance.region.get(input);
+          WorldRegister.instance.setDimension(input[0]);
+          const region = WorldRegister.instance.region.get(
+            input[1],
+            input[2],
+            input[3]
+          );
           if (!region) return false;
           return [input, region];
         },

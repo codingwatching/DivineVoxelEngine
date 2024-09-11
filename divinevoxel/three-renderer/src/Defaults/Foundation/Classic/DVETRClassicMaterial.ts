@@ -151,6 +151,7 @@ export class DVEBRClassicMaterial extends URIMaterial<
     });
     this._material = shaderMaterial;
 
+    shaderMaterial.wireframe = true;
     if (data.alphaBlending) {
       //   shaderMaterial.separateCullingPass = true;
       shaderMaterial.side = DoubleSide;

@@ -1,5 +1,5 @@
-import { DivineVoxelEngineDataLoaderWorld } from "./DivineVoxelEngineDataLoaderWorld"
-import type { LocationData } from "@divinevoxel/core/Math";;
+import { DivineVoxelEngineDataLoaderWorld } from "./DivineVoxelEngineDataLoaderWorld";
+import type { LocationData } from "@divinevoxel/core/Math";
 import { Threads } from "@amodx/threads/";
 import { WorldRegister } from "../../../Data/World/WorldRegister.js";
 import { SafeInterval } from "@amodx/core/Intervals/SafeInterval.js";
@@ -25,17 +25,26 @@ export default function (DVEDL: DivineVoxelEngineDataLoaderWorld) {
   );
   Threads.registerTasks<LocationData>(
     "load-column",
-    async (data, onDone) => {
-      if (WorldRegister.instance.column.get(data)) {
+    async (location, onDone) => {
+      WorldRegister.instance.setDimension(location[0]);
+      if (
+        WorldRegister.instance.column.get(location[1], location[2], location[3])
+      ) {
         if (onDone) {
           onDone();
         }
         return;
       }
 
-      await DataHanlderWrapper.loadColumn(data);
+      await DataHanlderWrapper.loadColumn(location);
       const inte = new SafeInterval().setInterval(1).setOnRun(() => {
-        if (WorldRegister.instance.column.get(data)) {
+        if (
+          WorldRegister.instance.column.get(
+            location[1],
+            location[2],
+            location[3]
+          )
+        ) {
           onDone ? onDone(true) : false;
           inte.stop();
         }
@@ -46,15 +55,22 @@ export default function (DVEDL: DivineVoxelEngineDataLoaderWorld) {
   );
   Threads.registerTasks<LocationData>(
     "unload-column",
-    async (data, onDone) => {
-      if (!WorldRegister.instance.column.get(data)) {
+    async (location, onDone) => {
+      WorldRegister.instance.setDimension(location[0]);
+      if (
+        !WorldRegister.instance.column.get(
+          location[1],
+          location[2],
+          location[3]
+        )
+      ) {
         if (onDone) onDone();
         return;
       }
-      await DataHanlderWrapper.unLoadColumn(data);
+      await DataHanlderWrapper.unLoadColumn(location);
       DivineVoxelEngineConstructor.instance.core.threads.world.runPromiseTasks(
         "unload-column",
-        data,
+        location,
         [],
         () => {
           if (onDone) onDone();
@@ -73,15 +89,17 @@ export default function (DVEDL: DivineVoxelEngineDataLoaderWorld) {
   );
   Threads.registerTasks<LocationData>(
     "column-exists",
-    async (data, onDone) => {
-      const start = performance.now();
-      if (WorldRegister.instance.column.get(data)) {
+    async (location, onDone) => {
+      WorldRegister.instance.setDimension(location[0]);
+      if (
+        WorldRegister.instance.column.get(location[1], location[2], location[3])
+      ) {
         if (onDone) {
           onDone();
         }
         return false;
       }
-      const exists = await DataHanlderWrapper.columnExists(data);
+      const exists = await DataHanlderWrapper.columnExists(location);
       if (onDone) {
         onDone(exists);
       }

@@ -59,9 +59,11 @@ export class DataLoaderTool {
   }
 
   async unLoadColumn(location: LocationData) {
+    WorldRegister.instance.setDimension(location[0]);
+
     if (
       WorldLock.isLocked(location) ||
-      !WorldRegister.instance.column.get(location)
+      !WorldRegister.instance.column.get(location[1],location[2],location[3])
     )
       return false;
     await DataHanlderWrapper.instance.unLoadColumn(location);

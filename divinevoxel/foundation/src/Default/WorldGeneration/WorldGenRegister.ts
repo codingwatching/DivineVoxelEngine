@@ -46,8 +46,16 @@ export class WorldGenRegister {
       return false;
     const requests = this._requests.get(registerId);
     if (!requests) return;
-    const chunkPOS = WorldSpaces.chunk.getPositionLocation(location);
-    const chunkKey = WorldSpaces.chunk.getKeyLocation(location);
+    const chunkPOS = WorldSpaces.chunk.getPositionXYZ(
+      location[1],
+      location[2],
+      location[3]
+    );
+    const chunkKey = WorldSpaces.chunk.getKeyXYZ(
+      location[1],
+      location[2],
+      location[3]
+    );
     if (!chunkTool.loadInAtLocation(location)) {
       if (!requests.chunks.has(chunkKey)) {
         DVEFConstrucotrCore.instance.threads.world.runTasks("add-chunk", [

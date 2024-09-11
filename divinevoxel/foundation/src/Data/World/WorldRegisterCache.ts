@@ -10,8 +10,6 @@ export class WorldRegisterCache {
   _chunkCache: Chunk[] = [];
   _columnCache: Column[] = [];
 
-  chunkSpaceIndex = Flat3DIndex.GetXZYOrder();
-  columnSpaceIndex = Flat3DIndex.GetXZYOrder();
   worldSize = Vector3Like.Create();
   chunkSize = Vector3Like.Create();
   chunkSizePower = Vector3Like.Create();
@@ -42,21 +40,10 @@ export class WorldRegisterCache {
       EngineSettings.settings.chunks.chunkZPow2 - 1
     );
     this.worldSize = Vector3Like.Create(size.width, size.height, size.depth);
-    this.chunkSpaceIndex.setBounds(
-      Math.floor(size.width / this.chunkSize.x),
-      Math.floor(size.height / this.chunkSize.y),
-      Math.floor(size.depth / this.chunkSize.z)
-    );
 
     this.columnSize.x = 2 ** EngineSettings.settings.chunks.chunkXPow2;
     this.columnSize.y = 2 ** EngineSettings.settings.regions.regionYPow2;
     this.columnSize.z = 2 ** EngineSettings.settings.chunks.chunkZPow2;
-
-    this.columnSpaceIndex.setBounds(
-      Math.floor(size.width / this.columnSize.x),
-      Math.floor(size.height / this.columnSize.y),
-      Math.floor(size.depth / this.columnSize.z)
-    );
   }
 
   enable() {
@@ -87,26 +74,25 @@ export class WorldRegisterCache {
     return this._columnCache[key];
   }
 
-  getChunkIndex(location: LocationData) {
+  getChunkIndex(x: number, y: number, z: number) {
     return Vector3Like.HashXYZ(
-      ((location[1] >> this.chunkSizePower.x) << this.chunkSizePower.x) /
+      ((x >> this.chunkSizePower.x) << this.chunkSizePower.x) /
         this.chunkSize.x,
 
-      ((location[2] >> this.chunkSizePower.y) << this.chunkSizePower.y) /
+      ((y >> this.chunkSizePower.y) << this.chunkSizePower.y) /
         this.chunkSize.y,
 
-      ((location[3] >> this.chunkSizePower.z) << this.chunkSizePower.z) /
-        this.chunkSize.z
+      ((z >> this.chunkSizePower.z) << this.chunkSizePower.z) / this.chunkSize.z
     );
   }
 
-  getColumnIndex(location: LocationData) {
+  getColumnIndex(x: number, y: number, z: number) {
     return Vector3Like.HashXYZ(
-      ((location[1] >> this.columnSizePower.x) << this.columnSizePower.x) /
+      ((x >> this.columnSizePower.x) << this.columnSizePower.x) /
         this.columnSize.x,
-      ((location[2] >> this.columnSizePower.y) << this.columnSizePower.y) /
+      ((y >> this.columnSizePower.y) << this.columnSizePower.y) /
         this.columnSize.y,
-      ((location[3] >> this.columnSizePower.z) << this.columnSizePower.z) /
+      ((z >> this.columnSizePower.z) << this.columnSizePower.z) /
         this.columnSize.z
     );
   }

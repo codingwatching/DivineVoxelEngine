@@ -1,5 +1,5 @@
-import { Vec3Array, Vector3Like } from "@amodx/math";
-import { VoxelSpace, VoxelSpaceData } from "./VoxelSpace.js";
+import { Vector3Like } from "@amodx/math";
+import { VoxelSpace } from "./VoxelSpace.js";
 
 class RegionSpace extends VoxelSpace {
   chunkBounds = Vector3Like.Create();
@@ -10,29 +10,112 @@ class RegionSpace extends VoxelSpace {
   getColumnVolume() {
     return this.columnBounds.x * this.columnBounds.y * this.columnBounds.z;
   }
+  getPosition() {
+    return VoxelSpace.simpleCubeHash(this);
+  }
+  getIndex() {
+    return -Infinity;
+  }
+  getPositionFromIndex(index: number) {
+    return this._position;
+  }
 }
-class ColumnSpace extends VoxelSpace {}
+class ColumnSpace extends VoxelSpace {
+  constructor(public region: RegionSpace) {
+    super();
+  }
+  getPosition() {
+    return VoxelSpace.simpleCubeHash(this);
+  }
+  getIndex() {
+    return VoxelSpace.getIndex(
+      Vector3Like.DivideInPlace(
+        Vector3Like.SubtractInPlace(
+          VoxelSpace.simpleCubeHash(this),
+          this.region._position
+        ),
+        this._bounds
+      ),
+      this.region.columnBounds
+    );
+  }
+  getPositionFromIndex(index: number) {
+    Vector3Like.MultiplyToRef(
+      VoxelSpace.getPositionFromIndex(
+        this._position,
+        this.region.columnBounds,
+        index
+      ),
+      this._bounds,
+      this._position
+    );
+    return this._position;
+  }
+}
 class ChunkSpace extends VoxelSpace {
-  constructor(public regionSpace: RegionSpace, data: VoxelSpaceData) {
-    super(data);
+  constructor(public region: RegionSpace) {
+    super();
   }
   _regionPosition = Vector3Like.Create();
   getRegionPositonx() {
     this.getPosition();
-    return VoxelSpace.spatialHash(this, this.regionSpace, this._bounds);
+    return VoxelSpace.spatialHash(this, this.region, this._bounds);
   }
   getRegionPositonxXYZ(x: number, y: number, z: number) {
     return this.setXYZ(x, y, z).getRegionPositonx();
   }
   getRegionIndex() {
-    return VoxelSpace.getIndex(
-      this._hashedPosition,
-      this.regionSpace.chunkBounds
-    );
+    return VoxelSpace.getIndex(this._hashedPosition, this.region.chunkBounds);
   }
   getRegionIndexXYZ(x: number, y: number, z: number) {
     this.getRegionPositonxXYZ(x, y, z);
     return this.getRegionIndex();
+  }
+  getPosition() {
+    return VoxelSpace.simpleCubeHash(this);
+  }
+  getIndex() {
+    const ry =
+      (this._position.y >> this.region._boundsPower2.y) <<
+      this.region._boundsPower2.y;
+    const cy =
+      (this._position.y >> this._boundsPower2.y) << this._boundsPower2.y;
+    return (cy - ry) / this._bounds.y;
+  }
+  getPositionFromIndex(index: number) {
+    Vector3Like.MultiplyToRef(
+      VoxelSpace.getPositionFromIndex(
+        this._position,
+        this.region.chunkBounds,
+        index
+      ),
+      this._bounds,
+      this._position
+    );
+    return this._position;
+  }
+}
+
+class FinalVoxelSpace extends VoxelSpace {
+  constructor(public chunk: ChunkSpace) {
+    super();
+  }
+  getPosition() {
+    VoxelSpace.spatialHash(this, this.chunk);
+    this._position.x = this._hashedPosition.x;
+    this._position.y = this._hashedPosition.y;
+    this._position.z = this._hashedPosition.z;
+    return this._position;
+  }
+  getIndex() {
+    return VoxelSpace.getIndex(this._hashedPosition, this._bounds);
+  }
+  getPositionFromIndex(index: number) {
+    return VoxelSpace.getPositionFromIndex(
+      this._position,
+      this.chunk._bounds,
+      index
+    );
   }
 }
 
@@ -40,90 +123,14 @@ export class VoxelSpaces {
   region: RegionSpace;
   column: ColumnSpace;
   chunk: ChunkSpace;
-  voxel: VoxelSpace;
+  voxel: FinalVoxelSpace;
   constructor() {
-    this.region = new RegionSpace({
-      getPosition(space) {
-        return VoxelSpace.simpleCubeHash(space);
-      },
-      getIndex(space) {
-        return -Infinity;
-      },
-      getPostionFromIndex(space, index) {
-        return space._position;
-      },
-    });
-    this.column = new ColumnSpace({
-      getPosition(space) {
-        return VoxelSpace.simpleCubeHash(space);
-      },
-      getIndex: (space) => {
-        return VoxelSpace.getIndex(
-          Vector3Like.DivideInPlace(
-            Vector3Like.SubtractInPlace(
-              VoxelSpace.simpleCubeHash(space),
-              this.region._position
-            ),
-            space._bounds
-          ),
-          this.region.columnBounds
-        );
-      },
-      getPostionFromIndex: (space, index) => {
-        return Vector3Like.Multiply(
-          VoxelSpace.getPositionFromIndex(
-            space._position,
-            this.region.columnBounds,
-            index
-          ),
-          space._bounds
-        );
-      },
-    });
+    this.region = new RegionSpace();
+    this.column = new ColumnSpace(this.region);
 
-    this.chunk = new ChunkSpace(this.region, {
-      getPosition(space) {
-        return VoxelSpace.simpleCubeHash(space);
-      },
-      getIndex: (space) => {
-        const ry =
-          (space._position.y >> this.region._boundsPower2.y) <<
-          this.region._boundsPower2.y;
-        const cy =
-          (space._position.y >> space._boundsPower2.y) << space._boundsPower2.y;
-        return (cy - ry) / space._bounds.y;
-      },
-      getPostionFromIndex: (space, index) => {
-        return Vector3Like.Multiply(
-          VoxelSpace.getPositionFromIndex(
-            space._position,
-            this.region.chunkBounds,
-            index
-          ),
-          space._bounds
-        );
-      },
-    });
+    this.chunk = new ChunkSpace(this.region);
 
-    this.voxel = new VoxelSpace({
-      getPosition: (space) => {
-        VoxelSpace.spatialHash(space, this.chunk);
-        space._position.x = space._hashedPosition.x;
-        space._position.y = space._hashedPosition.y;
-        space._position.z = space._hashedPosition.z;
-        return space._position;
-      },
-      getIndex(space) {
-        return VoxelSpace.getIndex(space._hashedPosition, space._bounds);
-      },
-      getPostionFromIndex: (space, index) => {
-        return VoxelSpace.getPositionFromIndex(
-          space._position,
-          this.chunk._bounds,
-          index
-        );
-      },
-    });
+    this.voxel = new FinalVoxelSpace(this.chunk);
   }
 
   setDimensions(data: {
