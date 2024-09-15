@@ -7,6 +7,7 @@ export class VoxelGeometryLookUp {
   static dataTool: DataTool;
 
   static stateCache: number[] = [];
+  static stateDataOverrideCache: number[] = [];
   static conditonalStateCache: number[] = [];
   static geometryCache: number[][] = [];
   static conditionalGeometryCache: number[][][] = [];
@@ -25,6 +26,7 @@ export class VoxelGeometryLookUp {
 
   static stop() {
     this.stateCache.length = 0;
+    this.stateDataOverrideCache.length = 0;
     this.geometryCache.length = 0;
     this.conditionalGeometryCache.length = 0;
     this.conditonalStateCache.length = 0;
@@ -63,21 +65,20 @@ export class VoxelGeometryLookUp {
     voxelConstructor.model.schema.voxel.setDimension(this.dataTool.dimension);
     voxelConstructor.model.schema.voxel.loadInAt(x, y, z);
     const shapeState = this.dataTool.getShapeState();
-    const state = voxelConstructor.getState(shapeState);
+    const state = voxelConstructor.model.shapeStateTree.getState(shapeState);
+    const stateDataOverride =
+      voxelConstructor.model.shapeStateDataOverrideTree.getState(shapeState);
 
-    const conditonalState = voxelConstructor.getCondtionalState(shapeState);
+    const conditonalState =
+      voxelConstructor.model.condtioanlShapeStateTree.getState(shapeState);
     this.stateCache[hashed] = state;
+    this.stateDataOverrideCache[hashed] = stateDataOverride;
     this.conditonalStateCache[hashed] = conditonalState;
 
-    if (this.geometryCache[hashed]) {
-      console.error(x, y, z);
-      throw new Error(`Duplicate hash!`);
-    }
-
     this.geometryCache[hashed] =
-      voxelConstructor.model.getShapeStateGeometry(state);
+      voxelConstructor.model.data.shapeStateGeometryMap[state];
     this.conditionalGeometryCache[hashed] =
-      voxelConstructor.model.getCondtionalShapeStateGeometry(conditonalState);
+    voxelConstructor.model.data.condiotnalShapeStateGeometryMap[conditonalState];
 
     return state;
   }

@@ -22,8 +22,7 @@ export default function (DVEC: DivineVoxelEngineConstructor) {
           new VoxelModelVoxelConstructor(
             voxel.id,
             VoxelModelConstructorRegister.models.get(voxel.modelId)!,
-            voxel.baseGeometryInputMap,
-            voxel.condiotnalGeometryInputMap
+            voxel
           )
         );
       }

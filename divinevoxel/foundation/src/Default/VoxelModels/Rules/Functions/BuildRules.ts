@@ -1,209 +1,197 @@
-import { OcclusionQuad, OcclusionResults } from "../Classes/OcclusionQuad";
+import { OcclusionQuad } from "../Classes/OcclusionQuad";
 import { VoxelRuleGeometry } from "../Classes/VoxelRulesGeometry";
 import { VoxelRelativeCubeIndex } from "../../Indexing/VoxelRelativeCubeIndex";
 import { Vec3Array } from "@amodx/math";
+import { StringPalette } from "@divinevoxel/core/Interfaces/Data/StringPalette";
+import { VoxelResultsIndex } from "../../Indexing/VoxelResultsIndex";
+import { VoxelModelManager } from "../VoxelModelManager";
 
 class OcculsionBox {
   constructor(
-    public p1: Vec3Array,
-    public p2: Vec3Array,
-    public p3: Vec3Array,
-    public p4: Vec3Array
+    public p1: Vec3Array = [0, 0, 0],
+    public p2: Vec3Array = [0, 0, 0],
+    public p3: Vec3Array = [0, 0, 0],
+    public p4: Vec3Array = [0, 0, 0]
   ) {}
 }
-function createOcculsionBox(point: Vec3Array, normal: Vec3Array): OcculsionBox {
-  const size = 0.1;
 
-  // Calculate half the size of the box
-  const halfSize = size / 2;
+const mainBox = new OcculsionBox();
+const size = 0.01;
+// Calculate half the size of the box
+const halfSize = size / 2;
+// Create a small offset to move the box forward
+const offset = 0.01;
+const boxNormals: Vec3Array[] = [
+  [1, 0, 0],
+  [0, 1, 0],
+  [0, 0, 1],
+];
 
-  // Normalize the normal vector
-  const normalLength = Math.sqrt(
-    normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2
-  );
-  const n = [
-    normal[0] / normalLength,
-    normal[1] / normalLength,
-    normal[2] / normalLength,
-  ];
+const boxPoints = [mainBox.p1, mainBox.p2, mainBox.p3, mainBox.p4];
 
-  // Create a small offset to move the box forward
-  const offset = 0.01;
-  const offsetPoint = [
-    point[0] + n[0] * offset,
-    point[1] + n[1] * offset,
-    point[2] + n[2] * offset,
-  ];
+const offsetPoint: Vec3Array = [0, 0, 0];
+const tangent: Vec3Array = [0, 0, 0];
+const bitangent: Vec3Array = [0, 0, 0];
 
-  // Generate two perpendicular vectors to the normal (for constructing the plane)
-  let tangent: Vec3Array;
-  let bitangent: Vec3Array;
+function updateOcculsionBox(point: Vec3Array, normal: Vec3Array): OcculsionBox {
+  offsetPoint[0] = point[0] + normal[0] * offset;
+  offsetPoint[1] = point[1] + normal[1] * offset;
+  offsetPoint[2] = point[2] + normal[2] * offset;
 
-  if (Math.abs(n[0]) > Math.abs(n[2])) {
-    tangent = [-n[1], n[0], 0]; // Arbitrary perpendicular vector
+  if (Math.abs(normal[0]) > Math.abs(normal[2])) {
+    tangent[0] = -normal[1];
+    tangent[1] = normal[0];
+    tangent[2] = 0;
   } else {
-    tangent = [0, -n[2], n[1]]; // Another perpendicular vector
+    tangent[0] = 0;
+    tangent[1] = -normal[2];
+    tangent[2] = normal[1];
   }
 
-  // Normalize the tangent
   const tangentLength = Math.sqrt(
     tangent[0] ** 2 + tangent[1] ** 2 + tangent[2] ** 2
   );
-  tangent = [
-    tangent[0] / tangentLength,
-    tangent[1] / tangentLength,
-    tangent[2] / tangentLength,
-  ];
 
-  // Bitangent is the cross product of the normal and tangent
-  bitangent = [
-    n[1] * tangent[2] - n[2] * tangent[1],
-    n[2] * tangent[0] - n[0] * tangent[2],
-    n[0] * tangent[1] - n[1] * tangent[0],
-  ];
+  tangent[0] = tangent[0] / tangentLength;
+  tangent[1] = tangent[1] / tangentLength;
+  tangent[2] = tangent[2] / tangentLength;
 
-  // Calculate the four corners of the box based on the tangent and bitangent vectors
-  const p1: Vec3Array = [
-    offsetPoint[0] - tangent[0] * halfSize - bitangent[0] * halfSize,
-    offsetPoint[1] - tangent[1] * halfSize - bitangent[1] * halfSize,
-    offsetPoint[2] - tangent[2] * halfSize - bitangent[2] * halfSize,
-  ];
+  bitangent[0] = normal[1] * tangent[2] - normal[2] * tangent[1];
+  bitangent[1] = normal[2] * tangent[0] - normal[0] * tangent[2];
+  bitangent[2] = normal[0] * tangent[1] - normal[1] * tangent[0];
 
-  const p2: Vec3Array = [
-    offsetPoint[0] + tangent[0] * halfSize - bitangent[0] * halfSize,
-    offsetPoint[1] + tangent[1] * halfSize - bitangent[1] * halfSize,
-    offsetPoint[2] + tangent[2] * halfSize - bitangent[2] * halfSize,
-  ];
+  mainBox.p1[0] =
+    offsetPoint[0] - tangent[0] * halfSize - bitangent[0] * halfSize;
+  mainBox.p1[1] =
+    offsetPoint[1] - tangent[1] * halfSize - bitangent[1] * halfSize;
+  mainBox.p1[2] =
+    offsetPoint[2] - tangent[2] * halfSize - bitangent[2] * halfSize;
 
-  const p3: Vec3Array = [
-    offsetPoint[0] + tangent[0] * halfSize + bitangent[0] * halfSize,
-    offsetPoint[1] + tangent[1] * halfSize + bitangent[1] * halfSize,
-    offsetPoint[2] + tangent[2] * halfSize + bitangent[2] * halfSize,
-  ];
+  mainBox.p2[0] =
+    offsetPoint[0] + tangent[0] * halfSize - bitangent[0] * halfSize;
+  mainBox.p2[1] =
+    offsetPoint[1] + tangent[1] * halfSize - bitangent[1] * halfSize;
+  mainBox.p2[2] =
+    offsetPoint[2] + tangent[2] * halfSize - bitangent[2] * halfSize;
 
-  const p4: Vec3Array = [
-    offsetPoint[0] - tangent[0] * halfSize + bitangent[0] * halfSize,
-    offsetPoint[1] - tangent[1] * halfSize + bitangent[1] * halfSize,
-    offsetPoint[2] - tangent[2] * halfSize + bitangent[2] * halfSize,
-  ];
+  mainBox.p3[0] =
+    offsetPoint[0] + tangent[0] * halfSize + bitangent[0] * halfSize;
+  mainBox.p3[1] =
+    offsetPoint[1] + tangent[1] * halfSize + bitangent[1] * halfSize;
+  mainBox.p3[2] =
+    offsetPoint[2] + tangent[2] * halfSize + bitangent[2] * halfSize;
 
-  // Create the box
-  return new OcculsionBox(p1, p2, p3, p4);
+  mainBox.p4[0] =
+    offsetPoint[0] - tangent[0] * halfSize + bitangent[0] * halfSize;
+  mainBox.p4[1] =
+    offsetPoint[1] - tangent[1] * halfSize + bitangent[1] * halfSize;
+  mainBox.p4[2] =
+    offsetPoint[2] - tangent[2] * halfSize + bitangent[2] * halfSize;
+
+  return mainBox;
 }
+
+const projectPointOntoAxis = (point: Vec3Array, axis: Vec3Array) => {
+  return point[0] * axis[0] + point[1] * axis[1] + point[2] * axis[2];
+};
+
+const projectionsOverlap = (
+  axis: Vec3Array,
+  shape1Points: Vec3Array[],
+  shape2Points: Vec3Array[]
+) => {
+  let min1 = Infinity;
+  let max1 = -Infinity;
+  let min2 = Infinity;
+  let max2 = -Infinity;
+
+  for (const point of shape1Points) {
+    const projection = projectPointOntoAxis(point, axis);
+    min1 = Math.min(min1, projection);
+    max1 = Math.max(max1, projection);
+  }
+
+  for (const point of shape2Points) {
+    const projection = projectPointOntoAxis(point, axis);
+    min2 = Math.min(min2, projection);
+    max2 = Math.max(max2, projection);
+  }
+
+  return !(max1 < min2 || max2 < min1);
+};
+
 function doesBoxIntersectQuad(box: OcculsionBox, quad: OcclusionQuad): boolean {
-  // Get the points of the quad
-  const quadPoints = quad.getPoints();
+  const quadPoints = quad.points;
 
-  // Get the points of the box
-  const boxPoints = [box.p1, box.p2, box.p3, box.p4];
+  const quadNormal = quad.normal;
 
-  // Compute the normals for the quad and box
-  const quadNormal = quad.getNormal();
-  const boxNormals: Vec3Array[] = [
-    [1, 0, 0], // X-axis normal
-    [0, 1, 0], // Y-axis normal
-    [0, 0, 1], // Z-axis normal
-  ];
-
-  // Function to project a point onto an axis
-  const projectPointOntoAxis = (point: Vec3Array, axis: Vec3Array) => {
-    return point[0] * axis[0] + point[1] * axis[1] + point[2] * axis[2];
-  };
-
-  // Function to check if projections overlap on an axis
-  const projectionsOverlap = (
-    axis: Vec3Array,
-    shape1Points: Vec3Array[],
-    shape2Points: Vec3Array[]
-  ) => {
-    let [min1, max1] = [Infinity, -Infinity];
-    let [min2, max2] = [Infinity, -Infinity];
-
-    for (const point of shape1Points) {
-      const projection = projectPointOntoAxis(point, axis);
-      min1 = Math.min(min1, projection);
-      max1 = Math.max(max1, projection);
-    }
-
-    for (const point of shape2Points) {
-      const projection = projectPointOntoAxis(point, axis);
-      min2 = Math.min(min2, projection);
-      max2 = Math.max(max2, projection);
-    }
-
-    return !(max1 < min2 || max2 < min1);
-  };
-
-  // Check the quad's normal as a separating axis
   if (!projectionsOverlap(quadNormal, quadPoints, boxPoints)) {
     return false;
   }
 
-  // Check the box's face normals as separating axes
   for (const boxNormal of boxNormals) {
     if (!projectionsOverlap(boxNormal, quadPoints, boxPoints)) {
       return false;
     }
   }
 
-  // Check cross-products of edges as separating axes (add edge vectors and cross products)
-
-  // If no separating axis found, the shapes intersect
   return true;
 }
 
-export function BuildRules(main: VoxelRuleGeometry, other: VoxelRuleGeometry) {
+export function BuildRules(main: VoxelRuleGeometry, geoPalette: StringPalette) {
   main.occlusionPlane.setOffset(0, 0, 0);
-  const faceCullMap = main.faceCullMap;
-  const vertexHitMap = main.vertexHitMap;
+  const faceCullMap: number[][] = [];
+  for (let i = 0; i < main.faceCount; i++) {
+    faceCullMap[i] = [];
+  }
+  const vertexHitMap: number[][] = [];
+  for (let i = 0; i < main.vertexCount; i++) {
+    vertexHitMap[i] = [];
+  }
+  const maxIndex = VoxelRelativeCubeIndex.flatIndex.size;
 
-  for (let y = -1; y < 2; y++) {
-    for (let nx = -1; nx < 2; nx++) {
-      for (let nz = -1; nz < 2; nz++) {
-        const cullResults = new OcclusionResults<boolean>();
-        const aoResults = new OcclusionResults<boolean>();
-        const directionIndex = VoxelRelativeCubeIndex.getIndex(nx, y, nz);
-        other.occlusionPlane.setOffset(nx, y, nz);
-        for (const [mainFaceIndex, currentPlane] of main.occlusionPlane
-          .planes) {
-          let occuled = false;
-          for (const [otherFaceIndex, otherPlane] of other.occlusionPlane
-            .planes) {
-            if (
-              otherPlane.parentId == currentPlane.parentId &&
-              currentPlane.nodeId == otherPlane.nodeId &&
-              nx == 0 &&
-              y == 0 &&
-              nz == 0
-            )
-              continue;
+  const totalAOReusltsSize = main.vertexCount * maxIndex;
+  const aoRulesBuffer = new SharedArrayBuffer(
+    totalAOReusltsSize * (geoPalette.size + 1)
+  );
 
-            if (otherPlane.doesCover(currentPlane)) occuled = true;
-            if (occuled) break;
-          }
-          faceCullMap[currentPlane.faceCount] ??= [];
-          if (occuled) {
-            if (
-              !faceCullMap[currentPlane.faceCount].find(
-                (_) => _ == directionIndex
-              )
-            )
-              faceCullMap[currentPlane.faceCount].push(directionIndex);
-          }
-          cullResults.results.set(currentPlane.faceCount, occuled);
-        }
-        for (const [mainFaceIndex, currentPlane] of main.occlusionPlane
-          .planes) {
-          const points = currentPlane.getPoints();
-          const normal = currentPlane.getNormal();
-          for (let v = 0; v < points.length; v++) {
-            const occulsionBox = createOcculsionBox(points[v], normal);
+  const aoIndex = new VoxelResultsIndex({
+    buffer: aoRulesBuffer,
+    resultsSize: main.vertexCount,
+  });
 
-            let touching = false;
-            const trueVertexIndex = currentPlane.vertexCount + v;
-            for (const [otherFaceIndex, otherPlane] of other.occlusionPlane
-              .planes) {
-              if (otherPlane.direction == currentPlane.direction) continue;
+  const totalCullReusltsSize = main.faceCount * maxIndex;
+  const cullRulesBuffer = new SharedArrayBuffer(
+    totalCullReusltsSize * (geoPalette.size + 1)
+  );
+
+  const cullIndex = new VoxelResultsIndex({
+    buffer: cullRulesBuffer,
+    resultsSize: main.faceCount,
+  });
+
+  for (
+    let otherNumberId = 0;
+    otherNumberId < geoPalette.size;
+    otherNumberId++
+  ) {
+    let other = VoxelModelManager.geometry.get(
+      geoPalette._palette[otherNumberId]
+    )!;
+    if (other.id == main.id) other = main.clone();
+
+    for (let y = -1; y < 2; y++) {
+      for (let nx = -1; nx < 2; nx++) {
+        for (let nz = -1; nz < 2; nz++) {
+          const directionIndex = VoxelRelativeCubeIndex.getIndex(nx, y, nz);
+          other.occlusionPlane.setOffset(nx, y, nz);
+          
+          for (const currentPlane of main.occlusionPlane.planes) {
+            let occuled = false;
+
+            const points = currentPlane.points;
+            const normal = currentPlane.normal;
+            for (const otherPlane of other.occlusionPlane.planes) {
               if (
                 otherPlane.parentId == currentPlane.parentId &&
                 currentPlane.nodeId == otherPlane.nodeId &&
@@ -212,25 +200,54 @@ export function BuildRules(main: VoxelRuleGeometry, other: VoxelRuleGeometry) {
                 nz == 0
               )
                 continue;
-              if (doesBoxIntersectQuad(occulsionBox, otherPlane)) {
-                touching = true;
+
+              if (otherPlane.doesCover(currentPlane)) occuled = true;
+              if (otherPlane.direction == currentPlane.direction) continue;
+              for (let v = 0; v < points.length; v++) {
+                const occulsionBox = updateOcculsionBox(points[v], normal);
+                const trueVertexIndex = currentPlane.vertexCount + v;
+
+                if (doesBoxIntersectQuad(occulsionBox, otherPlane)) {
+                  aoIndex.setValue(
+                    otherNumberId,
+                    directionIndex,
+                    trueVertexIndex,
+                    1
+                  );
+                  if (
+                    !vertexHitMap[trueVertexIndex].find(
+                      (_) => _ == directionIndex
+                    )
+                  )
+                    vertexHitMap[trueVertexIndex].push(directionIndex);
+                }
               }
-              if (touching) break;
             }
 
-            aoResults.results.set(trueVertexIndex, touching);
-            vertexHitMap[trueVertexIndex] ??= [];
-            if (touching) {
+            if (occuled) {
+              cullIndex.setValue(
+                otherNumberId,
+                directionIndex,
+                currentPlane.faceCount,
+                1
+              );
               if (
-                !vertexHitMap[trueVertexIndex].find((_) => _ == directionIndex)
+                !faceCullMap[currentPlane.faceCount].find(
+                  (_) => _ == directionIndex
+                )
               )
-                vertexHitMap[trueVertexIndex].push(directionIndex);
+                faceCullMap[currentPlane.faceCount].push(directionIndex);
             }
           }
         }
-        main.addCullResults(other.id, directionIndex, cullResults);
-        main.addAOResults(other.id, directionIndex, aoResults);
       }
     }
   }
+
+  return {
+    aoIndex: aoIndex.data,
+    cullIndex: cullIndex.data,
+    faceCullMap,
+    vertexHitMap,
+  };
 }

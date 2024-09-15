@@ -596,27 +596,27 @@ export const fenceEastWest: VoxelGeometryData = {
       faces: {
         up: {
           texture: "@upTex",
-          uv: [0, 0, 1, 1],
+          uv: [7 / 16, 7 / 16, 9 / 16, 9 / 16],
         },
         down: {
           texture: "@downTex",
-          uv: [0, 0, 1, 1],
+          uv: [7 / 16, 7 / 16, 9 / 16, 9 / 16],
         },
         north: {
           texture: "@northTex",
-          uv: [0, 0, 0.5, 0.5],
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
         },
         south: {
           texture: "@southTex",
-          uv: [0, 0, 0.5, 0.5],
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
         },
         east: {
           texture: "@eastTex",
-          uv: [0, 0, 0.5, 0.5],
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
         },
         west: {
           texture: "@westTex",
-          uv: [0, 0, 0.5, 0.5],
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
         },
       },
     },
@@ -855,61 +855,53 @@ export const pillarCube: VoxelModelData = {
     "direction=down-up,same-down=false,same-up=false": [
       {
         id: "cube",
-        data: {
-          inputs: {
-            "@upTex": "@upTex",
-            "@upUvs": [0, 0, 0.5, 0.5],
-            "@downTex": "@downTex",
-            "@northTex": "@sideDisconnectedTex",
-            "@southTex": "@sideDisconnectedTex",
-            "@eastTex": "@sideDisconnectedTex",
-            "@westTex": "@sideDisconnectedTex",
-          },
+        inputs: {
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
+          "@northTex": "@sideDisconnectedTex",
+          "@southTex": "@sideDisconnectedTex",
+          "@eastTex": "@sideDisconnectedTex",
+          "@westTex": "@sideDisconnectedTex",
         },
       },
     ],
     "direction=down-up,same-down=true,same-up=false": [
       {
         id: "cube",
-        data: {
-          inputs: {
-            "@upTex": "@upTex",
-            "@downTex": "@downTex",
-            "@northTex": "@sideDisconnectedTex",
-            "@southTex": "@sideDisconnectedTex",
-            "@eastTex": "@sideDisconnectedTex",
-            "@westTex": "@sideDisconnectedTex",
-          },
+
+        inputs: {
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
+          "@northTex": "@sideUpTex",
+          "@southTex": "@sideUpTex",
+          "@eastTex": "@sideUpTex",
+          "@westTex": "@sideUpTex",
         },
       },
     ],
     "direction=down-up,same-down=false,same-up=true": [
       {
         id: "cube",
-        data: {
-          inputs: {
-            "@upTex": "@upTex",
-            "@downTex": "@downTex",
-            "@northTex": "@sideDisconnectedTex",
-            "@southTex": "@sideDisconnectedTex",
-            "@eastTex": "@sideDisconnectedTex",
-            "@westTex": "@sideDisconnectedTex",
-          },
+        inputs: {
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
+          "@northTex": "@sideDownTex",
+          "@southTex": "@sideDownTex",
+          "@eastTex": "@sideDownTex",
+          "@westTex": "@sideDownTex",
         },
       },
     ],
     "direction=down-up,same-down=true,same-up=true": [
       {
         id: "cube",
-        data: {
-          inputs: {
-            "@upTex": "@upTex",
-            "@downTex": "@downTex",
-            "@northTex": "@sideDisconnectedTex",
-            "@southTex": "@sideDisconnectedTex",
-            "@eastTex": "@sideDisconnectedTex",
-            "@westTex": "@sideDisconnectedTex",
-          },
+        inputs: {
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
+          "@northTex": "@sideConnectedTex",
+          "@southTex": "@sideConnectedTex",
+          "@eastTex": "@sideConnectedTex",
+          "@westTex": "@sideConnectedTex",
         },
       },
     ],
@@ -929,7 +921,14 @@ export const pillarCube: VoxelModelData = {
       {
         id: "cube",
         geometryId: "dve_cube",
-        inputs: {},
+        inputs: {
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
+          "@northTex": "@sideDisconnectedTex",
+          "@southTex": "@sideDisconnectedTex",
+          "@eastTex": "@sideDisconnectedTex",
+          "@westTex": "@sideDisconnectedTex",
+        },
       },
     ],
   },

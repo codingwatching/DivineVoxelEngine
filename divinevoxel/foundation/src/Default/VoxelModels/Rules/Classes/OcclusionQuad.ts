@@ -1,15 +1,15 @@
 import { Vec3Array, Vector3Like } from "@amodx/math";
-import {
-  VoxelFaceNameArray,
-  VoxelFaceNames,
-  VoxelFacesArray,
-} from "@divinevoxel/core/Math";
+import { VoxelFaceNames } from "@divinevoxel/core/Math";
 
 export class OcclusionQuad {
   offset: Vec3Array = [0, 0, 0];
 
   start: Vector3Like;
   end: Vector3Like;
+
+  normal: Vec3Array;
+
+  points: [Vec3Array, Vec3Array, Vec3Array, Vec3Array];
 
   constructor(
     public parentId: string,
@@ -49,6 +49,39 @@ export class OcclusionQuad {
       },
       set z(value: number) {},
     };
+
+    this.points = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+
+    this.updatePoints();
+
+    switch (this.direction) {
+      case "up":
+        this.normal = [0, 1, 0];
+        break;
+      case "down":
+        this.normal = [0, -1, 0];
+        break;
+      case "north":
+        this.normal = [0, 0, 1];
+        break;
+      case "south":
+        this.normal = [0, 0, -1];
+        break;
+      case "east":
+        this.normal = [1, 0, 0];
+        break;
+      case "west":
+        this.normal = [-1, 0, 0];
+        break;
+      default:
+        this.normal = [0, 0, 0];
+        break;
+    }
   }
 
   setOffset(x: number, y: number, z: number) {
@@ -57,56 +90,123 @@ export class OcclusionQuad {
     this.offset[2] = z;
   }
 
-  getPoints(): Vec3Array[] {
+  updatePoints() {
     const { start, end } = this;
 
     switch (this.direction) {
       case "up":
-        return [
-          [end.x, end.y, end.z],
-          [start.x, end.y, end.z],
-          [start.x, end.y, start.z],
-          [end.x, end.y, start.z],
-        ];
+        this.points[0][0] = end.x;
+        this.points[0][1] = end.y;
+        this.points[0][2] = end.z;
+
+        this.points[1][0] = start.x;
+        this.points[1][1] = end.y;
+        this.points[1][2] = end.z;
+
+        this.points[2][0] = start.x;
+        this.points[2][1] = end.y;
+        this.points[2][2] = start.z;
+
+        this.points[3][0] = end.x;
+        this.points[3][1] = end.y;
+        this.points[3][2] = start.z;
+        break;
+
       case "down":
-        return [
-          [start.x, start.y, end.z],
-          [end.x, start.y, end.z],
-          [end.x, start.y, start.z],
-          [start.x, start.y, start.z],
-        ];
+        this.points[0][0] = start.x;
+        this.points[0][1] = start.y;
+        this.points[0][2] = end.z;
+
+        this.points[1][0] = end.x;
+        this.points[1][1] = start.y;
+        this.points[1][2] = end.z;
+
+        this.points[2][0] = end.x;
+        this.points[2][1] = start.y;
+        this.points[2][2] = start.z;
+
+        this.points[3][0] = start.x;
+        this.points[3][1] = start.y;
+        this.points[3][2] = start.z;
+        break;
+
       case "north":
-        return [
-          [start.x, end.y, end.z],
-          [end.x, end.y, end.z],
-          [end.x, start.y, end.z],
-          [start.x, start.y, end.z],
-        ];
+        this.points[0][0] = start.x;
+        this.points[0][1] = end.y;
+        this.points[0][2] = end.z;
+
+        this.points[1][0] = end.x;
+        this.points[1][1] = end.y;
+        this.points[1][2] = end.z;
+
+        this.points[2][0] = end.x;
+        this.points[2][1] = start.y;
+        this.points[2][2] = end.z;
+
+        this.points[3][0] = start.x;
+        this.points[3][1] = start.y;
+        this.points[3][2] = end.z;
+        break;
+
       case "south":
-        return [
-          [end.x, end.y, start.z],
-          [start.x, end.y, start.z],
-          [start.x, start.y, start.z],
-          [end.x, start.y, start.z],
-        ];
+        this.points[0][0] = end.x;
+        this.points[0][1] = end.y;
+        this.points[0][2] = start.z;
+
+        this.points[1][0] = start.x;
+        this.points[1][1] = end.y;
+        this.points[1][2] = start.z;
+
+        this.points[2][0] = start.x;
+        this.points[2][1] = start.y;
+        this.points[2][2] = start.z;
+
+        this.points[3][0] = end.x;
+        this.points[3][1] = start.y;
+        this.points[3][2] = start.z;
+        break;
+
       case "east":
-        return [
-          [end.x, end.y, end.z],
-          [end.x, end.y, start.z],
-          [end.x, start.y, start.z],
-          [end.x, start.y, end.z],
-        ];
+        this.points[0][0] = end.x;
+        this.points[0][1] = end.y;
+        this.points[0][2] = end.z;
+
+        this.points[1][0] = end.x;
+        this.points[1][1] = end.y;
+        this.points[1][2] = start.z;
+
+        this.points[2][0] = end.x;
+        this.points[2][1] = start.y;
+        this.points[2][2] = start.z;
+
+        this.points[3][0] = end.x;
+        this.points[3][1] = start.y;
+        this.points[3][2] = end.z;
+        break;
+
       case "west":
-        return [
-          [start.x, end.y, start.z],
-          [start.x, end.y, end.z],
-          [start.x, start.y, end.z],
-          [start.x, start.y, start.z],
-        ];
+        this.points[0][0] = start.x;
+        this.points[0][1] = end.y;
+        this.points[0][2] = start.z;
+
+        this.points[1][0] = start.x;
+        this.points[1][1] = end.y;
+        this.points[1][2] = end.z;
+
+        this.points[2][0] = start.x;
+        this.points[2][1] = start.y;
+        this.points[2][2] = end.z;
+
+        this.points[3][0] = start.x;
+        this.points[3][1] = start.y;
+        this.points[3][2] = start.z;
+        break;
+
       default:
-        return [];
+        break;
     }
   }
+
   clone() {
     return new OcclusionQuad(
       this.parentId,
@@ -154,26 +254,7 @@ export class OcclusionQuad {
         return false;
     }
   }
-  
-  // Get the normal vector for this quad based on its direction
-   getNormal(): Vec3Array {
-    switch (this.direction) {
-      case "up":
-        return [0, 1, 0];
-      case "down":
-        return [0, -1, 0];
-      case "north":
-        return [0, 0, 1];
-      case "south":
-        return [0, 0, -1];
-      case "east":
-        return [1, 0, 0];
-      case "west":
-        return [-1, 0, 0];
-      default:
-        return [0, 0, 0];
-    }
-  }
+
   doesCover(plane: OcclusionQuad): boolean {
     switch (this.direction) {
       case "up":
@@ -275,7 +356,7 @@ export class OcclusionQuad {
 }
 
 export class OcclusionQuadContainer {
-  planes = new Map<number, OcclusionQuad>();
+  planes: OcclusionQuad[] = [];
   offset: Vec3Array = [0, 0, 0];
 
   constructor() {}
@@ -283,29 +364,21 @@ export class OcclusionQuadContainer {
     this.offset[0] = x;
     this.offset[1] = y;
     this.offset[2] = z;
-    for (const [index, plane] of this.planes) {
+    for (const plane of this.planes) {
       plane.setOffset(x, y, z);
+      plane.updatePoints();
     }
   }
 
   addPlane(plane: OcclusionQuad) {
-    this.planes.set(plane.faceCount, plane);
+    this.planes[plane.faceCount] = plane;
   }
   clone() {
     const container = new OcclusionQuadContainer();
-    for (const [index, plane] of this.planes) {
-      container.planes.set(index, plane.clone());
+
+    for (const plane of this.planes) {
+      container.planes[plane.faceCount] = plane.clone();
     }
     return container;
-  }
-}
-
-export class OcclusionResults<T> {
-  results = new Map<number, T>();
-
-  constructor() {}
-
-  setResult(faceIndex: number, value: T) {
-    this.results.set(faceIndex, value);
   }
 }

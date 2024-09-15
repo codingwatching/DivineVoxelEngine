@@ -164,8 +164,7 @@ export interface VoxelModelData {
     string,
     {
       id: string;
-      willChangeGeometry?: boolean;
-      data: VoxelGeometryBaseLinkData;
+      inputs: VoxelGeometryBaseLinkData["inputs"];
     }[]
   >;
   shapeStatesNodes: Record<string, VoxelGeometryLinkData[]>;

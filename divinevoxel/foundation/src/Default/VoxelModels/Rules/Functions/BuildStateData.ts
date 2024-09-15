@@ -7,7 +7,7 @@ import {
 } from "../../State/State.types";
 import { VoxelRulesModoel } from "../Classes/VoxelRulesModel";
 import { StringPalette } from "@divinevoxel/core/Interfaces/Data/StringPalette";
-import { VoxelModelRuleBuilder } from "../VoxelModelManager";
+import { VoxelModelManager } from "../VoxelModelManager";
 function bitsNeeded(n: number): number {
   if (n < 0) throw new Error("Input must be a non-negative integer.");
 
@@ -120,7 +120,41 @@ const addPath = <Value>(
     
 
  */
+const reMap = (
+  schemaIdPalette: StringPalette,
+  schemaValuePalette: Map<string, StringPalette>,
+  baseObj: any,
+  newObj: any[]
+) => {
+  for (const key in baseObj) {
+    if (key == "*") continue;
 
+    const propertyIndex = schemaIdPalette.getNumberId(key);
+    const baseChild = baseObj[key];
+    const reMapedChildren: any[] = [];
+    const schemaValueIndex = schemaValuePalette.get(key);
+
+    if (!schemaValueIndex) continue;
+    for (const value in baseChild) {
+      const propertyValue = baseChild[value];
+      const valueIndex = schemaValueIndex.getNumberId(value);
+      if (typeof propertyValue == "object") {
+        reMapedChildren[valueIndex] = reMap(
+          schemaIdPalette,
+          schemaValuePalette,
+          baseChild[value],
+          []
+        );
+        continue;
+      }
+      reMapedChildren[valueIndex] = baseChild[value];
+    }
+
+    newObj[propertyIndex] = reMapedChildren;
+  }
+
+  return newObj;
+};
 export function BuildStateData(
   model: VoxelRulesModoel,
   geoPalette: StringPalette
@@ -191,10 +225,11 @@ export function BuildStateData(
     const nodeData = data.shapeStatesNodes[key];
 
     for (const node of nodeData) {
-      const nodeId = VoxelModelRuleBuilder.getGeometryLinkId(node);
-      if (geometryLinkPalette.isRegistered(nodeId)) continue;
-      const linkId = geometryLinkPalette.register(nodeId);
-      geometryLinkStateMap[linkId] = geoPalette.getNumberId(nodeId);
+      if (geometryLinkPalette.isRegistered(node.id)) continue;
+      const linkId = geometryLinkPalette.register(node.id);
+      geometryLinkStateMap[linkId] = geoPalette.getNumberId(
+        VoxelModelManager.getGeometryLinkId(node)
+      );
     }
   }
 
@@ -203,10 +238,11 @@ export function BuildStateData(
     const nodeData = data.shapeStatesConditonalNodes[key];
 
     for (const node of nodeData) {
-      const nodeId = VoxelModelRuleBuilder.getGeometryLinkId(node);
-      if (geometryLinkPalette.isRegistered(nodeId)) continue;
-      const linkId = geometryLinkPalette.register(nodeId);
-      geometryLinkStateMap[linkId] = geoPalette.getNumberId(nodeId);
+      if (geometryLinkPalette.isRegistered(node.id)) continue;
+      const linkId = geometryLinkPalette.register(node.id);
+      geometryLinkStateMap[linkId] = geoPalette.getNumberId(
+        VoxelModelManager.getGeometryLinkId(node)
+      );
     }
   }
 
@@ -217,9 +253,7 @@ export function BuildStateData(
   for (const key in data.shapeStatesNodes) {
     shapeStatePalette.push(
       data.shapeStatesNodes[key].map((_) =>
-        geometryLinkPalette.getNumberId(
-          VoxelModelRuleBuilder.getGeometryLinkId(_)
-        )
+        geometryLinkPalette.getNumberId(_.id)
       )
     );
 
@@ -241,9 +275,7 @@ export function BuildStateData(
   for (const key in data.shapeStatesConditonalNodes) {
     condiotnalShapeStateNodePalette.push(
       data.shapeStatesConditonalNodes[key].map((_) =>
-        geometryLinkPalette.getNumberId(
-          VoxelModelRuleBuilder.getGeometryLinkId(_)
-        )
+        geometryLinkPalette.getNumberId(_.id)
       )
     );
     condiotnalShapeStateNodeRecord[key] =
@@ -301,53 +333,55 @@ export function BuildStateData(
     condiotanlStatePalette.push(newCombo);
   }
 
+  const shapeStateDataOverrideRecord: Record<string, number> = {};
+  const shapeStateDataOverridePalette: number[][] = [];
   const dataOverrideTree = new StateTreeNode("root");
   for (const key in data.shapeStatesOverrides) {
+    shapeStateDataOverridePalette.push(
+      data.shapeStatesOverrides[key].map((_) =>
+        geometryLinkPalette.getNumberId(_.id)
+      )
+    );
     addPath(
       dataOverrideTree,
       key
         .split(",")
         .map((pair) => pair.split("="))
         .flat(),
-      data.shapeStatesOverrides[key].map((_) =>
-        geometryLinkPalette.getNumberId(_.id)
-      )
+      shapeStateDataOverridePalette.length - 1
     );
+    shapeStateDataOverrideRecord[key] =
+      shapeStateDataOverridePalette.length - 1;
   }
 
   const shapeStateTreeData = shapeStateTree.toJSON();
   const newShapeStateTree: any[] = [];
-  const reMap = (baseObj: any, newObj: any[]) => {
-    for (const key in baseObj) {
-      if (key == "*") continue;
 
-      const propertyIndex = schemaIdPalette.getNumberId(key);
-      const baseChild = baseObj[key];
-      const reMapedChildren: any[] = [];
-      const schemaValueIndex = schemaValuePalette.get(key);
+  reMap(
+    schemaIdPalette,
+    schemaValuePalette,
+    shapeStateTreeData,
+    newShapeStateTree
+  );
 
-      if (!schemaValueIndex) continue;
-      for (const value in baseChild) {
-        const propertyValue = baseChild[value];
-        const valueIndex = schemaValueIndex.getNumberId(value);
-        if (typeof propertyValue == "object") {
-          reMapedChildren[valueIndex] = reMap(baseChild[value], []);
-          continue;
-        }
-        reMapedChildren[valueIndex] = baseChild[value];
-      }
+  const shapeStatDataOverrideeTreeData = dataOverrideTree.toJSON();
+  const newshapeStatDataOverrideeTree: any[] = [];
 
-      newObj[propertyIndex] = reMapedChildren;
-    }
-
-    return newObj;
-  };
-  reMap(shapeStateTreeData, newShapeStateTree);
+  reMap(
+    schemaIdPalette,
+    schemaValuePalette,
+    shapeStatDataOverrideeTreeData,
+    newshapeStatDataOverrideeTree
+  );
 
   const finalData = {
     schema: baseSchema,
+    shapeStatDataOverrideeTree: newshapeStatDataOverrideeTree,
+    shapeStateDataOverridePalette,
+    shapeStateDataOverrideRecord,
     shapeStateTree: newShapeStateTree,
     geometryLinkIdMap: geometryLinkPalette._map,
+
     geometryLinkStateMap,
     shapeStatePalette,
     shapeStateRecord,
@@ -359,7 +393,6 @@ export function BuildStateData(
     // dataOverrideTree: dataOverrideTree.toJSON(),
     //condiotnalNodeTrees: condiotnalNodeTrees.map((_) => _.toJSON()),
   };
-
 
   model.stateData = finalData;
   return finalData;

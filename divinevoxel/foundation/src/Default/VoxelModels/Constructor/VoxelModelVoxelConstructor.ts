@@ -11,20 +11,20 @@ export class VoxelModelVoxelConstructor extends VoxelConstructor {
   isModel: true = true;
 
   geometries: number[][] = [];
+  baseInputMap: any[];
+  conditonalInputMap: any[];
+
+  dataOverrideInputMap: any[];
+
   constructor(
     public id: string,
     public model: VoxelModelConstructor,
-    public baseInputMap: VoxelInputsSyncData["baseGeometryInputMap"],
-    public conditonalInputMap: VoxelInputsSyncData["condiotnalGeometryInputMap"]
+    voxleData: VoxelInputsSyncData
   ) {
     super();
-  }
-
-  getState(shapeState: number) {
-    return this.model.shapeStateTree.getState(shapeState);
-  }
-  getCondtionalState(shapeState: number) {
-    return this.model.condtioanlShapeStateTree.getState(shapeState);
+    this.baseInputMap = voxleData.baseGeometryInputMap;
+    this.conditonalInputMap = voxleData.condiotnalGeometryInputMap;
+    this.dataOverrideInputMap = voxleData.shapeStateDataOverrideInputMap;
   }
 
   getGeometryNodes() {}
@@ -34,26 +34,35 @@ export class VoxelModelVoxelConstructor extends VoxelConstructor {
       tool.voxel.y,
       tool.voxel.z
     );
-
+    const dataOverrideState =
+      this.dataOverrideInputMap[
+        VoxelGeometryLookUp.stateDataOverrideCache[hashed]
+      ];
     {
       const treeState = VoxelGeometryLookUp.stateCache[hashed];
 
       if (treeState !== undefined && treeState > -1) {
-        const geometries = this.model.getShapeStateLocalGeometry(treeState);
+        const geometries = this.model.data.shapeStateMap[treeState];
         const geometriesLength = geometries.length;
 
         const inputs = this.baseInputMap[treeState];
 
         for (let i = 0; i < geometriesLength; i++) {
-          const geoInputs = inputs[geometries[i]];
+          const nodeId = geometries[i];
+          let geoInputs = inputs[nodeId];
+          if (dataOverrideState) {
+            if (dataOverrideState[nodeId]) {
+              geoInputs = dataOverrideState[nodeId];
+            }
+          }
+
           const geomtry =
             VoxelModelConstructorRegister.geometry[
-              this.model.data.geoLinkMap[geometries[i]]
+              this.model.data.geoLinkMap[nodeId]
             ];
 
           const nodesLength = geomtry.nodes.length;
           for (let k = 0; k < nodesLength; k++) {
-
             geomtry.nodes[k].add(tool, hashed, ShapeTool.origin, geoInputs[k]);
           }
         }
@@ -64,21 +73,27 @@ export class VoxelModelVoxelConstructor extends VoxelConstructor {
       const treeState = VoxelGeometryLookUp.conditonalStateCache[hashed];
 
       if (treeState !== undefined && treeState > -1) {
- 
         const condiotnalNodes =
-          this.model.getCondtionalShapeStateLocalGeometry(treeState);
+          this.model.data.condiotnalShapeStateMap[treeState];
         const condiotnalNodesLength = condiotnalNodes.length;
-   
+
         for (let i = 0; i < condiotnalNodesLength; i++) {
           const geometries = condiotnalNodes[i];
           const geometriesLength = geometries.length;
           const inputs = this.conditonalInputMap[i];
           for (let k = 0; k < geometriesLength; k++) {
-            const geoInputs = inputs[k];
+            const nodeId = geometries[k];
+            let geoInputs = inputs[k];
+            if (dataOverrideState) {
+              if (dataOverrideState[nodeId])
+                geoInputs = dataOverrideState[nodeId];
+            }
+
             const geomtry =
               VoxelModelConstructorRegister.geometry[
-                this.model.data.geoLinkMap[geometries[k]]
+                this.model.data.geoLinkMap[nodeId]
               ];
+
             const nodesLength = geomtry.nodes.length;
             for (let g = 0; g < nodesLength; g++) {
               geomtry.nodes[g].add(
@@ -91,7 +106,7 @@ export class VoxelModelVoxelConstructor extends VoxelConstructor {
           }
         }
       }
-    } 
+    }
 
     tool.clearCalculatedData();
   }

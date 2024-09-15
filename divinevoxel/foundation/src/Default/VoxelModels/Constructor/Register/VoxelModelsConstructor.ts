@@ -7,10 +7,21 @@ import { VoxelModelSyncData } from "../../VoxelModelRules.types";
 export class VoxelModelConstructor {
   schema: ShapeStateSchema;
   shapeStateTree: StateTreeReader;
+  shapeStateDataOverrideTree: StateTreeReader;
   condtioanlShapeStateTree: CondtionalTreeReader;
   constructor(public data: VoxelModelSyncData) {
     this.schema = new ShapeStateSchema(data.schema);
-    this.shapeStateTree = new StateTreeReader(this.schema, data.shapeStateTree);
+    this.shapeStateTree = new StateTreeReader(
+      this.schema,
+      0,
+      data.shapeStateTree
+    );
+    this.shapeStateDataOverrideTree = new StateTreeReader(
+      this.schema,
+      -1,
+      data.shapeStateDataOverrideTree
+    );
+
     this.condtioanlShapeStateTree = new CondtionalTreeReader(
       this.schema,
       data.condiotnalStatements,
@@ -18,20 +29,5 @@ export class VoxelModelConstructor {
     );
   }
 
-  hasCondiotnalGeometry() {
-    this.shapeStateTree;
-  }
 
-  getShapeStateLocalGeometry(treeState: number) {
-    return this.data.shapeStateMap[treeState];
-  }
-  getShapeStateGeometry(treeState: number) {
-    return this.data.shapeStateGeometryMap[treeState];
-  }
-  getCondtionalShapeStateLocalGeometry(treeState: number) {
-    return this.data.condiotnalShapeStateMap[treeState];
-  }
-  getCondtionalShapeStateGeometry(treeState: number) {
-    return this.data.condiotnalShapeStateGeometryMap[treeState];
-  }
 }

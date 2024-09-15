@@ -1,3 +1,4 @@
+import { StringPalette } from "@divinevoxel/core/Interfaces/Data/StringPalette";
 import {
   VoxelGeometryData,
   VoxelGeometryLinkData,
@@ -15,7 +16,8 @@ const getGeometryLinkId = (node: VoxelGeometryLinkData) => {
   }`.trim();
 };
 
-export class VoxelModelRuleBuilder {
+export class VoxelModelManager {
+  static geometryPalette = new StringPalette();
   static getGeometryLinkId = getGeometryLinkId;
   static voxels = new Map<
     string,
@@ -25,9 +27,11 @@ export class VoxelModelRuleBuilder {
   static models = new Map<string, VoxelRulesModoel>();
 
   static registerGeometry(...geometry: VoxelGeometryData[]) {
-    geometry.forEach((_) =>
-      this.geometry.set(_.id, new VoxelRuleGeometry(_.id, _))
-    );
+    for (const geo of geometry) {
+      if (!this.geometryPalette.isRegistered(geo.id))
+        this.geometryPalette.register(geo.id);
+      this.geometry.set(geo.id, new VoxelRuleGeometry(geo.id, geo));
+    }
   }
 
   static getGeomtryFromLink(link: VoxelGeometryLinkData) {
@@ -53,7 +57,8 @@ export class VoxelModelRuleBuilder {
 
         if (this.geometry.has(newId)) continue;
         registred.push([stateId, newId]);
-
+        if (!this.geometryPalette.isRegistered(newId))
+          this.geometryPalette.register(newId);
         const newData = structuredClone(geo.data);
         if (geoLinkNode.position) {
           for (const node of newData.nodes) {

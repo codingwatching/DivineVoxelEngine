@@ -1,21 +1,17 @@
 import { Vec3Array } from "@amodx/math";
 import { VoxelGeometryData } from "../../VoxelModel.types";
 import { GetOcclusionPlanes } from "../Functions/GetOcclusionPlanes";
-import { OcclusionQuadContainer, OcclusionResults } from "./OcclusionQuad";
+import { OcclusionQuadContainer } from "./OcclusionQuad";
 import { BuildGeomtryInputs } from "../Functions/BuildGeomtryInputs";
+import { BuildStateData } from "../Functions/BuildStateData";
 
 export class VoxelRuleGeometry {
-  cullRules = new Map<
-    string,
-    Map<number, OcclusionResults<boolean>>
-  >();
-  aoRules = new Map<string, Map<number, OcclusionResults<boolean>>>();
+
   occlusionPlane: OcclusionQuadContainer;
-  faceCullMap: number[][] = [];
-  vertexHitMap: number[][] = [];
-  
+
   faceCount = 0;
   vertexCount = 0;
+  state: ReturnType<typeof BuildStateData>;
   inputs: ReturnType<typeof BuildGeomtryInputs>;
   constructor(
     public id: string,
@@ -33,32 +29,6 @@ export class VoxelRuleGeometry {
     this.inputs = BuildGeomtryInputs(this);
   }
 
-  addCullResults(
-    id: string,
-    index: number,
-    results: OcclusionResults<boolean>
-  ) {
-    let outsideResults = this.cullRules.get(id);
-    if (!outsideResults) {
-      outsideResults = new Map();
-      this.cullRules.set(id, outsideResults);
-    }
-    outsideResults.set(index, results);
-  }
-
-  addAOResults(
-    id: string,
-    direction: number,
-    results: OcclusionResults<boolean>
-  ) {
-    let outsideResults = this.aoRules.get(id);
-    if (!outsideResults) {
-      outsideResults = new Map();
-      this.aoRules.set(id, outsideResults);
-    }
-    outsideResults.set(direction, results);
-  }
-
   clone() {
     const newVoxel = new VoxelRuleGeometry(
       this.id,
@@ -69,8 +39,6 @@ export class VoxelRuleGeometry {
     );
     newVoxel.vertexCount = this.vertexCount;
     newVoxel.faceCount = this.faceCount;
-    newVoxel.faceCullMap = this.faceCullMap;
-    newVoxel.vertexHitMap = this.vertexHitMap;
     newVoxel.occlusionPlane = this.occlusionPlane.clone();
     return newVoxel;
   }
