@@ -140,7 +140,7 @@ export class BrushTool extends LocationBoundTool {
     return this;
   }
 
-  sup() {
+  stop() {
     WorldRegister.instance.cache.disable();
     return this;
   }

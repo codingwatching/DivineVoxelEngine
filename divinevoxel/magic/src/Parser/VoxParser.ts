@@ -14,7 +14,6 @@ export class VoxParser {
   parse() {
     this.readHeader();
     this.readMainChunk();
- 
   }
 
   getGPUData() {
@@ -32,7 +31,6 @@ export class VoxParser {
       throw new Error("Invalid VOX file.");
     }
     const version = this.readInt();
-
   }
 
   private readString(length: number): string {
@@ -70,7 +68,6 @@ export class VoxParser {
 
     const start = this.cursor;
     const end = start + contentSize;
-
 
     switch (id) {
       case "SIZE":
@@ -303,8 +300,8 @@ export class VoxParser {
 
     this._sdfGrid = sdfGrid;
 
-  //  this.applyGaussianBlur(sdfGrid, this.size.x, this.size.y, this.size.z);
-  //  this.applyGaussianBlur(sdfGrid, this.size.x, this.size.y, this.size.z);
+    //  this.applyGaussianBlur(sdfGrid, this.size.x, this.size.y, this.size.z);
+    //  this.applyGaussianBlur(sdfGrid, this.size.x, this.size.y, this.size.z);
 
     return sdfGrid;
   }

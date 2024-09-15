@@ -96,17 +96,13 @@ export abstract class VoxelSpace {
   }
 
   setXYZ(x: number, y: number, z: number) {
-    if (this.log) {
-      console.warn("before", [x, y, z], structuredClone(this._position));
-    }
+
     this._position.x = x;
     this._position.y = y;
     this._position.z = z;
 
     this.getPosition();
-    if (this.log) {
-      console.warn("after", [x, y, z], structuredClone(this._position));
-    }
+
 
     return this;
   }

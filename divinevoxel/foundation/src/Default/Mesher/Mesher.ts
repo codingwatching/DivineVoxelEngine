@@ -47,7 +47,13 @@ export class DVEDefaultMesher extends DVEMesher {
       (data: any) => {
         this.textureManager.setTextureIndex(data);
         this.constructors.constructors.forEach((_) => {
-          _.onTexturesRegistered(this.textureManager);
+          try {
+            _.onTexturesRegistered(this.textureManager);
+          } catch (error) {
+            console.log("error when loading textures into constructors");
+            console.log(_);
+            console.error(error);
+          }
         });
         this.observers.texturesRegistered.notify(this.textureManager);
         this.textureManager.releaseTextureData();
@@ -63,8 +69,6 @@ export class DVEDefaultMesher extends DVEMesher {
       },
       "deferred"
     );
-
-
   }
   meshChunk(location: LocationData, LOD = 1, priority = 0) {
     this.chunkProcessor.build(location);

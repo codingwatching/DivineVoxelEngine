@@ -18,10 +18,8 @@ import { VoxelGeometryData, VoxelModelData } from "./VoxelModel.types";
 import { VoxelData } from "@divinevoxel/core";
 import { ThreadPool } from "@amodx/threads";
 
-import { BuildOcclusionRules } from "./Rules/Functions/BuildOcclusionRules";
-import { BuildAORules } from "./Rules/Functions/BuildAORules";
-import { BuildOcclusionRulesIndex } from "./Rules/Functions/BuildOcclusionRulesIndex";
-import { BuildAORulesIndex } from "./Rules/Functions/BuildAORulesIndex";
+import { BuildRules } from "./Rules/Functions/BuildRules";
+import { BuildRulesIndexes } from "./Rules/Functions/BuildRulesIndexes";
 import { BuildStateData } from "./Rules/Functions/BuildStateData";
 import { BuildGeomtryInputs } from "./Rules/Functions/BuildGeomtryInputs";
 import { BuildFinalInputs } from "./Rules/Functions/BuildFinalInputs";
@@ -34,12 +32,15 @@ export function InitVoxelModels(data: {
   models?: VoxelModelData[];
   voxels: VoxelData[];
 }) {
-
-  
   const t1 = performance.now();
   VoxelModelRuleBuilder.registerGeometry(
     cube,
- /*    halfCube,
+    fencePost,
+    fenceEastWest,
+    fenceNorthsouth,
+    /*  
+
+  halfCube,
     quaterCubeSouthNorth,
     quaterCubeUpDown,
     quaterCubeWestEast,
@@ -51,7 +52,8 @@ export function InitVoxelModels(data: {
   );
   VoxelModelRuleBuilder.registerModels(
     simpleCube,
-/*     pillarCube,
+    fence,
+    /*     pillarCube,
     stair,
     fence, */
     ...(data.models || [])
@@ -70,30 +72,29 @@ export function InitVoxelModels(data: {
     if (!data) continue;
     VoxelModelRuleBuilder.registerVoxel(voxel.id, data[1]);
   }
-
+  const output: any = {};
   for (const [mainKey, mainGeo] of VoxelModelRuleBuilder.geometry) {
     geoPalette.register(mainKey);
+
     for (let [otherKey, otherGeo] of VoxelModelRuleBuilder.geometry) {
       otherGeo = mainKey == otherKey ? mainGeo.clone() : otherGeo;
-      BuildOcclusionRules(mainGeo, otherGeo);
-      BuildAORules(mainGeo, otherGeo);
+      BuildRules(mainGeo, otherGeo);
     }
   }
 
   for (const [mainKey, mainGeo] of VoxelModelRuleBuilder.geometry) {
-    const cullIndex = BuildOcclusionRulesIndex(mainGeo, geoPalette);
-    const aoIndex = BuildAORulesIndex(mainGeo, geoPalette);
+    const { aoIndex, cullIndex } = BuildRulesIndexes(mainGeo, geoPalette);
+
     syncData.geometry.push({
       id: mainKey,
       nodes: mainGeo.data.nodes,
-      indexes: {
-        ao: aoIndex.data,
-        culling: cullIndex.data,
-      },
+      faceCullMap: mainGeo.faceCullMap,
+      vertexHitMap: mainGeo.vertexHitMap,
+      aoIndex: aoIndex.data,
+      cullIndex: cullIndex.data,
     });
   }
 
-  const output: any = {};
   for (const [mainKey, model] of VoxelModelRuleBuilder.models) {
     const stateData = BuildStateData(model, geoPalette);
     syncData.models.push({
@@ -105,21 +106,31 @@ export function InitVoxelModels(data: {
         _.map((id) => stateData.geometryLinkStateMap[id])
       ),
       shapeStateTree: stateData.shapeStateTree,
+      condiotnalStateTree: stateData.condiotnalNodeStateTree,
+      condiotnalStatements: stateData.condiotnalStatements,
+      condiotnalStateMap: stateData.condiotnalShapeStatePalette,
+      condiotnalShapeStateMap: stateData.condiotanlStatePalette,
+      condiotnalShapeStateGeometryMap: stateData.condiotanlStatePalette.map(
+        (state) =>
+          state.map((nodes: number[]) =>
+            nodes.map((id) => stateData.geometryLinkStateMap[id])
+          )
+      ),
     });
   }
   for (const [mainKey, geometry] of VoxelModelRuleBuilder.geometry) {
     BuildGeomtryInputs(geometry);
   }
   for (const [mainKey, voxels] of VoxelModelRuleBuilder.voxels) {
-    const inputs = BuildFinalInputs(
-      VoxelModelRuleBuilder.models.get(mainKey)!,
-      voxels
-    );
+    const { shapeStateVoxelInputs, conditionalShapeStateVoxelInputs } =
+      BuildFinalInputs(VoxelModelRuleBuilder.models.get(mainKey)!, voxels);
+
     for (const v of voxels) {
       syncData.voxels.push({
         id: v.id,
         modelId: mainKey,
-        voxelInputMap: inputs[v.id],
+        baseGeometryInputMap: shapeStateVoxelInputs[v.id],
+        condiotnalGeometryInputMap: conditionalShapeStateVoxelInputs[v.id],
       });
     }
   }
@@ -134,7 +145,8 @@ export function InitVoxelModels(data: {
   console.log("done building rules", performance.now() - t1);
   console.log([VoxelModelRuleBuilder.geometry, VoxelModelRuleBuilder.models]);
 
-  /*   const blob = new Blob([JSON.stringify(output, null, 1)], {});
+  /* 
+  const blob = new Blob([JSON.stringify(output, null, 1)], {});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -142,5 +154,6 @@ export function InitVoxelModels(data: {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  URL.revokeObjectURL(url);  */
+  URL.revokeObjectURL(url);
+ */
 }

@@ -6,6 +6,7 @@ import {
   VoxelFaceNameRecord,
 } from "@divinevoxel/core/Math";
 import { TextureManager } from "../../../../Textures/TextureManager";
+import { Vec4Array } from "@amodx/math";
 
 /**
  Default Inputs
@@ -70,6 +71,10 @@ export function BuildGeomtryInputs(geomtry: VoxelRuleGeometry) {
                 BoxVoxelGometryInputs.ArgIndexes.UVs
               ] = value)
           );
+        } else {
+          newArgs[VoxelFaceNameRecord[face]][
+            BoxVoxelGometryInputs.ArgIndexes.UVs
+          ] = faceData.uv as Vec4Array;
         }
         if (isArgString(faceData.texture)) {
           getInputObserver(String(faceData.texture!)).subscribe(

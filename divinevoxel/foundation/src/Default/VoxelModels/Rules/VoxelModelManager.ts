@@ -12,7 +12,7 @@ const getGeometryLinkId = (node: VoxelGeometryLinkData) => {
     node.position ? `-p${node.position.toString()}` : ""
   }${node.rotation ? `-r${node.rotation.toString()}` : ""}${
     node.scale ? `-s${node.scale.toString()}` : ""
-  }`;
+  }`.trim();
 };
 
 export class VoxelModelRuleBuilder {
@@ -23,15 +23,18 @@ export class VoxelModelRuleBuilder {
   >();
   static geometry = new Map<string, VoxelRuleGeometry>();
   static models = new Map<string, VoxelRulesModoel>();
+
   static registerGeometry(...geometry: VoxelGeometryData[]) {
     geometry.forEach((_) =>
       this.geometry.set(_.id, new VoxelRuleGeometry(_.id, _))
     );
   }
+
   static getGeomtryFromLink(link: VoxelGeometryLinkData) {
     const geoId = getGeometryLinkId(link);
     return this.geometry.get(geoId);
   }
+
   static registerModels(...models: VoxelModelData[]) {
     const addGeo = (
       modelId: string,

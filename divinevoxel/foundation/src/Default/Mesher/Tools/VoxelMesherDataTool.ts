@@ -10,10 +10,7 @@ import { BuilderDataTool } from "./BuilderDataTool.js";
 import { MesherDataTool } from "@amodx/meshing/Tools/MesherDataTools";
 
 //data
-import {
-  QuadScalarVertexData,
-  QuadVector3VertexData,
-} from "@amodx/meshing/Classes/QuadVertexData";
+import { QuadScalarVertexData } from "@amodx/meshing/Classes/QuadVertexData";
 import { VoxelTemplateDataTool } from "./VoxelTemplateDataTool.js";
 import { BinaryNumberTypes } from "@amodx/binary";
 import {
@@ -30,7 +27,14 @@ export class VoxelMesherDataTool extends MesherDataTool {
   nVoxel = new BuilderDataTool();
 
   dataCalculated: Record<VoxelFaces, boolean>;
-  geometryData: Record<VoxelFaces, Record<QuadVerticies, ([number[],number[],number[]])>>;
+  geometryData: Record<
+    VoxelFaces,
+    Record<QuadVerticies, [number[], number[], number[]]>
+  >;
+  condiotnalGeometryData: Record<
+    VoxelFaces,
+    Record<QuadVerticies, [number[][], number[][], number[][]]>
+  >;
   lightData: Record<VoxelFaces, Record<QuadVerticies, number>>;
 
   faceDataOverride = <FaceDataOverride>{
@@ -52,12 +56,27 @@ export class VoxelMesherDataTool extends MesherDataTool {
     this.geometryData = [] as any;
     for (const face of VoxelFacesArray) {
       this.geometryData[face] = [] as any;
-      this.geometryData[face][QuadVerticies.TopRight] = [[],[],[]];
-      this.geometryData[face][QuadVerticies.TopLeft] = [[],[],[]];
-      this.geometryData[face][QuadVerticies.BottomLeft] = [[],[],[]];
-      this.geometryData[face][QuadVerticies.BottomRight] = [[],[],[]];
+      this.geometryData[face][QuadVerticies.TopRight] = [[], [], []];
+      this.geometryData[face][QuadVerticies.TopLeft] = [[], [], []];
+      this.geometryData[face][QuadVerticies.BottomLeft] = [[], [], []];
+      this.geometryData[face][QuadVerticies.BottomRight] = [[], [], []];
     }
-
+    this.condiotnalGeometryData = [] as any;
+    for (const face of VoxelFacesArray) {
+      this.condiotnalGeometryData[face] = [] as any;
+      this.condiotnalGeometryData[face][QuadVerticies.TopRight] = [[], [], []];
+      this.condiotnalGeometryData[face][QuadVerticies.TopLeft] = [[], [], []];
+      this.condiotnalGeometryData[face][QuadVerticies.BottomLeft] = [
+        [],
+        [],
+        [],
+      ];
+      this.condiotnalGeometryData[face][QuadVerticies.BottomRight] = [
+        [],
+        [],
+        [],
+      ];
+    }
     this.lightData = [] as any;
     for (const face of VoxelFacesArray) {
       this.lightData[face] = [] as any;
@@ -134,7 +153,6 @@ export class VoxelMesherDataTool extends MesherDataTool {
     }
     return this.quadVertexData.get("light")!;
   }
-
 
   getWorldAO() {
     if (this.template.isAcive()) {

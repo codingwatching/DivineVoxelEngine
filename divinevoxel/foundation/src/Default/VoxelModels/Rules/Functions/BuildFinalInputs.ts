@@ -1,4 +1,7 @@
-import { VoxelModelConstructorData } from "../../VoxelModel.types";
+import {
+  VoxelGeometryLinkData,
+  VoxelModelConstructorData,
+} from "../../VoxelModel.types";
 import { VoxelRulesModoel } from "../Classes/VoxelRulesModel";
 import { VoxelModelRuleBuilder } from "../VoxelModelManager";
 
@@ -21,14 +24,15 @@ export function BuildFinalInputs(
   model: VoxelRulesModoel,
   voxels: { id: string; data: VoxelModelConstructorData }[]
 ) {
-  const voxelsInputs: VoxelStateRecords = {};
+  const shapeStateVoxelInputs: VoxelStateRecords = {};
+  const conditionalShapeStateVoxelInputs: VoxelStateRecords = {};
 
   for (const voxel of voxels) {
-    const states: any[] = [];
+    const baseStates: any[] = [];
     for (const state in model.data.shapeStatesNodes) {
       const geoNodes: any[] = [];
-      const nodes = model.data.shapeStatesNodes[state];
-      for (const node of nodes) {
+      const shapeStateNodes = model.data.shapeStatesNodes[state];
+      for (const node of shapeStateNodes) {
         const geo = VoxelModelRuleBuilder.getGeomtryFromLink(node);
         if (!geo) throw new Error(`Geometry does not exist`);
 
@@ -36,22 +40,56 @@ export function BuildFinalInputs(
           const constructorArg = node.inputs[geoArg];
           if (isArgString(constructorArg)) {
             geo.inputs[geoArg] = voxel.data.inputs[constructorArg];
-
             continue;
           }
           geo.inputs[geoArg] = constructorArg;
         }
 
-        geoNodes[model.stateData.geometryLinkIdMap[node.id]] =
-          geo.inputs.cloneArgs();
+        geoNodes[
+          model.stateData.geometryLinkIdMap[
+            VoxelModelRuleBuilder.getGeometryLinkId(node)
+          ]
+        ] = geo.inputs.cloneArgs();
       }
 
-      states[model.stateData.shapeStateRecord[state]] = geoNodes;
+      baseStates[model.stateData.shapeStateRecord[state]] = geoNodes;
+    }
+    shapeStateVoxelInputs[voxel.id] = baseStates;
+
+    const optionalStates: any[] = [];
+    console.log(model.data.shapeStatesConditonalNodes);
+    for (const state in model.data.shapeStatesConditonalNodes) {
+      console.log(state);
+      const geoNodes: any[] = [];
+      const shapeStateNodes = model.data.shapeStatesConditonalNodes[state];
+      for (let i = 0; i < shapeStateNodes.length; i++) {
+        const node = shapeStateNodes[i];
+        console.log(node);
+        const geo = VoxelModelRuleBuilder.getGeomtryFromLink(node);
+        if (!geo) throw new Error(`Geometry does not exist`);
+
+        for (const geoArg in node.inputs) {
+          const constructorArg = node.inputs[geoArg];
+          if (isArgString(constructorArg)) {
+            geo.inputs[geoArg] = voxel.data.inputs[constructorArg];
+            continue;
+          }
+          geo.inputs[geoArg] = constructorArg;
+        }
+
+        geoNodes[i] = geo.inputs.cloneArgs();
+      }
+
+      optionalStates[model.stateData.condiotnalShapeStateRecord[state]] =
+        geoNodes;
     }
 
-    voxelsInputs[voxel.id] = states;
+    conditionalShapeStateVoxelInputs[voxel.id] = optionalStates;
   }
 
-  console.warn(voxelsInputs);
-  return voxelsInputs;
+  if(model.data.id == "dve_fence") {
+    console.warn(shapeStateVoxelInputs)
+  }
+
+  return { shapeStateVoxelInputs, conditionalShapeStateVoxelInputs };
 }

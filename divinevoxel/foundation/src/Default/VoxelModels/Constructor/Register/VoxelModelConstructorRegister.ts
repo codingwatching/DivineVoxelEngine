@@ -22,8 +22,11 @@ export class VoxelModelConstructorRegister {
   }
   static registerGeometry(geometries: VoxelGeometrySyncData[]) {
     for (const geometry of geometries) {
-      this.geometry[this.geometryPalette.getNumberId(geometry.id)] =
-        new VoxelGeometryConstructor(geometry);
+      const paletteId = this.geometryPalette.getNumberId(geometry.id);
+      this.geometry[paletteId] = new VoxelGeometryConstructor(
+        paletteId,
+        geometry
+      );
     }
   }
 }

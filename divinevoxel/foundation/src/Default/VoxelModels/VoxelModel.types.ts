@@ -1,7 +1,6 @@
 import { Vec2Array, Vec3Array } from "@amodx/math";
 import { VoxelFaceNames } from "@divinevoxel/core/Math";
 
-
 export interface VoxelShadeData {
   interpolate?: boolean;
   vector?: 1 | 2 | 3 | 4;
@@ -42,7 +41,7 @@ export interface VoxelPlaneGeometryNode extends ShadedInterface {
   type: "plane";
   points: [start: Vec3Array, end: Vec3Array];
   direction: VoxelFaceNames;
-  doublueSided?: boolean;
+  doubleSided?: boolean;
   rotation?: Vec3Array;
   texture: string;
   uv: [p1: Vec2Array, p2: Vec2Array, p3: Vec2Array, p4: Vec2Array];
@@ -53,7 +52,7 @@ export interface VoxelTriangleGeometryNode extends ShadedInterface {
   type: "triangle";
   points: [p1: Vec3Array, p2: Vec3Array, p3: Vec3Array];
   orientation?: 0 | 1;
-  doublueSided?: boolean;
+  doubleSided?: boolean;
   rotation?: Vec3Array;
   texture: string;
   uv: [p1: Vec2Array, p2: Vec2Array, p3: Vec2Array];
@@ -63,7 +62,7 @@ export interface VoxelTriangleGeometryNode extends ShadedInterface {
 export interface VoxelQuadGeometryNode extends ShadedInterface {
   type: "quad";
   orientation?: 0 | 1;
-  doublueSided?: boolean;
+  doubleSided?: boolean;
   points: [p1: Vec3Array, p2: Vec3Array, p3: Vec3Array, p4: Vec3Array];
   rotation?: Vec3Array;
   texture: string;
@@ -75,7 +74,7 @@ export interface VoxelRawGeometryGeometryNode extends ShadedInterface {
   type: "raw-geometry";
   positions: number[];
   normals: number[];
-  indicies: number[];
+  indices: number[];
   uvs: number[];
   texture: string;
 }
@@ -87,7 +86,7 @@ export interface VoxelGeometryTextureArgument {
 
 export interface VoxelGeometryBoxUVArgument {
   type: "box-uv";
-  defualt?: [x1: number, y1: number, x2: number, y2: number];
+  default?: [x1: number, y1: number, x2: number, y2: number];
 }
 
 export interface VoxelGeometryVector3Argument {
@@ -160,7 +159,7 @@ export interface VoxelModelData {
     | VoxelGeometryVector3Argument
   >;
   shapeStateSchema: VoxelConstructorBinarySchemaData[];
-  relationsScehma: VoxelModelRelationsSchemaData[];
+  relationsSchema: VoxelModelRelationsSchemaData[];
   shapeStatesOverrides: Record<
     string,
     {

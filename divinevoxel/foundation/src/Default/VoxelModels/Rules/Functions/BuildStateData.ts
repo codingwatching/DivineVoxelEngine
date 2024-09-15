@@ -1,6 +1,9 @@
 import {
   ShapeStateSchemaNodeData,
   ShapeRelationsScehmaNodeData,
+  StateLogicStatement,
+  StateCompareOperationsMap,
+  StateLogicOperationsMap,
 } from "../../State/State.types";
 import { VoxelRulesModoel } from "../Classes/VoxelRulesModel";
 import { StringPalette } from "@divinevoxel/core/Interfaces/Data/StringPalette";
@@ -39,6 +42,46 @@ export class StateTreeNode<Value> {
 
     return childrenObj;
   }
+}
+
+function generateCombinations(length: number): number[][] {
+  const values: number[] = [0, 1];
+  function gen(
+    currentCombination: number[],
+    remainingLength: number
+  ): number[][] {
+    if (remainingLength === 0) {
+      return [currentCombination];
+    }
+
+    let combinations: number[][] = [];
+    for (let value of values) {
+      combinations.push(
+        ...gen([...currentCombination, value], remainingLength - 1)
+      );
+    }
+    return combinations;
+  }
+  return gen([], length);
+}
+
+function generateNestedCombinations(length: number, values: number[]): any {
+  let combinationIndex = 0;
+
+  function createNestedArray(depth: number): any {
+    if (depth === length) {
+      return combinationIndex++;
+    }
+
+    const nestedArray: any[] = [];
+    for (let i = 0; i < values.length; i++) {
+      nestedArray.push(createNestedArray(depth + 1));
+    }
+
+    return nestedArray;
+  }
+
+  return createNestedArray(0);
 }
 
 const addPath = <Value>(
@@ -84,8 +127,10 @@ export function BuildStateData(
 ) {
   const data = model.data;
 
-  const schema: (ShapeStateSchemaNodeData | ShapeRelationsScehmaNodeData)[] =
-    [];
+  const baseSchema: (
+    | ShapeStateSchemaNodeData
+    | ShapeRelationsScehmaNodeData
+  )[] = [];
 
   const schemaIdPalette = new StringPalette();
   const schemaValuePalette = new Map<string, StringPalette>();
@@ -101,7 +146,7 @@ export function BuildStateData(
           .pop()!
       );
 
-      schema.push({
+      baseSchema.push({
         id: schemaNode.name,
         type: "shape-state",
         index: bitIndex,
@@ -122,10 +167,10 @@ export function BuildStateData(
   }
 
   {
-    for (const schemaNode of data.relationsScehma) {
+    for (const schemaNode of data.relationsSchema) {
       schemaIdPalette.register(schemaNode.name);
 
-      schema.push({
+      baseSchema.push({
         id: schemaNode.name,
         type: "relation",
         conditions: schemaNode.conditions,
@@ -146,11 +191,10 @@ export function BuildStateData(
     const nodeData = data.shapeStatesNodes[key];
 
     for (const node of nodeData) {
-      if (geometryLinkPalette.isRegistered(node.id)) continue;
-      const linkId = geometryLinkPalette.register(node.id);
-      geometryLinkStateMap[linkId] = geoPalette.getNumberId(
-        VoxelModelRuleBuilder.getGeometryLinkId(node)
-      );
+      const nodeId = VoxelModelRuleBuilder.getGeometryLinkId(node);
+      if (geometryLinkPalette.isRegistered(nodeId)) continue;
+      const linkId = geometryLinkPalette.register(nodeId);
+      geometryLinkStateMap[linkId] = geoPalette.getNumberId(nodeId);
     }
   }
 
@@ -159,11 +203,10 @@ export function BuildStateData(
     const nodeData = data.shapeStatesConditonalNodes[key];
 
     for (const node of nodeData) {
-      if (geometryLinkPalette.isRegistered(node.id)) continue;
-      const linkId = geometryLinkPalette.register(node.id);
-      geometryLinkStateMap[linkId] = geoPalette.getNumberId(
-        VoxelModelRuleBuilder.getGeometryLinkId(node)
-      );
+      const nodeId = VoxelModelRuleBuilder.getGeometryLinkId(node);
+      if (geometryLinkPalette.isRegistered(nodeId)) continue;
+      const linkId = geometryLinkPalette.register(nodeId);
+      geometryLinkStateMap[linkId] = geoPalette.getNumberId(nodeId);
     }
   }
 
@@ -174,7 +217,9 @@ export function BuildStateData(
   for (const key in data.shapeStatesNodes) {
     shapeStatePalette.push(
       data.shapeStatesNodes[key].map((_) =>
-        geometryLinkPalette.getNumberId(_.id)
+        geometryLinkPalette.getNumberId(
+          VoxelModelRuleBuilder.getGeometryLinkId(_)
+        )
       )
     );
 
@@ -189,20 +234,71 @@ export function BuildStateData(
     );
   }
 
-  const condiotnalNodeTrees: StateTreeNode<any>[] = [];
+  const condiotnalShapeStateNodePalette: number[][] = [];
+  const condiotnalShapeStateNodeRecord: Record<string, number> = {};
+  const condiotnalStatements: StateLogicStatement[] = [];
+  const compareOperations = Object.keys(StateCompareOperationsMap);
   for (const key in data.shapeStatesConditonalNodes) {
-    const tree = new StateTreeNode("root");
-    addPath(
-      tree,
-      key
-        .split(",")
-        .map((pair) => pair.split("="))
-        .flat(),
+    condiotnalShapeStateNodePalette.push(
       data.shapeStatesConditonalNodes[key].map((_) =>
-        geometryLinkPalette.getNumberId(_.id)
+        geometryLinkPalette.getNumberId(
+          VoxelModelRuleBuilder.getGeometryLinkId(_)
+        )
       )
     );
-    condiotnalNodeTrees.push(tree);
+    condiotnalShapeStateNodeRecord[key] =
+      condiotnalShapeStateNodePalette.length - 1;
+
+    const statement: StateLogicStatement = [];
+    const nodes = key.split(" ");
+    let mode: "operation" | "node" = "node";
+
+    for (const node of nodes) {
+      if (!node) continue;
+      if (mode == "node") {
+        mode = "operation";
+        for (const op of compareOperations) {
+          if (node.includes(op)) {
+            const [schemaId, value] = node.split(op);
+
+            statement.push([
+              schemaIdPalette.getNumberId(schemaId),
+              StateCompareOperationsMap[op],
+              schemaValuePalette.get(schemaId)!.getNumberId(value),
+            ]);
+            break;
+          }
+        }
+        continue;
+      }
+
+      if (mode == "operation") {
+        mode = "node";
+        statement.push(StateLogicOperationsMap[node]);
+      }
+    }
+
+    condiotnalStatements.push(statement);
+  }
+
+  const condiotnalNodeStateTree = generateNestedCombinations(
+    condiotnalStatements.length,
+    [0, 1]
+  );
+  const allCombinations = generateCombinations(
+    condiotnalStatements.length
+  ) as any[];
+  const condiotanlStatePalette: number[][][] = [];
+
+  for (const combo of allCombinations) {
+    let k = 0;
+    const newCombo: number[][] = [];
+    for (let i = 0; i < combo.length; i++) {
+      if (combo[i] == 0) continue;
+      newCombo[k] = condiotnalShapeStateNodePalette[i];
+      k++;
+    }
+    condiotanlStatePalette.push(newCombo);
   }
 
   const dataOverrideTree = new StateTreeNode("root");
@@ -249,15 +345,21 @@ export function BuildStateData(
   reMap(shapeStateTreeData, newShapeStateTree);
 
   const finalData = {
-    schema,
+    schema: baseSchema,
     shapeStateTree: newShapeStateTree,
     geometryLinkIdMap: geometryLinkPalette._map,
     geometryLinkStateMap,
     shapeStatePalette,
     shapeStateRecord,
+    condiotnalNodeStateTree,
+    condiotnalStatements,
+    condiotnalShapeStatePalette: condiotnalShapeStateNodePalette,
+    condiotnalShapeStateRecord: condiotnalShapeStateNodeRecord,
+    condiotanlStatePalette,
     // dataOverrideTree: dataOverrideTree.toJSON(),
     //condiotnalNodeTrees: condiotnalNodeTrees.map((_) => _.toJSON()),
   };
+
 
   model.stateData = finalData;
   return finalData;

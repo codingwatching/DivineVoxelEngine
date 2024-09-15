@@ -1,6 +1,14 @@
-import { VoxelFaceDirections, VoxelFaces } from "@divinevoxel/core/Math";
-import { VoxelBoxGeometryNode } from "../../VoxelModel.types";
 import { Vec4Array, Vector3Like } from "@amodx/math";
+import { VoxelFaces } from "@divinevoxel/core/Math";
+
+
+import { QuadScalarVertexData } from "@amodx/meshing";
+import {
+  QuadVerticies,
+  QuadVerticiesArray,
+} from "@amodx/meshing/Geometry.types";
+import { VoxelBoxGeometryNode } from "../../VoxelModel.types";
+
 import { Quad } from "@amodx/meshing/Classes/Quad";
 import { VoxelMesherDataTool } from "../../../Mesher/Tools/VoxelMesherDataTool";
 import { VoxelGeometry } from "../../../Mesher/Geometry/VoxelGeometry";
@@ -12,16 +20,14 @@ import { VoxelGeometryLookUp } from "../VoxelGeometryLookUp";
 import { GeoemtryNode } from "./GeometryNode";
 import { VoxelGeometryConstructor } from "../Register/VoxelGeometryConstructor";
 import {
-  GeometryCheckSetIndexes,
   getInterpolationValue,
   getVertexWeights,
   shouldCauseFlip,
 } from "../../../Mesher/Calc/CalcConstants";
-import {
-  QuadVerticies,
-  QuadVerticiesArray,
-} from "@amodx/meshing/Geometry.types";
+
 import { LightData } from "../../../../Data/LightData";
+
+import { VoxelRelativeCubeIndexPositionMap } from "../../Indexing/VoxelRelativeCubeIndex";
 
 const mapUvs = (uvs: Vec4Array, quad: Quad) => {
   //1
@@ -55,18 +61,23 @@ const addQuadWeights = (
   return returnArray;
 };
 
-export class BoxVoxelGometryNode extends GeoemtryNode {
+export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
   quads: Quad[] = [];
   vertexWeights: [Vec4Array, Vec4Array, Vec4Array, Vec4Array][] = [];
+  worldLight: QuadScalarVertexData;
+  worldAO: QuadScalarVertexData;
+
   constructor(
+    geometryPaletteId: number,
     geometry: VoxelGeometryConstructor,
     public data: VoxelBoxGeometryNode
   ) {
-    super(geometry);
+    super(geometryPaletteId, geometry);
+
     const [start, end] = data.points.map((_) => Vector3Like.Create(..._));
 
     this.faceCount = 6;
-    this.vertexIndex = this.faceCount * 4;
+    this.vertexCount = this.faceCount * 4;
 
     this.quads[VoxelFaces.Up] = Quad.Create(
       [
@@ -169,53 +180,71 @@ export class BoxVoxelGometryNode extends GeoemtryNode {
       this.quads[VoxelFaces.West],
       VoxelFaces.West
     );
-
-
   }
 
-  isExposed(face: VoxelFaces, origin: Vector3Like) {
-    const direction = VoxelFaceDirections[face];
-    const geometry = VoxelGeometryLookUp.getConstructorGeometry(
-      origin.x + direction[0],
-      origin.y + direction[1],
-      origin.z + direction[2]
-    );
+  isExposed(face: VoxelFaces) {
+    const trueFaceIndex = face + this.faceIndex;
+    const faceIndexes = this.geomtry.data.faceCullMap[trueFaceIndex];
+    if (!faceIndexes) return true;
 
-    if (!geometry) return true;
+    const tool = this.tool;
 
-    if (geometry.length == 1) {
-      return (
-        this.geomtry.cullIndex.isExposed(
-          geometry[0],
-          face,
-          face,
-          this.faceIndex
-        ) == 1
+    for (
+      let positionIndex = 0;
+      positionIndex < faceIndexes.length;
+      positionIndex++
+    ) {
+      const currentIndex = faceIndexes[positionIndex];
+      const p = VoxelRelativeCubeIndexPositionMap[currentIndex];
+      const hashed = VoxelGeometryLookUp.getHash(
+        tool.voxel.x + p[0],
+        tool.voxel.y + p[1],
+        tool.voxel.z + p[2]
       );
-    }
+      const offsetBaseGometry = VoxelGeometryLookUp.geometryCache[hashed];
+      const offsetConditonalGeometry =
+        VoxelGeometryLookUp.conditionalGeometryCache[hashed];
 
-    let exposed = 1;
-    let gIndex = geometry.length;
-    while (gIndex--) {
-      exposed = this.geomtry.cullIndex.isExposed(
-        geometry[gIndex],
-        face,
-        face,
-        this.faceIndex
-      );
-      if (!exposed) return false;
+      if (offsetBaseGometry) {
+        for (let i = 0; i < offsetBaseGometry.length; i++) {
+          if (
+            this.geomtry.cullIndex.getValue(
+              offsetBaseGometry[i],
+              currentIndex,
+              trueFaceIndex
+            )
+          )
+            return false;
+        }
+      }
+
+      if (offsetConditonalGeometry) {
+        for (let i = 0; i < offsetConditonalGeometry.length; i++) {
+          const cond = offsetConditonalGeometry[i];
+          for (let k = 0; k < offsetConditonalGeometry.length; k++) {
+            if (
+              this.geomtry.cullIndex.getValue(
+                cond[i],
+                currentIndex,
+                trueFaceIndex
+              )
+            )
+              return false;
+          }
+        }
+      }
     }
 
     return true;
   }
 
-  determineShading(tool: VoxelMesherDataTool, face: VoxelFaces) {
-    const indexes = GeometryCheckSetIndexes[face];
-    const geometry = tool.geometryData[face];
+  determineShading(face: VoxelFaces) {
+    const tool = this.tool;
+
     const lightData = tool.lightData[face];
 
-    const worldLight = tool.getWorldLight();
-    const worldAO = tool.getWorldAO();
+    const worldLight = this.worldLight;
+    const worldAO = this.worldAO;
     for (let v = 0 as QuadVerticies; v < 4; v++) {
       worldAO.vertices[v] = 0;
 
@@ -223,198 +252,122 @@ export class BoxVoxelGometryNode extends GeoemtryNode {
         lightData as Vec4Array,
         this.vertexWeights[face][v]
       );
-      const vertGeo = geometry[v];
-      const aoIndex = indexes[v];
-      for (let set = 0; set < 3; set++) {
-        const length = vertGeo[set].length;
-        for (let i = 0; i < length; i++) {
-          if (
-            this.geomtry.aoIndex.isShaded(
-              vertGeo[set][i],
-              aoIndex[set],
-              face,
-              v
-            )
-          ) {
-            worldAO.vertices[v] = 1;
-            break;
+
+      const trueVertexIndex = this.vertexIndex + face * 4 + v;
+
+      const aoIndexes = this.geomtry.data.vertexHitMap[trueVertexIndex];
+
+      if (!aoIndexes) continue;
+
+      for (
+        let positionIndex = 0;
+        positionIndex < aoIndexes.length;
+        positionIndex++
+      ) {
+        const currentIndex = aoIndexes[positionIndex];
+        const p = VoxelRelativeCubeIndexPositionMap[currentIndex];
+
+        const hashed = VoxelGeometryLookUp.getHash(
+          tool.voxel.x + p[0],
+          tool.voxel.y + p[1],
+          tool.voxel.z + p[2]
+        );
+
+        const baseGeo = VoxelGeometryLookUp.geometryCache[hashed];
+        const conditonalGeo =
+          VoxelGeometryLookUp.conditionalGeometryCache[hashed];
+
+        if (!baseGeo && !conditonalGeo) continue;
+
+        let length = 0;
+        let shaded = false;
+        if (baseGeo) {
+          length = baseGeo.length;
+          for (let geoIndex = 0; geoIndex < length; geoIndex++) {
+            if (
+              this.geomtry.aoIndex.getValue(
+                baseGeo[geoIndex],
+                currentIndex,
+                trueVertexIndex
+              )
+            ) {
+              worldAO.vertices[v] = 1;
+              shaded = true;
+              break;
+            }
           }
         }
+        if (conditonalGeo) {
+          length = conditonalGeo.length;
+          for (
+            let condtionsIndex = 0;
+            condtionsIndex < length;
+            condtionsIndex++
+          ) {
+            const condiotnalength = conditonalGeo[condtionsIndex].length;
+            for (let geoIndex = 0; geoIndex < condiotnalength; geoIndex++) {
+              if (
+                this.geomtry.aoIndex.getValue(
+                  conditonalGeo[condtionsIndex][geoIndex],
+                  currentIndex,
+                  trueVertexIndex
+                )
+              ) {
+                worldAO.vertices[v] = 1;
+                shaded = true;
+                break;
+              }
+            }
+          }
+        }
+        if (shaded) break;
       }
     }
+  }
+  shouldFlip() {
+    if (
+      shouldCauseFlip(
+        this.worldAO.vertices[0],
+        this.worldAO.vertices[1],
+        this.worldAO.vertices[2],
+        this.worldAO.vertices[3]
+      )
+    )
+      return true;
+    return shouldCauseFlip(
+      LightData.getS(this.worldLight.vertices[0]),
+      LightData.getS(this.worldLight.vertices[1]),
+      LightData.getS(this.worldLight.vertices[2]),
+      LightData.getS(this.worldLight.vertices[3])
+    );
   }
 
   add(
     tool: VoxelMesherDataTool,
+    originHash: number,
     origin: Vector3Like,
     args: BoxVoxelGometryArgs
   ) {
-    const worldAO = tool.getWorldAO();
-    const worldLight = tool.getWorldLight();
+    this.tool = tool;
+    this.origin = tool.voxel;
 
-    if (
-      args[VoxelFaces.Up][ArgIndexes.Enabled] &&
-      this.isExposed(VoxelFaces.Up, tool.voxel)
-    ) {
-      tool.calculateFaceData(VoxelFaces.Up);
-      this.determineShading(tool, VoxelFaces.Up);
-      const faceArgs = args[VoxelFaces.Up];
-      const quad = this.quads[VoxelFaces.Up];
-      let faceFlip =
-        shouldCauseFlip(
-          worldAO.vertices[0],
-          worldAO.vertices[1],
-          worldAO.vertices[2],
-          worldAO.vertices[3]
-        ) ||
-        shouldCauseFlip(
-          LightData.getS(worldLight.vertices[0]),
-          LightData.getS(worldLight.vertices[1]),
-          LightData.getS(worldLight.vertices[2]),
-          LightData.getS(worldLight.vertices[3])
-        );
-      quad.flip = faceFlip || faceArgs[ArgIndexes.Fliped];
-      tool.setTexture(faceArgs[ArgIndexes.Texture]);
-      mapUvs(faceArgs[ArgIndexes.UVs], quad);
-      VoxelGeometry.addQuad(tool, origin, quad);
+    this.worldAO = tool.getWorldAO();
+    this.worldLight = tool.getWorldLight();
+
+    for (let face = 0 as VoxelFaces; face < 6; face++) {
+      if (args[face][ArgIndexes.Enabled] && this.isExposed(face)) {
+        tool.calculateFaceData(face);
+        this.determineShading(face);
+        const faceArgs = args[face];
+        const quad = this.quads[face];
+        quad.flip = this.shouldFlip() || faceArgs[ArgIndexes.Fliped];
+        tool.setTexture(faceArgs[ArgIndexes.Texture]);
+        mapUvs(faceArgs[ArgIndexes.UVs], quad);
+        VoxelGeometry.addQuad(tool, origin, quad);
+      }
     }
 
-    if (
-      args[VoxelFaces.Down][ArgIndexes.Enabled] &&
-      this.isExposed(VoxelFaces.Down, tool.voxel)
-    ) {
-      tool.calculateFaceData(VoxelFaces.Down);
-      this.determineShading(tool, VoxelFaces.Down);
-      const faceArgs = args[VoxelFaces.Down];
-      const quad = this.quads[VoxelFaces.Down];
-      let faceFlip =
-        shouldCauseFlip(
-          worldAO.vertices[0],
-          worldAO.vertices[1],
-          worldAO.vertices[2],
-          worldAO.vertices[3]
-        ) ||
-        shouldCauseFlip(
-          LightData.getS(worldLight.vertices[0]),
-          LightData.getS(worldLight.vertices[1]),
-          LightData.getS(worldLight.vertices[2]),
-          LightData.getS(worldLight.vertices[3])
-        );
-      quad.flip = faceFlip || faceArgs[ArgIndexes.Fliped];
-      tool.setTexture(faceArgs[ArgIndexes.Texture]);
-      mapUvs(faceArgs[ArgIndexes.UVs], quad);
-      VoxelGeometry.addQuad(tool, origin, quad);
-    }
-
-    if (
-      args[VoxelFaces.North][ArgIndexes.Enabled] &&
-      this.isExposed(VoxelFaces.North, tool.voxel)
-    ) {
-      tool.calculateFaceData(VoxelFaces.North);
-      this.determineShading(tool, VoxelFaces.North);
-      const faceArgs = args[VoxelFaces.North];
-      const quad = this.quads[VoxelFaces.North];
-      let faceFlip =
-        shouldCauseFlip(
-          worldAO.vertices[0],
-          worldAO.vertices[1],
-          worldAO.vertices[2],
-          worldAO.vertices[3]
-        ) ||
-        shouldCauseFlip(
-          LightData.getS(worldLight.vertices[0]),
-          LightData.getS(worldLight.vertices[1]),
-          LightData.getS(worldLight.vertices[2]),
-          LightData.getS(worldLight.vertices[3])
-        );
-      quad.flip = faceFlip || faceArgs[ArgIndexes.Fliped];
-      tool.setTexture(faceArgs[ArgIndexes.Texture]);
-      mapUvs(faceArgs[ArgIndexes.UVs], quad);
-      VoxelGeometry.addQuad(tool, origin, quad);
-    }
-
-    if (
-      args[VoxelFaces.South][ArgIndexes.Enabled] &&
-      this.isExposed(VoxelFaces.South, tool.voxel)
-    ) {
-      tool.calculateFaceData(VoxelFaces.South);
-      this.determineShading(tool, VoxelFaces.South);
-      const faceArgs = args[VoxelFaces.South];
-      const quad = this.quads[VoxelFaces.South];
-      let faceFlip =
-        shouldCauseFlip(
-          worldAO.vertices[0],
-          worldAO.vertices[1],
-          worldAO.vertices[2],
-          worldAO.vertices[3]
-        ) ||
-        shouldCauseFlip(
-          LightData.getS(worldLight.vertices[0]),
-          LightData.getS(worldLight.vertices[1]),
-          LightData.getS(worldLight.vertices[2]),
-          LightData.getS(worldLight.vertices[3])
-        );
-      quad.flip = faceFlip || faceArgs[ArgIndexes.Fliped];
-      tool.setTexture(faceArgs[ArgIndexes.Texture]);
-      mapUvs(faceArgs[ArgIndexes.UVs], quad);
-      VoxelGeometry.addQuad(tool, origin, quad);
-    }
-
-    if (
-      args[VoxelFaces.East][ArgIndexes.Enabled] &&
-      this.isExposed(VoxelFaces.East, tool.voxel)
-    ) {
-      tool.calculateFaceData(VoxelFaces.East);
-      this.determineShading(tool, VoxelFaces.East);
-      const faceArgs = args[VoxelFaces.East];
-      const quad = this.quads[VoxelFaces.East];
-      let faceFlip =
-        shouldCauseFlip(
-          worldAO.vertices[0],
-          worldAO.vertices[1],
-          worldAO.vertices[2],
-          worldAO.vertices[3]
-        ) ||
-        shouldCauseFlip(
-          LightData.getS(worldLight.vertices[0]),
-          LightData.getS(worldLight.vertices[1]),
-          LightData.getS(worldLight.vertices[2]),
-          LightData.getS(worldLight.vertices[3])
-        );
-      quad.flip = faceFlip || faceArgs[ArgIndexes.Fliped];
-      tool.setTexture(faceArgs[ArgIndexes.Texture]);
-      mapUvs(faceArgs[ArgIndexes.UVs], quad);
-      VoxelGeometry.addQuad(tool, origin, quad);
-    }
-
-    if (
-      args[VoxelFaces.West][ArgIndexes.Enabled] &&
-      this.isExposed(VoxelFaces.West, tool.voxel)
-    ) {
-      tool.calculateFaceData(VoxelFaces.West);
-      this.determineShading(tool, VoxelFaces.West);
-      const faceArgs = args[VoxelFaces.West];
-      const quad = this.quads[VoxelFaces.West];
-      let faceFlip =
-        shouldCauseFlip(
-          worldAO.vertices[0],
-          worldAO.vertices[1],
-          worldAO.vertices[2],
-          worldAO.vertices[3]
-        ) ||
-        shouldCauseFlip(
-          LightData.getS(worldLight.vertices[0]),
-          LightData.getS(worldLight.vertices[1]),
-          LightData.getS(worldLight.vertices[2]),
-          LightData.getS(worldLight.vertices[3])
-        );
-      quad.flip = faceFlip || faceArgs[ArgIndexes.Fliped];
-      tool.setTexture(faceArgs[ArgIndexes.Texture]);
-      mapUvs(faceArgs[ArgIndexes.UVs], quad);
-      VoxelGeometry.addQuad(tool, origin, quad);
-    }
-
-    worldLight.setAll(0);
-    worldAO.setAll(0);
+    this.worldLight.setAll(0);
+    this.worldAO.setAll(0);
   }
 }

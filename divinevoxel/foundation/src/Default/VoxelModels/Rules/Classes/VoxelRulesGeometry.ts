@@ -1,24 +1,21 @@
 import { Vec3Array } from "@amodx/math";
 import { VoxelGeometryData } from "../../VoxelModel.types";
 import { GetOcclusionPlanes } from "../Functions/GetOcclusionPlanes";
-import {
-  OcclusionQuadContainer,
-  OcclusionQuadResults,
-} from "./OcclusionQuad";
-import { VoxelFaceNames } from "@divinevoxel/core/Math";
+import { OcclusionQuadContainer, OcclusionResults } from "./OcclusionQuad";
 import { BuildGeomtryInputs } from "../Functions/BuildGeomtryInputs";
 
 export class VoxelRuleGeometry {
-  outsideOcculedRules = new Map<
+  cullRules = new Map<
     string,
-    Map<VoxelFaceNames, OcclusionQuadResults<boolean>>
+    Map<number, OcclusionResults<boolean>>
   >();
-  outsideAORules = new Map<
-    string,
-    Map<number, OcclusionQuadResults<boolean[]>>
-  >();
+  aoRules = new Map<string, Map<number, OcclusionResults<boolean>>>();
   occlusionPlane: OcclusionQuadContainer;
-
+  faceCullMap: number[][] = [];
+  vertexHitMap: number[][] = [];
+  
+  faceCount = 0;
+  vertexCount = 0;
   inputs: ReturnType<typeof BuildGeomtryInputs>;
   constructor(
     public id: string,
@@ -30,33 +27,34 @@ export class VoxelRuleGeometry {
     this.init(data);
   }
 
+
   private init(data: VoxelGeometryData) {
-    this.occlusionPlane = GetOcclusionPlanes(data.nodes);
+    this.occlusionPlane = GetOcclusionPlanes(this.id, this, data.nodes);
     this.inputs = BuildGeomtryInputs(this);
   }
 
-  addOutsideOcculedResult(
+  addCullResults(
     id: string,
-    direction: VoxelFaceNames,
-    results: OcclusionQuadResults<boolean>
+    index: number,
+    results: OcclusionResults<boolean>
   ) {
-    let outsideResults = this.outsideOcculedRules.get(id);
+    let outsideResults = this.cullRules.get(id);
     if (!outsideResults) {
       outsideResults = new Map();
-      this.outsideOcculedRules.set(id, outsideResults);
+      this.cullRules.set(id, outsideResults);
     }
-    outsideResults.set(direction, results);
+    outsideResults.set(index, results);
   }
 
-  addOutsideAOResult(
+  addAOResults(
     id: string,
     direction: number,
-    results: OcclusionQuadResults<boolean[]>
+    results: OcclusionResults<boolean>
   ) {
-    let outsideResults = this.outsideAORules.get(id);
+    let outsideResults = this.aoRules.get(id);
     if (!outsideResults) {
       outsideResults = new Map();
-      this.outsideAORules.set(id, outsideResults);
+      this.aoRules.set(id, outsideResults);
     }
     outsideResults.set(direction, results);
   }
@@ -69,7 +67,10 @@ export class VoxelRuleGeometry {
       this.scale,
       this.rotation
     );
-
+    newVoxel.vertexCount = this.vertexCount;
+    newVoxel.faceCount = this.faceCount;
+    newVoxel.faceCullMap = this.faceCullMap;
+    newVoxel.vertexHitMap = this.vertexHitMap;
     newVoxel.occlusionPlane = this.occlusionPlane.clone();
     return newVoxel;
   }

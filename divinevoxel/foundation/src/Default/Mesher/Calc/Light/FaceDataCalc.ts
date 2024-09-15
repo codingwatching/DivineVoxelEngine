@@ -11,11 +11,13 @@ const currentLightValues = new Uint16Array([0, 0, 0, 0]) as any as AllLight;
 const loadedLightValues = new Uint16Array([0, 0, 0, 0]) as any as AllLight;
 const faceLength = 9 * 4;
 const emptyArray: number[] = [];
+const emptyCondtionalArray: number[][] = [];
+const settings = {
+  doAO: true,
+  doLight: true,
+};
 export const FaceDataCalc = {
-  settings: {
-    doAO: true,
-    doLight: true,
-  },
+  settings,
   calculate(face: VoxelFaces, tool: VoxelMesherDataTool) {
     let light = tool.voxel.getLight();
 
@@ -32,9 +34,8 @@ export const FaceDataCalc = {
     const baseIndex = face * faceLength;
     for (let vertex: QuadVerticies = <QuadVerticies>0; vertex < 4; vertex++) {
       const checkSetIndex = baseIndex + vertex * 9;
-      //  const checkSet = GradientCheckSets[face][vertex];
-
-      if (this.settings.doLight) {
+ 
+      if (settings.doLight) {
         tool.lightData[face][vertex] = 0;
         LightData.getLightValuesToRef(light, currentLightValues);
       }
@@ -46,28 +47,27 @@ export const FaceDataCalc = {
           GradientCheckSetsArray[checkSetIndex + i + 1] + tool.voxel.y,
           GradientCheckSetsArray[checkSetIndex + i + 2] + tool.voxel.z
         );
-
-        /*   const didLoad = tool.nVoxel.loadInAt(
-          checkSet[i] + tool.voxel.x,
-          checkSet[i + 1] + tool.voxel.y,
-          checkSet[i + 2] + tool.voxel.z
-        ); */
         /*
       Do AO
       */
-        if (this.settings.doAO) {
-          const geo = VoxelGeometryLookUp.getConstructorGeometry(
+     /*    if (settings.doAO) {
+          const hashed = VoxelGeometryLookUp.getHash(
             tool.nVoxel.x,
             tool.nVoxel.y,
             tool.nVoxel.z
           );
+          const geo = VoxelGeometryLookUp.geometryCache[hashed];
+          const conditonal =
+            VoxelGeometryLookUp.conditionalGeometryCache[hashed];
           tool.geometryData[face][vertex][checkSetAOIndex] = geo
             ? geo
             : emptyArray;
-        }
+          tool.condiotnalGeometryData[face][vertex][checkSetAOIndex] =
+            conditonal ? conditonal : emptyCondtionalArray;
+        } */
         checkSetAOIndex++;
 
-        if (!this.settings.doLight || !didLoad) continue;
+        if (!settings.doLight || !didLoad) continue;
         const nl = tool.nVoxel.getLight();
         if (nl <= 0) continue;
         /*

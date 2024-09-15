@@ -1,20 +1,22 @@
-import { VoxelGeometryCulledIndex } from "../../Indexing/VoxelGeometryCulledIndex";
-import { VoxelGeometryAOIndex } from "../../Indexing/VoxelGeometryAOIndex";
+import { VoxelResultsIndex } from "../../Indexing/VoxelResultsIndex";
 import { VoxelGeometrySyncData } from "../../VoxelModelRules.types";
 import { BoxVoxelGometryNode } from "../Nodes/BoxVoxelGeometryNode";
 
 export class VoxelGeometryConstructor {
   nodes: BoxVoxelGometryNode[] = [];
 
-  cullIndex: VoxelGeometryCulledIndex;
-  aoIndex: VoxelGeometryAOIndex;
-  constructor(public data: VoxelGeometrySyncData) {
-    this.cullIndex = new VoxelGeometryCulledIndex(data.indexes.culling);
-    this.aoIndex = new VoxelGeometryAOIndex(data.indexes.ao);
+  cullIndex: VoxelResultsIndex;
+  aoIndex: VoxelResultsIndex;
+  constructor(
+    public geometryPaletteId: number,
+    public data: VoxelGeometrySyncData
+  ) {
+    this.cullIndex = new VoxelResultsIndex(data.cullIndex);
+    this.aoIndex = new VoxelResultsIndex(data.aoIndex);
 
     for (const node of data.nodes) {
       if (node.type == "box") {
-        this.nodes.push(new BoxVoxelGometryNode(this, node));
+        this.nodes.push(new BoxVoxelGometryNode(geometryPaletteId, this, node));
       }
     }
     let faceCount = 0;

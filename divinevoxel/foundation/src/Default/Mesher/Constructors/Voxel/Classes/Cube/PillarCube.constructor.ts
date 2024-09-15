@@ -7,11 +7,11 @@ import { TextureRegister } from "../../../../../../Textures/TextureRegister.js";
 import { VoxelFaces } from "@divinevoxel/core/Math";
 
 export type PillarCubeVoxelConstructorData = {
-  up: ConstructorTextureData;
-  down: ConstructorTextureData;
+  top: ConstructorTextureData;
+  bottom: ConstructorTextureData;
   sideMiddle: ConstructorTextureData;
-  sideDown: ConstructorTextureData;
-  sideUp: ConstructorTextureData;
+  sideBottom: ConstructorTextureData;
+  sideTop: ConstructorTextureData;
   sideFloat: ConstructorTextureData;
 };
 export class PillarCubeVoxelConstructor extends VoxelConstructor {
@@ -85,12 +85,13 @@ export class PillarCubeVoxelConstructor extends VoxelConstructor {
     }
   }
   onTexturesRegistered(textureManager: typeof TextureRegister): void {
+
     this.textures = [
-      textureManager.getTextureUV(this.textureData.up),
-      textureManager.getTextureUV(this.textureData.down),
+      textureManager.getTextureUV(this.textureData.top),
+      textureManager.getTextureUV(this.textureData.bottom),
       textureManager.getTextureUV(this.textureData.sideMiddle),
-      textureManager.getTextureUV(this.textureData.sideDown),
-      textureManager.getTextureUV(this.textureData.sideUp),
+      textureManager.getTextureUV(this.textureData.sideBottom),
+      textureManager.getTextureUV(this.textureData.sideTop),
       textureManager.getTextureUV(this.textureData.sideFloat),
     ];
     (this as any).textureData = null;

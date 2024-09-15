@@ -8,42 +8,42 @@ export const cube: VoxelGeometryData = {
     },
     upUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     downTex: {
       type: "texture",
     },
     downUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     northTex: {
       type: "texture",
     },
     northUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     southTex: {
       type: "texture",
     },
     southUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     eastTex: {
       type: "texture",
     },
     eastUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     westTex: {
       type: "texture",
     },
     westUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
   },
   nodes: [
@@ -90,42 +90,42 @@ export const halfCube: VoxelGeometryData = {
     },
     upUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     downTex: {
       type: "texture",
     },
     downUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     northTex: {
       type: "texture",
     },
     northUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     southTex: {
       type: "texture",
     },
     southUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     eastTex: {
       type: "texture",
     },
     eastUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     westTex: {
       type: "texture",
     },
     westUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
   },
   nodes: [
@@ -165,8 +165,6 @@ export const halfCube: VoxelGeometryData = {
   ],
 };
 
-
-
 export const quaterCubeWestEast: VoxelGeometryData = {
   id: "dve_quater_cube_west_east",
   arguments: {
@@ -175,42 +173,42 @@ export const quaterCubeWestEast: VoxelGeometryData = {
     },
     upUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     downTex: {
       type: "texture",
     },
     downUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     northTex: {
       type: "texture",
     },
     northUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     southTex: {
       type: "texture",
     },
     southUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     eastTex: {
       type: "texture",
     },
     eastUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     westTex: {
       type: "texture",
     },
     westUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
   },
   nodes: [
@@ -257,42 +255,42 @@ export const quaterCubeSouthNorth: VoxelGeometryData = {
     },
     upUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     downTex: {
       type: "texture",
     },
     downUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     northTex: {
       type: "texture",
     },
     northUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     southTex: {
       type: "texture",
     },
     southUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     eastTex: {
       type: "texture",
     },
     eastUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     westTex: {
       type: "texture",
     },
     westUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
   },
   nodes: [
@@ -332,7 +330,6 @@ export const quaterCubeSouthNorth: VoxelGeometryData = {
   ],
 };
 
-
 export const quaterCubeUpDown: VoxelGeometryData = {
   id: "dve_quater_cube_up_down",
   arguments: {
@@ -341,42 +338,42 @@ export const quaterCubeUpDown: VoxelGeometryData = {
     },
     upUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     downTex: {
       type: "texture",
     },
     downUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     northTex: {
       type: "texture",
     },
     northUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     southTex: {
       type: "texture",
     },
     southUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     eastTex: {
       type: "texture",
     },
     eastUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
     westTex: {
       type: "texture",
     },
     westUvs: {
       type: "box-uv",
-      defualt: [0, 0, 1, 1],
+      default: [0, 0, 1, 1],
     },
   },
   nodes: [
@@ -415,8 +412,6 @@ export const quaterCubeUpDown: VoxelGeometryData = {
     },
   ],
 };
-
-
 
 export const eighthCube: VoxelGeometryData = {
   id: "dve_eighth_cube",
@@ -503,40 +498,38 @@ export const fencePost: VoxelGeometryData = {
     {
       type: "box",
       points: [
-        [0.5, 0, 0.5],
-        [0.5625, 1, 0.5625],
+        [6 / 16, 0, 6 / 16],
+        [10 / 16, 1, 10 / 16],
       ],
       faces: {
         up: {
-          texture: "@tex",
-          uv: [0, 0, 1, 1],
+          texture: "@upTex",
+          uv: [6 / 16, 6 / 16, 10 / 16, 10 / 16],
         },
         down: {
-          texture: "@tex",
-          uv: [0, 0, 1, 1],
+          texture: "@downTex",
+          uv: [6 / 16, 6 / 16, 10 / 16, 10 / 16],
         },
         north: {
-          texture: "@tex",
-          uv: [0, 0, 0.5, 0.5],
+          texture: "@northTex",
+          uv: [6 / 16, 0, 10 / 16, 1],
         },
         south: {
-          texture: "@tex",
-          uv: [0, 0, 0.5, 0.5],
+          texture: "@southTex",
+          uv: [6 / 16, 0, 10 / 16, 1],
         },
         east: {
-          texture: "@tex",
-          uv: [0, 0, 0.5, 0.5],
+          texture: "@eastTex",
+          uv: [6 / 16, 0, 10 / 16, 1],
         },
         west: {
-          texture: "@tex",
-          uv: [0, 0, 0.5, 0.5],
+          texture: "@westTex",
+          uv: [6 / 16, 0, 10 / 16, 1],
         },
       },
     },
   ],
 };
-
-
 
 export const fenceEastWest: VoxelGeometryData = {
   id: "dve_fence_east_west",
@@ -564,40 +557,71 @@ export const fenceEastWest: VoxelGeometryData = {
     {
       type: "box",
       points: [
-        [0.5, 0, 0.5],
-        [0.5625, 1, 0.5625],
+        [0, 12 / 16, 7 / 16],
+        [6 / 16, 15 / 16, 9 / 16],
       ],
       faces: {
         up: {
-          texture: "@tex",
+          texture: "@upTex",
+          uv: [7 / 16, 7 / 16, 9 / 16, 9 / 16],
+        },
+        down: {
+          texture: "@downTex",
+          uv: [7 / 16, 7 / 16, 9 / 16, 9 / 16],
+        },
+        north: {
+          texture: "@northTex",
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
+        },
+        south: {
+          texture: "@southTex",
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
+        },
+        east: {
+          texture: "@eastTex",
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
+        },
+        west: {
+          texture: "@westTex",
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
+        },
+      },
+    },
+    {
+      type: "box",
+      points: [
+        [0, 6 / 16, 7 / 16],
+        [6 / 16, 9 / 16, 9 / 16],
+      ],
+      faces: {
+        up: {
+          texture: "@upTex",
           uv: [0, 0, 1, 1],
         },
         down: {
-          texture: "@tex",
+          texture: "@downTex",
           uv: [0, 0, 1, 1],
         },
         north: {
-          texture: "@tex",
+          texture: "@northTex",
           uv: [0, 0, 0.5, 0.5],
         },
         south: {
-          texture: "@tex",
+          texture: "@southTex",
           uv: [0, 0, 0.5, 0.5],
         },
         east: {
-          texture: "@tex",
+          texture: "@eastTex",
           uv: [0, 0, 0.5, 0.5],
         },
         west: {
-          texture: "@tex",
+          texture: "@westTex",
           uv: [0, 0, 0.5, 0.5],
         },
       },
     },
   ],
 };
-
-
 
 export const fenceNorthsouth: VoxelGeometryData = {
   id: "dve_fence_north_south",
@@ -625,43 +649,75 @@ export const fenceNorthsouth: VoxelGeometryData = {
     {
       type: "box",
       points: [
-        [0.5, 0, 0.5],
-        [0.5625, 1, 0.5625],
+        [7 / 16, 12 / 16, 0],
+        [9 / 16, 15 / 16, 6 / 16],
       ],
       faces: {
         up: {
-          texture: "@tex",
-          uv: [0, 0, 1, 1],
+          texture: "@upTex",
+          uv: [7 / 16, 7 / 16, 9 / 16, 9 / 16],
         },
         down: {
-          texture: "@tex",
-          uv: [0, 0, 1, 1],
+          texture: "@downTex",
+          uv: [7 / 16, 7 / 16, 9 / 16, 9 / 16],
         },
         north: {
-          texture: "@tex",
-          uv: [0, 0, 0.5, 0.5],
+          texture: "@northTex",
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
         },
         south: {
-          texture: "@tex",
-          uv: [0, 0, 0.5, 0.5],
+          texture: "@southTex",
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
         },
         east: {
-          texture: "@tex",
-          uv: [0, 0, 0.5, 0.5],
+          texture: "@eastTex",
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
         },
         west: {
-          texture: "@tex",
-          uv: [0, 0, 0.5, 0.5],
+          texture: "@westTex",
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
+        },
+      },
+    },
+    {
+      type: "box",
+      points: [
+        [7 / 16, 6 / 16, 0],
+        [9 / 16, 9 / 16, 6 / 16],
+      ],
+      faces: {
+        up: {
+          texture: "@upTex",
+          uv: [7 / 16, 7 / 16, 9 / 16, 9 / 16],
+        },
+        down: {
+          texture: "@downTex",
+          uv: [7 / 16, 7 / 16, 9 / 16, 9 / 16],
+        },
+        north: {
+          texture: "@northTex",
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
+        },
+        south: {
+          texture: "@southTex",
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
+        },
+        east: {
+          texture: "@eastTex",
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
+        },
+        west: {
+          texture: "@westTex",
+          uv: [0, 7 / 16, 6 / 16, 9 / 16],
         },
       },
     },
   ],
 };
 
-
 export const simpleCube: VoxelModelData = {
   id: "dve_simple_cube",
-  relationsScehma: [],
+  relationsSchema: [],
   shapeStateSchema: [
     {
       name: "direction",
@@ -706,10 +762,9 @@ export const simpleCube: VoxelModelData = {
   },
 };
 
-
 export const pillarCube: VoxelModelData = {
   id: "dve_pillar_cube",
-  relationsScehma: [
+  relationsSchema: [
     {
       name: "same-down",
       conditions: [
@@ -882,7 +937,7 @@ export const pillarCube: VoxelModelData = {
 
 export const stair: VoxelModelData = {
   id: "dve_stair",
-  relationsScehma: [],
+  relationsSchema: [],
   shapeStateSchema: [
     {
       name: "direction",
@@ -1156,7 +1211,7 @@ export const stair: VoxelModelData = {
 export const fence: VoxelModelData = {
   id: "dve_fence",
 
-  relationsScehma: [
+  relationsSchema: [
     {
       name: "same-east",
       conditions: [
@@ -1215,10 +1270,11 @@ export const fence: VoxelModelData = {
       type: "texture",
     },
   },
+  //  shapeStatesConditonalNodes: {},
   shapeStatesConditonalNodes: {
     "same-south=true": [
       {
-        id: "fence_post",
+        id: "fence_connection_south",
         geometryId: "dve_fence_north_south",
         inputs: {
           "@upTex": "@upTex",
@@ -1232,9 +1288,9 @@ export const fence: VoxelModelData = {
     ],
     "same-north=true": [
       {
-        id: "fence_post",
+        id: "fence_connection_north",
         geometryId: "dve_fence_north_south",
-        position: [0, 0, 0.5],
+        position: [0, 0, 10 / 16],
         inputs: {
           "@upTex": "@upTex",
           "@downTex": "@downTex",
@@ -1247,7 +1303,8 @@ export const fence: VoxelModelData = {
     ],
     "same-east=true": [
       {
-        id: "fence_post",
+        id: "fence_connection_east",
+        position: [10 / 16, 0, 0],
         geometryId: "dve_fence_east_west",
         inputs: {
           "@upTex": "@upTex",
@@ -1261,9 +1318,8 @@ export const fence: VoxelModelData = {
     ],
     "same-west=true": [
       {
-        id: "fence_post",
+        id: "fence_connection_west",
         geometryId: "dve_fence_east_west",
-        position: [0.5, 0, 0],
         inputs: {
           "@upTex": "@upTex",
           "@downTex": "@downTex",
@@ -1277,11 +1333,32 @@ export const fence: VoxelModelData = {
   },
   shapeStatesOverrides: {},
   shapeStatesNodes: {
+    /*     "*": [
+      {
+        id: "fence_post",
+        geometryId: "dve_fence_east_west",
+        inputs: {
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
+          "@northTex": "@northTex",
+          "@southTex": "@southTex",
+          "@eastTex": "@eastTex",
+          "@westTex": "@westTex",
+        },
+      },
+    ], */
     "*": [
       {
         id: "fence_post",
         geometryId: "dve_fence_post",
-        inputs: {},
+        inputs: {
+          "@upTex": "@upTex",
+          "@downTex": "@downTex",
+          "@northTex": "@northTex",
+          "@southTex": "@southTex",
+          "@eastTex": "@eastTex",
+          "@westTex": "@westTex",
+        },
       },
     ],
   },

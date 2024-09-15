@@ -1,4 +1,4 @@
-import { ShapeStateSchemaNodeData } from "./State.types";
+import { ShapeStateSchemaNodeData } from "../State.types";
 
 export class ShapeStateSchemaNode {
   id: string;

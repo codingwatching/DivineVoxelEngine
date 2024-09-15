@@ -121,7 +121,7 @@ export class WorldGenRegister {
       dataTool.loadInAt(data[0], data[1], data[2]);
       brush.setXYZ(data[0], data[1], data[2]).setRaw(data[3]).paint();
     }
-    brush.sup();
+    brush.stop();
     this._requests.delete(registerId);
     return true;
   }

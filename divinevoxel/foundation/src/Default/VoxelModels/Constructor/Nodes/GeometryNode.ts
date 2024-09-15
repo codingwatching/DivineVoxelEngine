@@ -3,18 +3,24 @@ import { BoxVoxelGometryArgs } from "../../Input/Nodes/BoxVoxelGometryInputs";
 import { Vector3Like } from "@amodx/math";
 import { VoxelGeometryConstructor } from "../Register/VoxelGeometryConstructor";
 
-export abstract class GeoemtryNode {
+export abstract class GeoemtryNode<Args> {
   faceIndex = -1;
   vertexIndex = -1;
 
   faceCount = -1;
   vertexCount = -1;
 
-  constructor(public geomtry: VoxelGeometryConstructor) {}
+  tool: VoxelMesherDataTool;
+  origin: Vector3Like;
+
+  
+
+  constructor(  public geometryPaletteId: number,public geomtry: VoxelGeometryConstructor) {}
 
   abstract add(
     tool: VoxelMesherDataTool,
+    originHash:number,
     origin: Vector3Like,
-    args: BoxVoxelGometryArgs
+    args: Args
   ): void;
 }

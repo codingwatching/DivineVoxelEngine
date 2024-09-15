@@ -1,13 +1,12 @@
-import { ShapeStateSchema } from "./ShapeStateSchema";
+import { ShapeStateSchema } from "./Schema/ShapeStateSchema";
 
 export class StateTreeReader {
   startingIndex = 0;
   constructor(public schema: ShapeStateSchema, public tree: any[]) {}
 
   getState(shapeState: number) {
+    if (!this.tree.length) return 0;
     let found = -1;
-    this.tree[this.startingIndex];
-
     let index = this.startingIndex;
     let curretNode = this.tree[this.startingIndex];
     while (found == -1) {
