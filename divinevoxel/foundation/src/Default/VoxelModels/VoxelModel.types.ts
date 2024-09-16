@@ -16,7 +16,9 @@ interface ShadedInterface {
 
 export interface VoxelModelConstructorData {
   id: string;
-  inputs: Record<string, any>;
+  modRelationSchema?: VoxelModelRelationsSchemaData[];
+  modSchema?: VoxelConstructorBinarySchemaData[];
+  inputs: Record<string, Record<string, any>>;
 }
 
 //box

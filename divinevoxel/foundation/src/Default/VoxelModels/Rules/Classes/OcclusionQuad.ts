@@ -4,8 +4,8 @@ import { VoxelFaceNames } from "@divinevoxel/core/Math";
 export class OcclusionQuad {
   offset: Vec3Array = [0, 0, 0];
 
-  start: Vector3Like;
-  end: Vector3Like;
+  start = Vector3Like.Create();
+  end = Vector3Like.Create();
 
   normal: Vec3Array;
 
@@ -21,34 +21,9 @@ export class OcclusionQuad {
     private _end: Vec3Array
   ) {
     const self = this;
-    this.start = {
-      get x() {
-        return _start[0] + self.offset[0];
-      },
-      set x(value: number) {},
-      get y() {
-        return _start[1] + self.offset[1];
-      },
-      set y(value: number) {},
-      get z() {
-        return _start[2] + self.offset[2];
-      },
-      set z(value: number) {},
-    };
-    this.end = {
-      get x() {
-        return _end[0] + self.offset[0];
-      },
-      set x(value: number) {},
-      get y() {
-        return _end[1] + self.offset[1];
-      },
-      set y(value: number) {},
-      get z() {
-        return _end[2] + self.offset[2];
-      },
-      set z(value: number) {},
-    };
+
+    Vector3Like.CopyFromArray(this.start, _start);
+    Vector3Like.CopyFromArray(this.end, _end);
 
     this.points = [
       [0, 0, 0],
@@ -88,6 +63,12 @@ export class OcclusionQuad {
     this.offset[0] = x;
     this.offset[1] = y;
     this.offset[2] = z;
+    this.start.x = this._start[0] + x;
+    this.start.y = this._start[1] + y;
+    this.start.z = this._start[2] + z;
+    this.end.x = this._end[0] + x;
+    this.end.y = this._end[1] + y;
+    this.end.z = this._end[2] + z;
   }
 
   updatePoints() {

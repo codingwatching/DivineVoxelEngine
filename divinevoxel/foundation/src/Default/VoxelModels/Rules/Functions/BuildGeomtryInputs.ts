@@ -8,14 +8,6 @@ import {
 import { TextureManager } from "../../../../Textures/TextureManager";
 import { Vec4Array } from "@amodx/math";
 
-/**
- Default Inputs
-[voxel id]
-   [state id]
-      [geo id]:[args]
-      [geo id]:[args]
-     ...
- */
 
 const isArgString = (data: any) => {
   if (typeof data !== "string") return;

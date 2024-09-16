@@ -8,6 +8,10 @@ import {
 import { VoxelRulesModoel } from "../Classes/VoxelRulesModel";
 import { StringPalette } from "@divinevoxel/core/Interfaces/Data/StringPalette";
 import { VoxelModelManager } from "../VoxelModelManager";
+import {
+  VoxelConstructorBinarySchemaData,
+  VoxelModelRelationsSchemaData,
+} from "Default/VoxelModels/VoxelModel.types";
 function bitsNeeded(n: number): number {
   if (n < 0) throw new Error("Input must be a non-negative integer.");
 
@@ -84,11 +88,11 @@ function generateNestedCombinations(length: number, values: number[]): any {
   return createNestedArray(0);
 }
 
-const addPath = <Value>(
+function addPathToTree<Value>(
   root: StateTreeNode<Value>,
   path: string[],
   result: Value
-) => {
+) {
   let currentNode = root;
 
   for (let i = 0; i < path.length; i += 2) {
@@ -110,22 +114,14 @@ const addPath = <Value>(
     currentNode = valueNode;
   }
   currentNode.result = result;
-};
+}
 
-/**
-[geo state index]
-
-[state id]
-    [geo-link-id][]
-    
-
- */
-const reMap = (
+function reMapTree(
   schemaIdPalette: StringPalette,
   schemaValuePalette: Map<string, StringPalette>,
   baseObj: any,
   newObj: any[]
-) => {
+) {
   for (const key in baseObj) {
     if (key == "*") continue;
 
@@ -139,7 +135,7 @@ const reMap = (
       const propertyValue = baseChild[value];
       const valueIndex = schemaValueIndex.getNumberId(value);
       if (typeof propertyValue == "object") {
-        reMapedChildren[valueIndex] = reMap(
+        reMapedChildren[valueIndex] = reMapTree(
           schemaIdPalette,
           schemaValuePalette,
           baseChild[value],
@@ -154,13 +150,12 @@ const reMap = (
   }
 
   return newObj;
-};
-export function BuildStateData(
-  model: VoxelRulesModoel,
-  geoPalette: StringPalette
-) {
-  const data = model.data;
+}
 
+function buildSchemas(
+  binaryNodes: VoxelConstructorBinarySchemaData[],
+  relationNodes: VoxelModelRelationsSchemaData[]
+) {
   const baseSchema: (
     | ShapeStateSchemaNodeData
     | ShapeRelationsScehmaNodeData
@@ -170,7 +165,7 @@ export function BuildStateData(
   const schemaValuePalette = new Map<string, StringPalette>();
   {
     let bitIndex = 0;
-    for (const schemaNode of data.shapeStateSchema) {
+    for (const schemaNode of binaryNodes) {
       schemaIdPalette.register(schemaNode.name);
 
       const maxBits = bitsNeeded(
@@ -201,7 +196,7 @@ export function BuildStateData(
   }
 
   {
-    for (const schemaNode of data.relationsSchema) {
+    for (const schemaNode of relationNodes) {
       schemaIdPalette.register(schemaNode.name);
 
       baseSchema.push({
@@ -216,6 +211,23 @@ export function BuildStateData(
     }
   }
 
+  return {
+    baseSchema,
+    schemaIdPalette,
+    schemaValuePalette,
+  };
+}
+
+export function BuildStateData(
+  model: VoxelRulesModoel,
+  geoPalette: StringPalette
+) {
+  const data = model.data;
+
+  const { baseSchema, schemaIdPalette, schemaValuePalette } = buildSchemas(
+    data.shapeStateSchema,
+    data.relationsSchema
+  );
   const geometryLinkPalette = new StringPalette();
   //maps geo link ids to geomtry ids
   const geometryLinkStateMap: number[] = [];
@@ -258,7 +270,7 @@ export function BuildStateData(
     );
 
     shapeStateRecord[key] = shapeStatePalette.length - 1;
-    addPath(
+    addPathToTree(
       shapeStateTree,
       key
         .split(",")
@@ -342,7 +354,7 @@ export function BuildStateData(
         geometryLinkPalette.getNumberId(_.id)
       )
     );
-    addPath(
+    addPathToTree(
       dataOverrideTree,
       key
         .split(",")
@@ -357,7 +369,7 @@ export function BuildStateData(
   const shapeStateTreeData = shapeStateTree.toJSON();
   const newShapeStateTree: any[] = [];
 
-  reMap(
+  reMapTree(
     schemaIdPalette,
     schemaValuePalette,
     shapeStateTreeData,
@@ -367,12 +379,45 @@ export function BuildStateData(
   const shapeStatDataOverrideeTreeData = dataOverrideTree.toJSON();
   const newshapeStatDataOverrideeTree: any[] = [];
 
-  reMap(
+  reMapTree(
     schemaIdPalette,
     schemaValuePalette,
     shapeStatDataOverrideeTreeData,
     newshapeStatDataOverrideeTree
   );
+
+  for (const [voxelId, voxelData] of model.voxels) {
+    const modeStateTree = new StateTreeNode("root");
+    const modStatePalette: any[] = [];
+    const modStateRecord: Record<string, number> = {};
+
+    const { baseSchema, schemaIdPalette, schemaValuePalette } = buildSchemas(
+      voxelData.modSchema || [],
+      voxelData.modRelationSchema || []
+    );
+    for (const key in voxelData.inputs) {
+      modStatePalette.push(voxelData.inputs[key]);
+
+      modStateRecord[key] = modStatePalette.length - 1;
+      addPathToTree(
+        modeStateTree,
+        key
+          .split(",")
+          .map((pair) => pair.split("="))
+          .flat(),
+        modStatePalette.length - 1
+      );
+    }
+    const modTreeData = modeStateTree.toJSON();
+    const newModTree: any[] = [];
+    reMapTree(schemaIdPalette, schemaValuePalette, modTreeData, newModTree);
+    model.voxelModData.set(voxelId, {
+      modSchema: baseSchema,
+      modPalette: modStatePalette,
+      modRecord: modStateRecord,
+      modStateTree: newModTree,
+    });
+  }
 
   const finalData = {
     schema: baseSchema,
@@ -381,7 +426,6 @@ export function BuildStateData(
     shapeStateDataOverrideRecord,
     shapeStateTree: newShapeStateTree,
     geometryLinkIdMap: geometryLinkPalette._map,
-
     geometryLinkStateMap,
     shapeStatePalette,
     shapeStateRecord,
@@ -390,8 +434,6 @@ export function BuildStateData(
     condiotnalShapeStatePalette: condiotnalShapeStateNodePalette,
     condiotnalShapeStateRecord: condiotnalShapeStateNodeRecord,
     condiotanlStatePalette,
-    // dataOverrideTree: dataOverrideTree.toJSON(),
-    //condiotnalNodeTrees: condiotnalNodeTrees.map((_) => _.toJSON()),
   };
 
   model.stateData = finalData;

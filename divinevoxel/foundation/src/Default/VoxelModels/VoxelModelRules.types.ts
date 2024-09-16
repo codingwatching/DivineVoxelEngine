@@ -31,6 +31,10 @@ export interface VoxelModelSyncData {
 export interface VoxelInputsSyncData {
   id: string;
   modelId: string;
+
+  modSchema: ShapeStateSchemaData[];
+  modStateTree: any[];
+
   baseGeometryInputMap: any[][];
   condiotnalGeometryInputMap: any[][];
   shapeStateDataOverrideInputMap: any[][];

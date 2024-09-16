@@ -14,7 +14,11 @@ import {
   stair,
 } from "./Examples";
 import { VoxelModelManager } from "./Rules/VoxelModelManager";
-import { VoxelGeometryData, VoxelModelData } from "./VoxelModel.types";
+import {
+  VoxelGeometryData,
+  VoxelModelConstructorData,
+  VoxelModelData,
+} from "./VoxelModel.types";
 import { VoxelData } from "@divinevoxel/core";
 import { ThreadPool } from "@amodx/threads";
 
@@ -63,24 +67,31 @@ export function InitVoxelModels(data: {
     ...(data.models || [])
   );
 
-
   const syncData: ConstructorVoxelModelSyncData = {
-    geometryPalette:   VoxelModelManager.geometryPalette._palette,
+    geometryPalette: VoxelModelManager.geometryPalette._palette,
     geometry: [],
     models: [],
     voxels: [],
   };
 
   for (const voxel of data.voxels) {
-    const data = voxel.tags.find((_) => _[0] == "#dve_model_data");
+    const data = voxel.tags.find((_) => _[0] == "#dve_model_data") as any as [
+      string,
+      VoxelModelConstructorData
+    ];
     if (!data) continue;
-    VoxelModelManager.registerVoxel(voxel.id, data[1]);
+    const voxelData = data[1];
+    VoxelModelManager.registerVoxel(voxel.id, voxelData);
+    const model = VoxelModelManager.models.get(voxelData.id)!;
+    if (!model)
+      throw new Error(`Voxel model with id ${voxelData.id} does not exist.`);
+    model!.voxels.set(voxel.id, voxelData);
   }
   const output: any = {};
 
   const startTime = performance.now();
   for (const [mainKey, mainGeo] of VoxelModelManager.geometry) {
-    const output = BuildRules(mainGeo,   VoxelModelManager.geometryPalette);
+    const output = BuildRules(mainGeo, VoxelModelManager.geometryPalette);
 
     syncData.geometry.push({
       id: mainKey,
@@ -92,7 +103,7 @@ export function InitVoxelModels(data: {
 
   const inputStartTime = performance.now();
   for (const [mainKey, model] of VoxelModelManager.models) {
-    const stateData = BuildStateData(model,   VoxelModelManager.geometryPalette);
+    const stateData = BuildStateData(model, VoxelModelManager.geometryPalette);
     model.stateData = stateData;
     syncData.models.push({
       id: mainKey,
@@ -116,27 +127,33 @@ export function InitVoxelModels(data: {
       ),
     });
   }
+
   for (const [mainKey, geometry] of VoxelModelManager.geometry) {
     BuildGeomtryInputs(geometry);
   }
-  for (const [mainKey, voxels] of VoxelModelManager.voxels) {
+
+  for (const [mainKey, model] of VoxelModelManager.models) {
     const {
       shapeStateVoxelInputs,
       conditionalShapeStateVoxelInputs,
       shapeStateDataOverridesVoxelInputs,
-    } = BuildFinalInputs(VoxelModelManager.models.get(mainKey)!, voxels);
+    } = BuildFinalInputs(model);
 
-    for (const v of voxels) {
+    for (const v in shapeStateVoxelInputs) {
+      const stateData = model.voxelModData.get(v)!;
+
       syncData.voxels.push({
-        id: v.id,
+        id: v,
         modelId: mainKey,
-        baseGeometryInputMap: shapeStateVoxelInputs[v.id],
-        condiotnalGeometryInputMap: conditionalShapeStateVoxelInputs[v.id],
-        shapeStateDataOverrideInputMap:
-          shapeStateDataOverridesVoxelInputs[v.id],
+        modSchema: stateData.modSchema,
+        modStateTree: stateData.modStateTree,
+        baseGeometryInputMap: shapeStateVoxelInputs[v],
+        condiotnalGeometryInputMap: conditionalShapeStateVoxelInputs[v],
+        shapeStateDataOverrideInputMap: shapeStateDataOverridesVoxelInputs[v],
       });
     }
   }
+
   data.constructors.runTasksForAll("sync-voxel-model-data", syncData);
   console.log("done building inputs", performance.now() - inputStartTime);
 

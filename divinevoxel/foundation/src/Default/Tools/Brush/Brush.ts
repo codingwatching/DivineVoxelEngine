@@ -74,6 +74,7 @@ export class BrushTool extends LocationBoundTool {
 
   setMod(mod: number) {
     this.data.mod = mod;
+    return this;
   }
 
   clear() {
