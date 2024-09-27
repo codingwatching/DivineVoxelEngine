@@ -1,5 +1,10 @@
-import { VoxelResultsIndexData } from "./Indexing/VoxelResultsIndex";
-import { ShapeStateSchemaData, StateLogicStatement } from "./State/State.types";
+import { VoxelAOResultsIndexData } from "./Indexing/VoxelAOResultsIndex";
+import { VoxelFaceCullResultsIndexData } from "./Indexing/VoxelFaceCullResultsIndex";
+import { VoxelFaceTransparentResultsIndexData } from "./Indexing/VoxelFaceTransparentResultsIndex";
+import {
+  VoxelModelStateSchemaData,
+  StateLogicStatement,
+} from "./State/State.types";
 import { VoxelGeometryNodes } from "./VoxelModel.types";
 
 export interface VoxelGeometrySyncData {
@@ -7,24 +12,30 @@ export interface VoxelGeometrySyncData {
   nodes: VoxelGeometryNodes[];
   faceCullMap: number[][];
   vertexHitMap: number[][];
-  aoIndex: VoxelResultsIndexData;
-  cullIndex: VoxelResultsIndexData;
+  aoIndex: VoxelAOResultsIndexData;
+  cullIndex: VoxelFaceCullResultsIndexData;
 }
 
 export interface VoxelModelSyncData {
   id: string;
-  schema: ShapeStateSchemaData[];
+  schema: VoxelModelStateSchemaData[];
   geoLinkMap: number[];
-  shapeStateDataOverrideTree: any[];
   shapeStateTree: any[];
   shapeStateMap: number[][];
   shapeStateGeometryMap: number[][];
+  //maps each shape state geometry nodes to their relative index
+  shapeStateRelativeGeometryMap: number[][];
+  //maps each shape state & condtional geometry relative ids to their starting byte index for the transparent index
+  relativeGeometryByteIndexMap: number[];
+
   condiotnalStatements: StateLogicStatement[];
   condiotnalStateMap: number[][];
-  //maps states to their local geometry links
+  //maps condiotnal states to their local geometry links
   condiotnalShapeStateMap: number[][][];
-  //maps states to their actual geometry ids
+  //maps condiotnal states to their actual geometry ids
   condiotnalShapeStateGeometryMap: number[][][];
+  //maps each condiotnal shape state geometry nodes to their relative index
+  condiotnalShapeStateRelativeGeometryMap: number[][];
   condiotnalStateTree: any[];
 }
 
@@ -32,12 +43,11 @@ export interface VoxelInputsSyncData {
   id: string;
   modelId: string;
 
-  modSchema: ShapeStateSchemaData[];
+  transparentFaceIndex: VoxelFaceTransparentResultsIndexData;
+  modSchema: VoxelModelStateSchemaData[];
   modStateTree: any[];
-
   baseGeometryInputMap: any[][];
   condiotnalGeometryInputMap: any[][];
-  shapeStateDataOverrideInputMap: any[][];
 }
 
 export interface ConstructorVoxelModelSyncData {

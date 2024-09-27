@@ -1,4 +1,4 @@
-import { ShapeStateSchema } from "./Schema/ShapeStateSchema";
+import { StateSchema } from "./Schema/StateSchema";
 import {
   StateCompareOperations,
   StateLogiceOperations,
@@ -7,7 +7,7 @@ import {
 
 export class LogicStatementReader {
   constructor(
-    public schema: ShapeStateSchema,
+    public schema: StateSchema,
     public statement: StateLogicStatement
   ) {}
 

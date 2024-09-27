@@ -10,8 +10,6 @@ type AllLight = [s: number, r: number, g: number, b: number];
 const currentLightValues = new Uint16Array([0, 0, 0, 0]) as any as AllLight;
 const loadedLightValues = new Uint16Array([0, 0, 0, 0]) as any as AllLight;
 const faceLength = 9 * 4;
-const emptyArray: number[] = [];
-const emptyCondtionalArray: number[][] = [];
 const settings = {
   doAO: true,
   doLight: true,
@@ -34,38 +32,18 @@ export const FaceDataCalc = {
     const baseIndex = face * faceLength;
     for (let vertex: QuadVerticies = <QuadVerticies>0; vertex < 4; vertex++) {
       const checkSetIndex = baseIndex + vertex * 9;
- 
+
       if (settings.doLight) {
-        tool.lightData[face][vertex] = 0;
+        tool.lightData[face][vertex] = light;
         LightData.getLightValuesToRef(light, currentLightValues);
       }
 
-      let checkSetAOIndex = 0;
       for (let i = 0; i < 9; i += 3) {
         const didLoad = tool.nVoxel.loadInAt(
-          GradientCheckSetsArray[checkSetIndex + i] + tool.voxel.x,
-          GradientCheckSetsArray[checkSetIndex + i + 1] + tool.voxel.y,
-          GradientCheckSetsArray[checkSetIndex + i + 2] + tool.voxel.z
+          GradientCheckSets[face][vertex][i] + tool.voxel.x,
+          GradientCheckSets[face][vertex][i + 1] + tool.voxel.y,
+          GradientCheckSets[face][vertex][i + 2] + tool.voxel.z
         );
-        /*
-      Do AO
-      */
-     /*    if (settings.doAO) {
-          const hashed = VoxelGeometryLookUp.getHash(
-            tool.nVoxel.x,
-            tool.nVoxel.y,
-            tool.nVoxel.z
-          );
-          const geo = VoxelGeometryLookUp.geometryCache[hashed];
-          const conditonal =
-            VoxelGeometryLookUp.conditionalGeometryCache[hashed];
-          tool.geometryData[face][vertex][checkSetAOIndex] = geo
-            ? geo
-            : emptyArray;
-          tool.condiotnalGeometryData[face][vertex][checkSetAOIndex] =
-            conditonal ? conditonal : emptyCondtionalArray;
-        } */
-        checkSetAOIndex++;
 
         if (!settings.doLight || !didLoad) continue;
         const nl = tool.nVoxel.getLight();

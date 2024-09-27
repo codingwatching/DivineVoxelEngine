@@ -35,8 +35,8 @@ export class VoxelModelManager {
   }
 
   static getGeomtryFromLink(link: VoxelGeometryLinkData) {
-    const geoId = getGeometryLinkId(link);
-    return this.geometry.get(geoId);
+
+    return this.geometry.get( getGeometryLinkId(link));
   }
 
   static registerModels(...models: VoxelModelData[]) {

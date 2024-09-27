@@ -27,10 +27,7 @@ export class VoxelMesherDataTool extends MesherDataTool {
   nVoxel = new BuilderDataTool();
 
   dataCalculated: Record<VoxelFaces, boolean>;
-  geometryData: Record<
-    VoxelFaces,
-    Record<QuadVerticies, [number[], number[], number[]]>
-  >;
+
   condiotnalGeometryData: Record<
     VoxelFaces,
     Record<QuadVerticies, [number[][], number[][], number[][]]>
@@ -53,14 +50,6 @@ export class VoxelMesherDataTool extends MesherDataTool {
       this.dataCalculated[face] = false;
     }
 
-    this.geometryData = [] as any;
-    for (const face of VoxelFacesArray) {
-      this.geometryData[face] = [] as any;
-      this.geometryData[face][QuadVerticies.TopRight] = [[], [], []];
-      this.geometryData[face][QuadVerticies.TopLeft] = [[], [], []];
-      this.geometryData[face][QuadVerticies.BottomLeft] = [[], [], []];
-      this.geometryData[face][QuadVerticies.BottomRight] = [[], [], []];
-    }
     this.condiotnalGeometryData = [] as any;
     for (const face of VoxelFacesArray) {
       this.condiotnalGeometryData[face] = [] as any;
@@ -116,6 +105,7 @@ export class VoxelMesherDataTool extends MesherDataTool {
   calculateFaceData(direction: VoxelFaces) {
     if (this.dataCalculated[direction]) return true;
     FaceDataCalc.calculate(direction, this);
+    this.dataCalculated[direction] = true;
   }
 
   clearCalculatedData() {

@@ -1,23 +1,10 @@
 import { Vec2Array, Vec3Array } from "@amodx/math";
 import { VoxelFaceNames } from "@divinevoxel/core/Math";
 
-export interface VoxelShadeData {
-  interpolate?: boolean;
-  vector?: 1 | 2 | 3 | 4;
-  direction?: VoxelFaceNames;
-  value?: number;
-}
-
-interface ShadedInterface {
-  noShade?: boolean;
-  lightShade?: (string | number)[];
-  aoShade?: (string | number)[];
-}
-
 export interface VoxelModelConstructorData {
   id: string;
   modRelationSchema?: VoxelModelRelationsSchemaData[];
-  modSchema?: VoxelConstructorBinarySchemaData[];
+  modSchema?: VoxelBinaryStringSchemaData[];
   inputs: Record<string, Record<string, any>>;
 }
 
@@ -30,16 +17,17 @@ export interface VoxelBoxGeometryNode {
   faces: Record<VoxelFaceNames, VoxelBoxFaceData>;
 }
 
-export interface VoxelBoxFaceData extends ShadedInterface {
+export interface VoxelBoxFaceData {
   enabled?: boolean;
   flip?: boolean;
   texture: string;
+  transparent?: boolean | string;
   uv: [x1: number, y1: number, x2: number, y2: number] | string;
   rotation?: number | string;
 }
 
 //plane
-export interface VoxelPlaneGeometryNode extends ShadedInterface {
+export interface VoxelPlaneGeometryNode {
   type: "plane";
   points: [start: Vec3Array, end: Vec3Array];
   direction: VoxelFaceNames;
@@ -50,7 +38,7 @@ export interface VoxelPlaneGeometryNode extends ShadedInterface {
 }
 
 //triangle
-export interface VoxelTriangleGeometryNode extends ShadedInterface {
+export interface VoxelTriangleGeometryNode {
   type: "triangle";
   points: [p1: Vec3Array, p2: Vec3Array, p3: Vec3Array];
   orientation?: 0 | 1;
@@ -61,7 +49,7 @@ export interface VoxelTriangleGeometryNode extends ShadedInterface {
 }
 
 //quad
-export interface VoxelQuadGeometryNode extends ShadedInterface {
+export interface VoxelQuadGeometryNode {
   type: "quad";
   orientation?: 0 | 1;
   doubleSided?: boolean;
@@ -72,7 +60,7 @@ export interface VoxelQuadGeometryNode extends ShadedInterface {
 }
 
 //geometry
-export interface VoxelRawGeometryGeometryNode extends ShadedInterface {
+export interface VoxelRawGeometryGeometryNode {
   type: "raw-geometry";
   positions: number[];
   normals: number[];
@@ -85,10 +73,21 @@ export interface VoxelRawGeometryGeometryNode extends ShadedInterface {
 export interface VoxelGeometryTextureArgument {
   type: "texture";
 }
-
+export interface VoxelGeometryBooleanArgument {
+  type: "boolean";
+  default: boolean;
+}
+export interface VoxelGeometryIntArgument {
+  type: "int";
+  default: number;
+}
+export interface VoxelGeometryFloatArgument {
+  type: "float";
+  default: number;
+}
 export interface VoxelGeometryBoxUVArgument {
   type: "box-uv";
-  default?: [x1: number, y1: number, x2: number, y2: number];
+  default: [x1: number, y1: number, x2: number, y2: number];
 }
 
 export interface VoxelGeometryVector3Argument {
@@ -98,9 +97,15 @@ export interface VoxelGeometryVector3Argument {
   max?: Vec3Array;
 }
 
-export interface VoxelConstructorBinarySchemaData {
+export interface VoxelBinaryStringSchemaData {
   name: string;
+  type: "string";
   values: Record<number, string>;
+}
+export interface VoxelBinaryNumberSchemaData {
+  name: string;
+  type: "number";
+  maxValue: number;
 }
 
 export interface SameVoxelRelationsConditionData {
@@ -137,6 +142,9 @@ export interface VoxelGeometryData {
     | VoxelGeometryTextureArgument
     | VoxelGeometryBoxUVArgument
     | VoxelGeometryVector3Argument
+    | VoxelGeometryIntArgument
+    | VoxelGeometryBooleanArgument
+    | VoxelGeometryFloatArgument
   >;
 }
 
@@ -159,16 +167,15 @@ export interface VoxelModelData {
     | VoxelGeometryTextureArgument
     | VoxelGeometryBoxUVArgument
     | VoxelGeometryVector3Argument
+    | VoxelGeometryIntArgument
+    | VoxelGeometryBooleanArgument
+    | VoxelGeometryFloatArgument
   >;
-  shapeStateSchema: VoxelConstructorBinarySchemaData[];
+  shapeStateSchema: (
+    | VoxelBinaryStringSchemaData
+    | VoxelBinaryNumberSchemaData
+  )[];
   relationsSchema: VoxelModelRelationsSchemaData[];
-  shapeStatesOverrides: Record<
-    string,
-    {
-      id: string;
-      inputs: VoxelGeometryBaseLinkData["inputs"];
-    }[]
-  >;
   shapeStatesNodes: Record<string, VoxelGeometryLinkData[]>;
   shapeStatesConditonalNodes: Record<string, VoxelGeometryLinkData[]>;
 }

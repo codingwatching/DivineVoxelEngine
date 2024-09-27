@@ -1,18 +1,18 @@
 import { Vector3Like } from "@amodx/math";
 import {
-  OcclusionQuad,
-  OcclusionQuadContainer,
-} from "../Classes/OcclusionQuad";
+  OcclusionQuadFace,
+  OcclusionFaceContainer,
+} from "../Classes/OcclusionFace";
 import { VoxelGeometryNodes } from "../../VoxelModel.types";
 import { VoxelRuleGeometry } from "../Classes/VoxelRulesGeometry";
 import { VoxelFaces } from "@divinevoxel/core/Math";
 
-export function GetOcclusionPlanes(
+export function GetOcclusionFaces(
   parentId: string,
   geometry: VoxelRuleGeometry,
   data: VoxelGeometryNodes[]
 ) {
-  const planes = new OcclusionQuadContainer();
+  const faceContainer = new OcclusionFaceContainer();
 
   let vertexCount = 0;
   let faceCount = 0;
@@ -23,8 +23,8 @@ export function GetOcclusionPlanes(
       if (node.rotation) continue;
       const [start, end] = node.points.map((_) => Vector3Like.Create(..._));
 
-      planes.addPlane(
-        new OcclusionQuad(
+      faceContainer.addFace(
+        new OcclusionQuadFace(
           parentId,
           nodeId,
           "up",
@@ -35,8 +35,8 @@ export function GetOcclusionPlanes(
         )
       );
 
-      planes.addPlane(
-        new OcclusionQuad(
+      faceContainer.addFace(
+        new OcclusionQuadFace(
           parentId,
           nodeId,
           "down",
@@ -47,8 +47,8 @@ export function GetOcclusionPlanes(
         )
       );
 
-      planes.addPlane(
-        new OcclusionQuad(
+      faceContainer.addFace(
+        new OcclusionQuadFace(
           parentId,
           nodeId,
           "north",
@@ -59,8 +59,8 @@ export function GetOcclusionPlanes(
         )
       );
 
-      planes.addPlane(
-        new OcclusionQuad(
+      faceContainer.addFace(
+        new OcclusionQuadFace(
           parentId,
           nodeId,
           "south",
@@ -71,8 +71,8 @@ export function GetOcclusionPlanes(
         )
       );
 
-      planes.addPlane(
-        new OcclusionQuad(
+      faceContainer.addFace(
+        new OcclusionQuadFace(
           parentId,
           nodeId,
           "east",
@@ -83,8 +83,8 @@ export function GetOcclusionPlanes(
         )
       );
 
-      planes.addPlane(
-        new OcclusionQuad(
+      faceContainer.addFace(
+        new OcclusionQuadFace(
           parentId,
           nodeId,
           "west",
@@ -107,5 +107,5 @@ export function GetOcclusionPlanes(
   }
   geometry.vertexCount = vertexCount;
   geometry.faceCount = faceCount;
-  return planes;
+  return faceContainer;
 }

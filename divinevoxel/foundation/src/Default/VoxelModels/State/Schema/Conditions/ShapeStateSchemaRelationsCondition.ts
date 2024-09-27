@@ -1,8 +1,8 @@
-import { ShapeStateSchema } from "../ShapeStateSchema";
+import { StateSchema } from "../StateSchema";
 
 export abstract class ShapeStateSchemaRelationsCondition {
 
-    constructor(public schema: ShapeStateSchema) {}
+    constructor(public schema: StateSchema) {}
 
   abstract evulate(): boolean;
 }

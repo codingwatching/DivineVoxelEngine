@@ -7,6 +7,11 @@ type AllLight = [s: number, r: number, g: number, b: number];
 export const LightData = {
   SRS: 2,
   _lightValues: <AllLight>(new Uint16Array([0, 0, 0, 0]) as any),
+
+  sumRGB(value: number) {
+    return this.getR(value) + this.getG(value) + this.getB(value);
+  },
+
   getS(value: number) {
     return value & 0xf;
   },

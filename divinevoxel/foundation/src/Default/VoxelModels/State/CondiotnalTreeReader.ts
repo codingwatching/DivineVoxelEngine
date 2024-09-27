@@ -1,11 +1,11 @@
 import { LogicStatementReader } from "./LogicStatementReader";
-import { ShapeStateSchema } from "./Schema/ShapeStateSchema";
+import { StateSchema } from "./Schema/StateSchema";
 import { StateLogicStatement } from "./State.types";
 
 export class CondtionalTreeReader {
   statements: LogicStatementReader[] = [];
   constructor(
-    public schema: ShapeStateSchema,
+    public schema: StateSchema,
     statements: StateLogicStatement[],
     public tree: any[]
   ) {

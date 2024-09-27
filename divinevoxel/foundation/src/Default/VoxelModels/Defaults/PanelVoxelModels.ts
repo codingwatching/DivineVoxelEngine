@@ -1,0 +1,463 @@
+import { VoxelModelData } from "../VoxelModel.types";
+
+export const simpleThinPannel: VoxelModelData = {
+  id: "dve_simple_thin_panel",
+  relationsSchema: [],
+  shapeStateSchema: [
+    {
+      name: "placement",
+      type: "string",
+      values: {
+        0: "down",
+        1: "up",
+        2: "north",
+        3: "south",
+        4: "east",
+        5: "west",
+      },
+    },
+    {
+      name: "direction",
+      type: "string",
+      values: {
+        0: "north",
+        1: "south",
+        2: "east",
+        3: "west",
+      },
+    },
+  ],
+  arguments: {
+    upDownTextures: {
+      type: "texture",
+    },
+    upDownTexturesTransparent: {
+      type: "boolean",
+      default: false,
+    },
+    sideTextures: {
+      type: "texture",
+    },
+  },
+  shapeStatesConditonalNodes: {},
+  //  shapeStatesOverrides: {},
+
+  shapeStatesNodes: {
+    "placement=down,direction=south": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_down",
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@upTexRotation": 0,
+          "@upTexTransparent": "@upDownTexturesTransparent",
+          "@downTex": "@upDownTextures",
+          "@downTexRotation": 0,
+          "@downTexTransparent": "@upDownTexturesTransparent",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=down,direction=north": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_down",
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@upTexRotation": 180,
+          "@upTexTransparent": "@upDownTexturesTransparent",
+          "@downTex": "@upDownTextures",
+          "@downTexRotation": 180,
+          "@downTexTransparent": "@upDownTexturesTransparent",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=down,direction=east": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_down",
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@upTexRotation": 90,
+          "@upTexTransparent": "@upDownTexturesTransparent",
+          "@downTex": "@upDownTextures",
+          "@downTexRotation": 90,
+          "@downTexTransparent": "@upDownTexturesTransparent",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=down,direction=west": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_down",
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@upTexRotation": 270,
+          "@upTexTransparent": "@upDownTexturesTransparent",
+          "@downTex": "@upDownTextures",
+          "@downTexRotation": 270,
+          "@downTexTransparent": "@upDownTexturesTransparent",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+
+    "placement=up,direction=north": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_down",
+        position: [0, 1 - 3 / 16, 0],
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@upTexRotation": 180,
+          "@upTexTransparent": "@upDownTexturesTransparent",
+          "@downTex": "@upDownTextures",
+          "@downTexRotation": 180,
+          "@downTexTransparent": "@upDownTexturesTransparent",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=up,direction=south": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_down",
+        position: [0, 1 - 3 / 16, 0],
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@upTexRotation": 0,
+          "@upTexTransparent": "@upDownTexturesTransparent",
+          "@downTex": "@upDownTextures",
+          "@downTexRotation": 0,
+          "@downTexTransparent": "@upDownTexturesTransparent",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=up,direction=east": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_down",
+        position: [0, 1 - 3 / 16, 0],
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@upTexRotation": 90,
+          "@upTexTransparent": "@upDownTexturesTransparent",
+          "@downTex": "@upDownTextures",
+          "@downTexRotation": 90,
+          "@downTexTransparent": "@upDownTexturesTransparent",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=up,direction=west": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_down",
+        position: [0, 1 - 3 / 16, 0],
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@upTexRotation": 270,
+          "@upTexTransparent": "@upDownTexturesTransparent",
+          "@downTex": "@upDownTextures",
+          "@downTexRotation": 270,
+          "@downTexTransparent": "@upDownTexturesTransparent",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+
+    "placement=north,direction=north": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_south",
+        position: [0, 0, 1 - 3 / 16],
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@northTexRotation": 180,
+          "@southTex": "@sideTextures",
+          "@southTexRotation": 180,
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=north,direction=south": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_south",
+        position: [0, 0, 1 - 3 / 16],
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@northTexRotation": 0,
+          "@southTex": "@sideTextures",
+          "@southTexRotation": 0,
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=north,direction=east": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_south",
+        position: [0, 0, 1 - 3 / 16],
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@northTexRotation": 90,
+          "@southTex": "@sideTextures",
+          "@southTexRotation": 90,
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=north,direction=west": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_south",
+        position: [0, 0, 1 - 3 / 16],
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@northTexRotation": 270,
+          "@southTex": "@sideTextures",
+          "@southTexRotation": 270,
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+
+    "placement=south,direction=north": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_south",
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@northTexRotation": 180,
+          "@southTex": "@sideTextures",
+          "@southTexRotation": 180,
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=south,direction=south": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_south",
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@northTexRotation": 0,
+          "@southTex": "@sideTextures",
+          "@southTexRotation": 0,
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=south,direction=east": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_south",
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@northTexRotation": 90,
+          "@southTex": "@sideTextures",
+          "@southTexRotation": 90,
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=south,direction=west": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_south",
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@northTexRotation": 270,
+          "@southTex": "@sideTextures",
+          "@southTexRotation": 270,
+          "@eastTex": "@sideTextures",
+          "@westTex": "@sideTextures",
+        },
+      },
+    ],
+    "placement=east,direction=north": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_west",
+        position: [1 - 3 / 16, 0, 0],
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@eastTexRotation": 0,
+          "@westTex": "@sideTextures",
+          "@westTexRotation": 0,
+        },
+      },
+    ],
+    "placement=east,direction=south": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_west",
+        position: [1 - 3 / 16, 0, 0],
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@eastTexRotation": 180,
+          "@westTex": "@sideTextures",
+          "@westTexRotation": 180,
+        },
+      },
+    ],
+    "placement=east,direction=east": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_west",
+        position: [1 - 3 / 16, 0, 0],
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@eastTexRotation": 90,
+          "@westTex": "@sideTextures",
+          "@westTexRotation": 90,
+        },
+      },
+    ],
+    "placement=east,direction=west": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_west",
+        position: [1 - 3 / 16, 0, 0],
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@eastTexRotation": 270,
+          "@westTex": "@sideTextures",
+          "@westTexRotation": 270,
+        },
+      },
+    ],
+
+    "placement=west,direction=north": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_west",
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@eastTexRotation": 0,
+          "@westTex": "@sideTextures",
+          "@westTexRotation": 0,
+        },
+      },
+    ],
+    "placement=west,direction=south": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_west",
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@eastTexRotation": 180,
+          "@westTex": "@sideTextures",
+          "@westTexRotation": 180,
+        },
+      },
+    ],
+    "placement=west,direction=east": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_west",
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@eastTexRotation": 90,
+          "@westTex": "@sideTextures",
+          "@westTexRotation": 90,
+        },
+      },
+    ],
+    "placement=west,direction=west": [
+      {
+        id: "cube",
+        geometryId: "dve_thin_panel_west",
+        inputs: {
+          "@upTex": "@upDownTextures",
+          "@downTex": "@upDownTextures",
+          "@northTex": "@sideTextures",
+          "@southTex": "@sideTextures",
+          "@eastTex": "@sideTextures",
+          "@eastTexRotation": 270,
+          "@westTex": "@sideTextures",
+          "@westTexRotation": 270,
+        },
+      },
+    ],
+  },
+};

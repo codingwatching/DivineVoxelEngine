@@ -332,7 +332,7 @@ export default function ArchiveColumn(
                 archiveChunk.ids
               ),
           light: archiveChunk.lightAllTheSame
-            ? archiveChunk.chunk.light[0]
+            ? archiveChunk.light[0]
             : archiveChunk.isLightPaletted
             ? convertToPaletteBuffer(
                 archiveChunk.rempaedLight

@@ -1,7 +1,6 @@
 import { Vec4Array, Vector3Like } from "@amodx/math";
 import { VoxelFaces } from "@divinevoxel/core/Math";
 
-
 import { QuadScalarVertexData } from "@amodx/meshing";
 import {
   QuadVerticies,
@@ -28,21 +27,6 @@ import {
 import { LightData } from "../../../../Data/LightData";
 
 import { VoxelRelativeCubeIndexPositionMap } from "../../Indexing/VoxelRelativeCubeIndex";
-
-const mapUvs = (uvs: Vec4Array, quad: Quad) => {
-  //1
-  quad.uvs.vertices[0].x = uvs[2];
-  quad.uvs.vertices[0].y = uvs[3];
-  //2
-  quad.uvs.vertices[1].x = uvs[0];
-  quad.uvs.vertices[1].y = uvs[3];
-  //3
-  quad.uvs.vertices[2].x = uvs[0];
-  quad.uvs.vertices[2].y = uvs[1];
-  //4
-  quad.uvs.vertices[3].x = uvs[2];
-  quad.uvs.vertices[3].y = uvs[1];
-};
 
 const ArgIndexes = BoxVoxelGometryInputs.ArgIndexes;
 
@@ -201,36 +185,53 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
         tool.voxel.y + p[1],
         tool.voxel.z + p[2]
       );
+
       const offsetBaseGometry = VoxelGeometryLookUp.geometryCache[hashed];
       const offsetConditonalGeometry =
         VoxelGeometryLookUp.conditionalGeometryCache[hashed];
 
       if (offsetBaseGometry) {
         for (let i = 0; i < offsetBaseGometry.length; i++) {
+          const faceIndex = this.geomtry.cullIndex.getValue(
+            offsetBaseGometry[i],
+            currentIndex,
+            trueFaceIndex
+          );
           if (
-            this.geomtry.cullIndex.getValue(
+            faceIndex > -1 &&
+            !VoxelGeometryLookUp.voxelHash[hashed].isShapeStateFaceTransparent(
+              VoxelGeometryLookUp.modCache[hashed],
+              VoxelGeometryLookUp.stateCache[hashed],
               offsetBaseGometry[i],
-              currentIndex,
-              trueFaceIndex
+              faceIndex
             )
-          )
+          ) {
             return false;
+          }
         }
       }
 
-      if (offsetConditonalGeometry) {
-        for (let i = 0; i < offsetConditonalGeometry.length; i++) {
-          const cond = offsetConditonalGeometry[i];
-          for (let k = 0; k < offsetConditonalGeometry.length; k++) {
-            if (
-              this.geomtry.cullIndex.getValue(
-                cond[i],
-                currentIndex,
-                trueFaceIndex
-              )
+      if (!offsetConditonalGeometry) continue;
+      for (let i = 0; i < offsetConditonalGeometry.length; i++) {
+        const cond = offsetConditonalGeometry[i];
+        for (let k = 0; k < cond.length; k++) {
+          const faceIndex = this.geomtry.cullIndex.getValue(
+            cond[k],
+            currentIndex,
+            trueFaceIndex
+          );
+          if (
+            faceIndex > -1 &&
+            !VoxelGeometryLookUp.voxelHash[
+              hashed
+            ].isCondtionalStateFaceTransparent(
+              VoxelGeometryLookUp.modCache[hashed],
+              VoxelGeometryLookUp.stateCache[hashed],
+              cond[i],
+              faceIndex
             )
-              return false;
-          }
+          )
+            return false;
         }
       }
     }
@@ -242,6 +243,7 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
     const tool = this.tool;
 
     const lightData = tool.lightData[face];
+    const isLightSource = this.tool.voxel.isLightSource();
 
     const worldLight = this.worldLight;
     const worldAO = this.worldAO;
@@ -252,6 +254,8 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
         lightData as Vec4Array,
         this.vertexWeights[face][v]
       );
+
+      if (isLightSource) continue;
 
       const trueVertexIndex = this.vertexIndex + face * 4 + v;
 
@@ -273,6 +277,7 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
           tool.voxel.z + p[2]
         );
 
+        if (VoxelGeometryLookUp.lightSourecCache[hashed] === true) continue;
         const baseGeo = VoxelGeometryLookUp.geometryCache[hashed];
         const conditonalGeo =
           VoxelGeometryLookUp.conditionalGeometryCache[hashed];
@@ -297,30 +302,27 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
             }
           }
         }
-        if (conditonalGeo) {
-          length = conditonalGeo.length;
-          for (
-            let condtionsIndex = 0;
-            condtionsIndex < length;
-            condtionsIndex++
-          ) {
-            const condiotnalength = conditonalGeo[condtionsIndex].length;
-            for (let geoIndex = 0; geoIndex < condiotnalength; geoIndex++) {
-              if (
-                this.geomtry.aoIndex.getValue(
-                  conditonalGeo[condtionsIndex][geoIndex],
-                  currentIndex,
-                  trueVertexIndex
-                )
-              ) {
-                worldAO.vertices[v] = 1;
-                shaded = true;
-                break;
-              }
+        if (!conditonalGeo) continue;
+        length = conditonalGeo.length;
+        for (
+          let condtionsIndex = 0;
+          condtionsIndex < length;
+          condtionsIndex++
+        ) {
+          const condiotnalength = conditonalGeo[condtionsIndex].length;
+          for (let geoIndex = 0; geoIndex < condiotnalength; geoIndex++) {
+            if (
+              this.geomtry.aoIndex.getValue(
+                conditonalGeo[condtionsIndex][geoIndex],
+                currentIndex,
+                trueVertexIndex
+              )
+            ) {
+              worldAO.vertices[v] = 1;
+              break;
             }
           }
         }
-        if (shaded) break;
       }
     }
   }
@@ -334,11 +336,19 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
       )
     )
       return true;
-    return shouldCauseFlip(
-      LightData.getS(this.worldLight.vertices[0]),
-      LightData.getS(this.worldLight.vertices[1]),
-      LightData.getS(this.worldLight.vertices[2]),
-      LightData.getS(this.worldLight.vertices[3])
+    return (
+      shouldCauseFlip(
+        LightData.getS(this.worldLight.vertices[0]),
+        LightData.getS(this.worldLight.vertices[1]),
+        LightData.getS(this.worldLight.vertices[2]),
+        LightData.getS(this.worldLight.vertices[3])
+      ) ||
+      shouldCauseFlip(
+        LightData.sumRGB(this.worldLight.vertices[0]),
+        LightData.sumRGB(this.worldLight.vertices[1]),
+        LightData.sumRGB(this.worldLight.vertices[2]),
+        LightData.sumRGB(this.worldLight.vertices[3])
+      )
     );
   }
 
@@ -362,7 +372,20 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
         const quad = this.quads[face];
         quad.flip = this.shouldFlip() || faceArgs[ArgIndexes.Fliped];
         tool.setTexture(faceArgs[ArgIndexes.Texture]);
-        mapUvs(faceArgs[ArgIndexes.UVs], quad);
+
+        const uvs = faceArgs[ArgIndexes.UVs];
+        //1
+        quad.uvs.vertices[0].x = uvs[0][0];
+        quad.uvs.vertices[0].y = uvs[0][1];
+        //2
+        quad.uvs.vertices[1].x = uvs[1][0];
+        quad.uvs.vertices[1].y = uvs[1][1];
+        //3
+        quad.uvs.vertices[2].x = uvs[2][0];
+        quad.uvs.vertices[2].y = uvs[2][1];
+        //4
+        quad.uvs.vertices[3].x = uvs[3][0];
+        quad.uvs.vertices[3].y = uvs[3][1];
         VoxelGeometry.addQuad(tool, origin, quad);
       }
     }

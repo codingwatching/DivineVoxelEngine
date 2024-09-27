@@ -104,20 +104,25 @@ class Request<T, Q> {
     if (EngineSettings.isServer()) return false;
     if (!this.needsRebuild() && !this.keepTrackOfChunks) return false;
     if (!chunkTool.setDimension(this.origin[0]).loadInAt(x, y, z)) return false;
-    const chunkKey = WorldSpaces.chunk.getKeyXYZ(x,y,z);
+    const chunkKey = WorldSpaces.chunk.getKeyXYZ(x, y, z);
     if (this.rebuildQueMap.has(chunkKey)) return false;
     this.rebuildQueMap.set(chunkKey, true);
+    const chunkPOS = WorldSpaces.chunk.getPosition();
     if (this.keepTrackOfChunks) {
-      const chunkPOS = WorldSpaces.chunk.getPosition();
       !this.trackedChunks.has(chunkKey) &&
         this.trackedChunks.set(chunkKey, [chunkPOS.x, chunkPOS.y, chunkPOS.z]);
     }
     if (this.needsRebuild()) {
       if (this.buildMode == "async") {
-        this.aSyncQueue.push([...chunkTool.location]);
+        this.aSyncQueue.push([
+          this.origin[0],
+          chunkPOS.x,
+          chunkPOS.y,
+          chunkPOS.z,
+        ]);
         return true;
       }
-      this.syncQueue.push([...chunkTool.location]);
+      this.syncQueue.push([this.origin[0], chunkPOS.x, chunkPOS.y, chunkPOS.z]);
       return true;
     }
     return false;

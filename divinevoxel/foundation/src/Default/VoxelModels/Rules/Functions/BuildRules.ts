@@ -1,10 +1,11 @@
-import { OcclusionQuad } from "../Classes/OcclusionQuad";
+import { OcclusionFace, OcclusionQuadFace } from "../Classes/OcclusionFace";
 import { VoxelRuleGeometry } from "../Classes/VoxelRulesGeometry";
 import { VoxelRelativeCubeIndex } from "../../Indexing/VoxelRelativeCubeIndex";
-import { Vec3Array } from "@amodx/math";
+import { Vec3Array, Vector3Like } from "@amodx/math";
 import { StringPalette } from "@divinevoxel/core/Interfaces/Data/StringPalette";
-import { VoxelResultsIndex } from "../../Indexing/VoxelResultsIndex";
+import { VoxelAOResultsIndex } from "../../Indexing/VoxelAOResultsIndex";
 import { VoxelModelManager } from "../VoxelModelManager";
+import { VoxelFaceCullResultsIndex } from "../../Indexing/VoxelFaceCullResultsIndex";
 
 class OcculsionBox {
   constructor(
@@ -91,15 +92,15 @@ function updateOcculsionBox(point: Vec3Array, normal: Vec3Array): OcculsionBox {
   return mainBox;
 }
 
-const projectPointOntoAxis = (point: Vec3Array, axis: Vec3Array) => {
+function projectPointOntoAxis(point: Vec3Array, axis: Vec3Array) {
   return point[0] * axis[0] + point[1] * axis[1] + point[2] * axis[2];
-};
+}
 
-const projectionsOverlap = (
+function projectionsOverlap(
   axis: Vec3Array,
   shape1Points: Vec3Array[],
   shape2Points: Vec3Array[]
-) => {
+) {
   let min1 = Infinity;
   let max1 = -Infinity;
   let min2 = Infinity;
@@ -118,9 +119,9 @@ const projectionsOverlap = (
   }
 
   return !(max1 < min2 || max2 < min1);
-};
+}
 
-function doesBoxIntersectQuad(box: OcculsionBox, quad: OcclusionQuad): boolean {
+function doesBoxIntersectFace(quad: OcclusionFace): boolean {
   const quadPoints = quad.points;
 
   const quadNormal = quad.normal;
@@ -155,19 +156,17 @@ export function BuildRules(main: VoxelRuleGeometry, geoPalette: StringPalette) {
     totalAOReusltsSize * (geoPalette.size + 1)
   );
 
-  const aoIndex = new VoxelResultsIndex({
+  const aoIndex = new VoxelAOResultsIndex({
     buffer: aoRulesBuffer,
-    resultsSize: main.vertexCount,
+    vertexByteCount: main.vertexCount,
   });
 
-  const totalCullReusltsSize = main.faceCount * maxIndex;
-  const cullRulesBuffer = new SharedArrayBuffer(
-    totalCullReusltsSize * (geoPalette.size + 1)
-  );
+  const cullIndex = new VoxelFaceCullResultsIndex({
+    buffer: new SharedArrayBuffer(
+      main.faceCount * 2 * maxIndex * (geoPalette.size + 1)
+    ),
 
-  const cullIndex = new VoxelResultsIndex({
-    buffer: cullRulesBuffer,
-    resultsSize: main.faceCount,
+    faceByteCount: main.faceCount,
   });
 
   for (
@@ -185,13 +184,13 @@ export function BuildRules(main: VoxelRuleGeometry, geoPalette: StringPalette) {
         for (let nz = -1; nz < 2; nz++) {
           const directionIndex = VoxelRelativeCubeIndex.getIndex(nx, y, nz);
           other.occlusionPlane.setOffset(nx, y, nz);
-          
-          for (const currentPlane of main.occlusionPlane.planes) {
-            let occuled = false;
+
+          for (const currentPlane of main.occlusionPlane.faces) {
+            let occuledFaceIndex = -1;
 
             const points = currentPlane.points;
             const normal = currentPlane.normal;
-            for (const otherPlane of other.occlusionPlane.planes) {
+            for (const otherPlane of other.occlusionPlane.faces) {
               if (
                 otherPlane.parentId == currentPlane.parentId &&
                 currentPlane.nodeId == otherPlane.nodeId &&
@@ -201,41 +200,39 @@ export function BuildRules(main: VoxelRuleGeometry, geoPalette: StringPalette) {
               )
                 continue;
 
-              if (otherPlane.doesCover(currentPlane)) occuled = true;
-              if (otherPlane.direction == currentPlane.direction) continue;
+              if (otherPlane.doesCoverFace(currentPlane)) {
+                occuledFaceIndex = otherPlane.faceCount;
+              }
+
+              if (
+                Vector3Like.EqualsArray(otherPlane.normal, currentPlane.normal)
+              )
+                continue;
               for (let v = 0; v < points.length; v++) {
-                const occulsionBox = updateOcculsionBox(points[v], normal);
+                updateOcculsionBox(points[v], normal);
                 const trueVertexIndex = currentPlane.vertexCount + v;
 
-                if (doesBoxIntersectQuad(occulsionBox, otherPlane)) {
+                if (doesBoxIntersectFace(otherPlane)) {
                   aoIndex.setValue(
                     otherNumberId,
                     directionIndex,
                     trueVertexIndex,
                     1
                   );
-                  if (
-                    !vertexHitMap[trueVertexIndex].find(
-                      (_) => _ == directionIndex
-                    )
-                  )
+                  if (!vertexHitMap[trueVertexIndex].includes(directionIndex))
                     vertexHitMap[trueVertexIndex].push(directionIndex);
                 }
               }
             }
 
-            if (occuled) {
-              cullIndex.setValue(
-                otherNumberId,
-                directionIndex,
-                currentPlane.faceCount,
-                1
-              );
-              if (
-                !faceCullMap[currentPlane.faceCount].find(
-                  (_) => _ == directionIndex
-                )
-              )
+            cullIndex.setValue(
+              otherNumberId,
+              directionIndex,
+              currentPlane.faceCount,
+              occuledFaceIndex
+            );
+            if (occuledFaceIndex > -1) {
+              if (!faceCullMap[currentPlane.faceCount].includes(directionIndex))
                 faceCullMap[currentPlane.faceCount].push(directionIndex);
             }
           }

@@ -1,18 +1,26 @@
+import { fence, fenceEastWest, fenceNorthsouth, fencePost } from "./Examples";
 import {
   cube,
+  halfDownCube,
   eighthCube,
-  fence,
-  fenceEastWest,
-  fenceNorthsouth,
-  fencePost,
-  halfCube,
-  pillarCube,
   quaterCubeSouthNorth,
   quaterCubeUpDown,
   quaterCubeWestEast,
+  halfSouthCube,
+  halfWestCube,
+} from "./Defaults/CubeVoxelGeometry";
+import {
+  pillarCube,
   simpleCube,
-  stair,
-} from "./Examples";
+  simpleHalfCube,
+} from "./Defaults/CubeVoxelModels";
+import {
+  thinPanelDown,
+  thinPanelSouth,
+  thinPanelWest,
+} from "./Defaults/PanelVoxelGeometry";
+import { stair } from "./Defaults/StairVoxelModel";
+
 import { VoxelModelManager } from "./Rules/VoxelModelManager";
 import {
   VoxelGeometryData,
@@ -20,50 +28,51 @@ import {
   VoxelModelData,
 } from "./VoxelModel.types";
 import { VoxelData } from "@divinevoxel/core";
-import { ThreadPool } from "@amodx/threads";
+import { Thread, ThreadPool } from "@amodx/threads";
 
 import { BuildRules } from "./Rules/Functions/BuildRules";
 import { BuildStateData } from "./Rules/Functions/BuildStateData";
 import { BuildGeomtryInputs } from "./Rules/Functions/BuildGeomtryInputs";
 import { BuildFinalInputs } from "./Rules/Functions/BuildFinalInputs";
-import { StringPalette } from "@divinevoxel/core/Interfaces/Data/StringPalette";
 import { ConstructorVoxelModelSyncData } from "./VoxelModelRules.types";
+import { SchemaRegister } from "./State/SchemaRegister";
+import { simpleThinPannel } from "./Defaults/PanelVoxelModels";
 
 export function InitVoxelModels(data: {
   constructors: ThreadPool;
+  world: Thread;
   geometry?: VoxelGeometryData[];
   models?: VoxelModelData[];
   voxels: VoxelData[];
 }) {
   const initTime = performance.now();
+
   VoxelModelManager.registerGeometry(
     cube,
     fencePost,
     fenceEastWest,
     fenceNorthsouth,
-
-    /*  
-
-
-  halfCube,
+    halfDownCube,
+    halfSouthCube,
+    halfWestCube,
     quaterCubeSouthNorth,
     quaterCubeUpDown,
     quaterCubeWestEast,
     eighthCube,
-    fencePost,
-    fenceEastWest,
-    fenceNorthsouth, */
+    thinPanelDown,
+    thinPanelSouth,
+    thinPanelWest,
+
     ...(data.geometry || [])
   );
+
   VoxelModelManager.registerModels(
     simpleCube,
+    simpleHalfCube,
     pillarCube,
+    simpleThinPannel,
     fence,
-    /* 
-  
-    ,
     stair,
-    fence, */
     ...(data.models || [])
   );
 
@@ -105,26 +114,23 @@ export function InitVoxelModels(data: {
   for (const [mainKey, model] of VoxelModelManager.models) {
     const stateData = BuildStateData(model, VoxelModelManager.geometryPalette);
     model.stateData = stateData;
+    SchemaRegister.registerModel(mainKey, stateData.schema);
     syncData.models.push({
       id: mainKey,
       schema: stateData.schema,
       geoLinkMap: stateData.geometryLinkStateMap,
       shapeStateMap: stateData.shapeStatePalette,
-      shapeStateGeometryMap: stateData.shapeStatePalette.map((_) =>
-        _.map((id) => stateData.geometryLinkStateMap[id])
-      ),
-      shapeStateDataOverrideTree: stateData.shapeStatDataOverrideeTree,
+      shapeStateGeometryMap: stateData.shapeStateGeometryPalette,
       shapeStateTree: stateData.shapeStateTree,
       condiotnalStateTree: stateData.condiotnalNodeStateTree,
       condiotnalStatements: stateData.condiotnalStatements,
       condiotnalStateMap: stateData.condiotnalShapeStatePalette,
       condiotnalShapeStateMap: stateData.condiotanlStatePalette,
-      condiotnalShapeStateGeometryMap: stateData.condiotanlStatePalette.map(
-        (state) =>
-          state.map((nodes: number[]) =>
-            nodes.map((id) => stateData.geometryLinkStateMap[id])
-          )
-      ),
+      condiotnalShapeStateGeometryMap: stateData.condiotanlGeometryStatePalette,
+      shapeStateRelativeGeometryMap: stateData.shapeStateRelativeGeometryMap,
+      relativeGeometryByteIndexMap: stateData.relativeGeometryByteIndexMap,
+      condiotnalShapeStateRelativeGeometryMap:
+        stateData.condiotnalShapeStateRelativeGeometryMap,
     });
   }
 
@@ -136,24 +142,24 @@ export function InitVoxelModels(data: {
     const {
       shapeStateVoxelInputs,
       conditionalShapeStateVoxelInputs,
-      shapeStateDataOverridesVoxelInputs,
+      transparentVoxelFaceIndexes,
     } = BuildFinalInputs(model);
 
     for (const v in shapeStateVoxelInputs) {
       const stateData = model.voxelModData.get(v)!;
-
+      SchemaRegister.registerVoxel(v, mainKey, stateData.modSchema);
       syncData.voxels.push({
         id: v,
         modelId: mainKey,
+        transparentFaceIndex: transparentVoxelFaceIndexes[v].data,
         modSchema: stateData.modSchema,
         modStateTree: stateData.modStateTree,
         baseGeometryInputMap: shapeStateVoxelInputs[v],
         condiotnalGeometryInputMap: conditionalShapeStateVoxelInputs[v],
-        shapeStateDataOverrideInputMap: shapeStateDataOverridesVoxelInputs[v],
       });
     }
   }
-
+  data.world.runAsyncTasks("sync-voxel-model-data", syncData);
   data.constructors.runTasksForAll("sync-voxel-model-data", syncData);
   console.log("done building inputs", performance.now() - inputStartTime);
 
@@ -161,12 +167,7 @@ export function InitVoxelModels(data: {
     "init voxel models done | totle time: ",
     performance.now() - initTime
   );
-  console.log([VoxelModelManager.geometry, VoxelModelManager.models]);
-  console.log(
-    "BUILD RULES",
-    VoxelModelManager.geometry,
-    VoxelModelManager.models
-  );
+
 
   /* 
   const blob = new Blob([JSON.stringify(output, null, 1)], {});

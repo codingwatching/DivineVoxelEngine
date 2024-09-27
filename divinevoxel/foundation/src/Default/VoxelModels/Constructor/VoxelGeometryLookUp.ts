@@ -5,12 +5,13 @@ import { Vec3Array, Vector3Like } from "@amodx/math";
 
 export class VoxelGeometryLookUp {
   static dataTool: DataTool;
-
+  static voxelHash: VoxelModelVoxelConstructor[] = [];
+  static modCache: number[] = [];
   static stateCache: number[] = [];
-  static stateDataOverrideCache: number[] = [];
   static conditonalStateCache: number[] = [];
   static geometryCache: number[][] = [];
   static conditionalGeometryCache: number[][][] = [];
+  static lightSourecCache: boolean[] = [];
   static offset: Vec3Array = [0, 0, 0];
 
   static init() {
@@ -26,10 +27,12 @@ export class VoxelGeometryLookUp {
 
   static stop() {
     this.stateCache.length = 0;
-    this.stateDataOverrideCache.length = 0;
+    this.voxelHash.length = 0;
+    this.modCache.length = 0;
     this.geometryCache.length = 0;
     this.conditionalGeometryCache.length = 0;
     this.conditonalStateCache.length = 0;
+    this.lightSourecCache.length = 0;
   }
 
   static getHash(x: number, y: number, z: number) {
@@ -58,7 +61,7 @@ export class VoxelGeometryLookUp {
       this.dataTool.getId()
     ] as VoxelModelVoxelConstructor;
 
-    if (!voxelConstructor.isModel) {
+    if (!voxelConstructor || !voxelConstructor.isModel) {
       this.stateCache[hashed] = -1;
       return -1;
     }
@@ -66,19 +69,25 @@ export class VoxelGeometryLookUp {
     voxelConstructor.model.schema.voxel.loadInAt(x, y, z);
     const shapeState = this.dataTool.getShapeState();
     const state = voxelConstructor.model.shapeStateTree.getState(shapeState);
-    const stateDataOverride =
-      voxelConstructor.model.shapeStateDataOverrideTree.getState(shapeState);
-
+    const mod = this.dataTool.getMod();
+    const modState = voxelConstructor.modTree.getState(mod);
+    this.modCache[hashed] = modState;
     const conditonalState =
       voxelConstructor.model.condtioanlShapeStateTree.getState(shapeState);
     this.stateCache[hashed] = state;
-    this.stateDataOverrideCache[hashed] = stateDataOverride;
+
+    this.voxelHash[hashed] = voxelConstructor;
     this.conditonalStateCache[hashed] = conditonalState;
+
+    this.lightSourecCache[hashed] = this.dataTool.isLightSource();
 
     this.geometryCache[hashed] =
       voxelConstructor.model.data.shapeStateGeometryMap[state];
+
     this.conditionalGeometryCache[hashed] =
-    voxelConstructor.model.data.condiotnalShapeStateGeometryMap[conditonalState];
+      voxelConstructor.model.data.condiotnalShapeStateGeometryMap[
+        conditonalState
+      ];
 
     return state;
   }

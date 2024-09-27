@@ -1,9 +1,23 @@
 import { Vec3Array, Vector3Like } from "@amodx/math";
 import { VoxelFaceNames } from "@divinevoxel/core/Math";
 
-export class OcclusionQuad {
+export abstract class OcclusionFace {
+  public parentId: string;
+  public nodeId: number;
+  public vertexCount: number;
+  public faceCount: number;
+  points: Vec3Array[];
+  normal: Vec3Array;
   offset: Vec3Array = [0, 0, 0];
 
+  abstract setOffset(x: number, y: number, z: number): void;
+  abstract updatePoints(): void;
+  abstract clone(): OcclusionFace;
+  abstract isPointInBounds(point: Vec3Array): boolean;
+  abstract doesCoverFace(face: OcclusionFace): boolean;
+}
+
+export class OcclusionQuadFace extends OcclusionFace {
   start = Vector3Like.Create();
   end = Vector3Like.Create();
 
@@ -20,6 +34,7 @@ export class OcclusionQuad {
     private _start: Vec3Array,
     private _end: Vec3Array
   ) {
+    super();
     const self = this;
 
     Vector3Like.CopyFromArray(this.start, _start);
@@ -189,7 +204,7 @@ export class OcclusionQuad {
   }
 
   clone() {
-    return new OcclusionQuad(
+    return new OcclusionQuadFace(
       this.parentId,
       this.nodeId,
       this.direction,
@@ -236,36 +251,37 @@ export class OcclusionQuad {
     }
   }
 
-  doesCover(plane: OcclusionQuad): boolean {
+  doesCoverFace(face: OcclusionFace): boolean {
+    if (!(face instanceof OcclusionQuadFace)) return false;
     switch (this.direction) {
       case "up":
-        if (plane.direction === "down" && this.start.y === plane.end.y) {
-          return this.totallyCoversInXAndZ(plane);
+        if (face.direction === "down" && this.start.y === face.end.y) {
+          return this.totallyCoversInXAndZ(face);
         }
         break;
       case "down":
-        if (plane.direction === "up" && this.end.y === plane.start.y) {
-          return this.totallyCoversInXAndZ(plane);
+        if (face.direction === "up" && this.end.y === face.start.y) {
+          return this.totallyCoversInXAndZ(face);
         }
         break;
       case "north":
-        if (plane.direction === "south" && this.end.z === plane.start.z) {
-          return this.totallyCoversInXAndY(plane);
+        if (face.direction === "south" && this.end.z === face.start.z) {
+          return this.totallyCoversInXAndY(face);
         }
         break;
       case "south":
-        if (plane.direction === "north" && this.start.z === plane.end.z) {
-          return this.totallyCoversInXAndY(plane);
+        if (face.direction === "north" && this.start.z === face.end.z) {
+          return this.totallyCoversInXAndY(face);
         }
         break;
       case "east":
-        if (plane.direction === "west" && this.start.x === plane.end.x) {
-          return this.totallyCoversInYAndZ(plane);
+        if (face.direction === "west" && this.start.x === face.end.x) {
+          return this.totallyCoversInYAndZ(face);
         }
         break;
       case "west":
-        if (plane.direction === "east" && this.end.x === plane.start.x) {
-          return this.totallyCoversInYAndZ(plane);
+        if (face.direction === "east" && this.end.x === face.start.x) {
+          return this.totallyCoversInYAndZ(face);
         }
         break;
       default:
@@ -274,7 +290,7 @@ export class OcclusionQuad {
     return false;
   }
 
-  private totallyCoversInXAndZ(plane: OcclusionQuad): boolean {
+  private totallyCoversInXAndZ(plane: OcclusionQuadFace): boolean {
     return (
       this.start.x <= plane.start.x &&
       this.end.x >= plane.end.x &&
@@ -283,7 +299,7 @@ export class OcclusionQuad {
     );
   }
 
-  private totallyCoversInXAndY(plane: OcclusionQuad): boolean {
+  private totallyCoversInXAndY(plane: OcclusionQuadFace): boolean {
     return (
       this.start.x <= plane.start.x &&
       this.end.x >= plane.end.x &&
@@ -292,7 +308,7 @@ export class OcclusionQuad {
     );
   }
 
-  private totallyCoversInYAndZ(plane: OcclusionQuad): boolean {
+  private totallyCoversInYAndZ(plane: OcclusionQuadFace): boolean {
     return (
       this.start.y <= plane.start.y &&
       this.end.y >= plane.end.y &&
@@ -301,7 +317,7 @@ export class OcclusionQuad {
     );
   }
 
-  isPointOnPlane(x: number, y: number, z: number): boolean {
+  isPointOnFace(x: number, y: number, z: number): boolean {
     switch (this.direction) {
       case "up":
       case "down":
@@ -336,8 +352,8 @@ export class OcclusionQuad {
   }
 }
 
-export class OcclusionQuadContainer {
-  planes: OcclusionQuad[] = [];
+export class OcclusionFaceContainer {
+  faces: OcclusionFace[] = [];
   offset: Vec3Array = [0, 0, 0];
 
   constructor() {}
@@ -345,20 +361,20 @@ export class OcclusionQuadContainer {
     this.offset[0] = x;
     this.offset[1] = y;
     this.offset[2] = z;
-    for (const plane of this.planes) {
+    for (const plane of this.faces) {
       plane.setOffset(x, y, z);
       plane.updatePoints();
     }
   }
 
-  addPlane(plane: OcclusionQuad) {
-    this.planes[plane.faceCount] = plane;
+  addFace(face: OcclusionFace) {
+    this.faces[face.faceCount] = face;
   }
   clone() {
-    const container = new OcclusionQuadContainer();
+    const container = new OcclusionFaceContainer();
 
-    for (const plane of this.planes) {
-      container.planes[plane.faceCount] = plane.clone();
+    for (const face of this.faces) {
+      container.faces[face.faceCount] = face.clone();
     }
     return container;
   }

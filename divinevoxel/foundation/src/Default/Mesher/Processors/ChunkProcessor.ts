@@ -85,14 +85,12 @@ export class ChunkProcessor {
     const chunks = <SetChunkMeshTask>[location, [], priority];
     const trasnfers: any[] = [];
     for (const [substance, mesher] of RenderedSubstances.meshers) {
-      if (mesher.getAttribute("position").length == 0) {
+      if (mesher.positions.length == 0) {
         chunks[1].push([substance, false]);
         mesher.resetAll();
         continue;
       }
-
       const [attributes, buffers] = mesher.getAllAttributes();
-
       trasnfers.push(...buffers);
       chunks[1].push([substance, [location, attributes]]);
       mesher.resetAll();

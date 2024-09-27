@@ -1,22 +1,21 @@
 import { BinaryArrays } from "@amodx/binary/Util/BinaryArrays";
 import { VoxelRelativeCubeIndex } from "./VoxelRelativeCubeIndex";
-import { Vec3Array } from "@amodx/math";
-export type VoxelResultsIndexData = {
+export type VoxelAOResultsIndexData = {
   buffer: SharedArrayBuffer;
-  resultsSize: number;
+  vertexByteCount: number;
 };
 
-export class VoxelResultsIndex {
+export class VoxelAOResultsIndex {
   view: DataView;
 
-  constructor(public data: VoxelResultsIndexData) {
+  constructor(public data: VoxelAOResultsIndexData) {
     this.view = new DataView(data.buffer);
   }
 
   getByteIndex(otherId: number, directionIndex: number) {
     return (
-      otherId * this.data.resultsSize * VoxelRelativeCubeIndex.flatIndex.size +
-      directionIndex * this.data.resultsSize
+      otherId * this.data.vertexByteCount * VoxelRelativeCubeIndex.flatIndex.size +
+      directionIndex * this.data.vertexByteCount
     );
   }
 
@@ -42,6 +41,3 @@ export class VoxelResultsIndex {
     );
   }
 }
-
-
-

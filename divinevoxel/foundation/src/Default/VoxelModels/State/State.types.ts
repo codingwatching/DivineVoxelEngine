@@ -1,20 +1,21 @@
 import { VoxelModelRelationsConditionData } from "../VoxelModel.types";
 
-export type ShapeStateSchemaNodeData = {
+export type BinarySchemaNodeData = {
   id: string;
-  type: "shape-state";
+  type: "binary";
+  valuePalette?:string[];
   index: number;
   mask: number;
 };
-export type ShapeRelationsScehmaNodeData = {
+export type VoxelRelationsScehmaNodeData = {
   id: string;
   type: "relation";
   conditions: VoxelModelRelationsConditionData[];
 };
 
-export type ShapeStateSchemaData =
-  | ShapeStateSchemaNodeData
-  | ShapeRelationsScehmaNodeData;
+export type VoxelModelStateSchemaData =
+  | BinarySchemaNodeData
+  | VoxelRelationsScehmaNodeData;
 
 export enum StateCompareOperations {
   Equals,

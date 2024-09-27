@@ -1,13 +1,13 @@
 import { Vec3Array } from "@amodx/math";
 import { VoxelGeometryData } from "../../VoxelModel.types";
-import { GetOcclusionPlanes } from "../Functions/GetOcclusionPlanes";
-import { OcclusionQuadContainer } from "./OcclusionQuad";
+import { GetOcclusionFaces } from "../Functions/GetOcclusionFaces";
+import { OcclusionFaceContainer } from "./OcclusionFace";
 import { BuildGeomtryInputs } from "../Functions/BuildGeomtryInputs";
 import { BuildStateData } from "../Functions/BuildStateData";
 
 export class VoxelRuleGeometry {
 
-  occlusionPlane: OcclusionQuadContainer;
+  occlusionPlane: OcclusionFaceContainer;
 
   faceCount = 0;
   vertexCount = 0;
@@ -25,7 +25,7 @@ export class VoxelRuleGeometry {
 
 
   private init(data: VoxelGeometryData) {
-    this.occlusionPlane = GetOcclusionPlanes(this.id, this, data.nodes);
+    this.occlusionPlane = GetOcclusionFaces(this.id, this, data.nodes);
     this.inputs = BuildGeomtryInputs(this);
   }
 

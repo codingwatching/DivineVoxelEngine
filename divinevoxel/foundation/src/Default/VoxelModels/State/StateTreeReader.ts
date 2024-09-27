@@ -1,9 +1,9 @@
-import { ShapeStateSchema } from "./Schema/ShapeStateSchema";
+import { StateSchema } from "./Schema/StateSchema";
 
 export class StateTreeReader {
   startingIndex = 0;
   constructor(
-    public schema: ShapeStateSchema,
+    public schema: StateSchema,
     public defaultValue = 0,
     public tree: any[]
   ) {}
@@ -12,20 +12,23 @@ export class StateTreeReader {
     if (!this.tree.length) return this.defaultValue;
     let found = -1;
     let index = this.startingIndex;
-    let curretNode = this.tree[this.startingIndex];
+    let curretNode = this.tree;
 
     while (found == -1) {
-      curretNode = curretNode[this.schema.nodes[index].getValue(shapeState)];
-      if (typeof curretNode == "number") {
-        found = curretNode;
-        break;
-      }
+      curretNode =
+        curretNode[index][this.schema.nodes[index].getValue(shapeState)];
 
+      if (typeof curretNode == "number") {
+        return curretNode;
+      }
       for (let i = 0; i < curretNode.length; i++) {
         if (curretNode[i]) {
           index = i;
-          curretNode = curretNode[index];
+          break;
         }
+      }
+      if (typeof curretNode == "number") {
+        return curretNode;
       }
     }
 

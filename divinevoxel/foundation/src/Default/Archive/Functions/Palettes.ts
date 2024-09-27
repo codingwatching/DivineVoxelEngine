@@ -23,7 +23,7 @@ export const convertToPaletteBuffer = (
     for (let i = 0; i < data.length; i++) {
       halfNibbleArray[i] = data[i];
     }
-  } else if (paletteSize > 0 && paletteSize <= 2) {
+  } else if (paletteSize == 2) {
     buffer = new Uint8Array(data.length / 8);
     const bitArray = new BitArray(buffer);
     for (let i = 0; i < data.length; i++) {

@@ -6,20 +6,22 @@ import { VoxelInputsSyncData } from "../VoxelModelRules.types";
 import { VoxelModelConstructorRegister } from "./Register/VoxelModelConstructorRegister";
 import { ShapeTool } from "../../Mesher/Shapes/ShapeTool";
 import { VoxelGeometryLookUp } from "./VoxelGeometryLookUp";
-import { ShapeStateSchema } from "../State/Schema/ShapeStateSchema";
+import { StateSchema } from "../State/Schema/StateSchema";
 import { StateTreeReader } from "../State/StateTreeReader";
+import { VoxelFaceTransparentResultsIndex } from "../Indexing/VoxelFaceTransparentResultsIndex";
 
 export class VoxelModelVoxelConstructor extends VoxelConstructor {
   isModel: true = true;
 
   geometries: number[][] = [];
 
-  modSchema: ShapeStateSchema;
+  modSchema: StateSchema;
   modTree: StateTreeReader;
+
+  transparentIndex: VoxelFaceTransparentResultsIndex;
 
   baseInputMap: any[];
   conditonalInputMap: any[];
-  dataOverrideInputMap: any[];
 
   constructor(
     public id: string,
@@ -29,9 +31,11 @@ export class VoxelModelVoxelConstructor extends VoxelConstructor {
     super();
     this.baseInputMap = voxleData.baseGeometryInputMap;
     this.conditonalInputMap = voxleData.condiotnalGeometryInputMap;
-    this.dataOverrideInputMap = voxleData.shapeStateDataOverrideInputMap;
+    this.transparentIndex = new VoxelFaceTransparentResultsIndex(
+      voxleData.transparentFaceIndex
+    );
 
-    this.modSchema = new ShapeStateSchema(voxleData.modSchema);
+    this.modSchema = new StateSchema(voxleData.modSchema);
 
     this.modTree = new StateTreeReader(
       this.modSchema,
@@ -40,40 +44,57 @@ export class VoxelModelVoxelConstructor extends VoxelConstructor {
     );
   }
 
+  isShapeStateFaceTransparent(
+    modState: number,
+    shapeState: number,
+    geoId: number,
+    faceIndex: number
+  ) {
+    return (
+      this.transparentIndex.getValue(
+        modState,
+        this.model.getShapeStateTransaprentByteIndex(shapeState, geoId),
+        faceIndex
+      ) == 1
+    );
+  }
+  isCondtionalStateFaceTransparent(
+    modState: number,
+    shapeState: number,
+    geoId: number,
+    faceIndex: number
+  ) {
+    return (
+      this.transparentIndex.getValue(
+        modState,
+        this.model.getCondtionalStateTransaprentByteIndex(shapeState, geoId),
+        faceIndex
+      ) == 1
+    );
+  }
   process(tool: VoxelMesherDataTool) {
-    const modState = this.modTree.getState(tool.voxel.getMod());
-
     const hashed = VoxelGeometryLookUp.getHash(
       tool.voxel.x,
       tool.voxel.y,
       tool.voxel.z
     );
-    const dataOverrideState =
-      this.dataOverrideInputMap[modState][
-        VoxelGeometryLookUp.stateDataOverrideCache[hashed]
-      ];
 
     const treeState = VoxelGeometryLookUp.stateCache[hashed];
+    const modState = VoxelGeometryLookUp.modCache[hashed];
 
     if (treeState !== undefined && treeState > -1) {
-      const geometries = this.model.data.shapeStateMap[treeState];
-      const geometriesLength = geometries.length;
+      const geoLinks = this.model.data.shapeStateMap[treeState];
+      const geometries = this.model.data.shapeStateGeometryMap[treeState];
+
+      const geometriesLength = geoLinks.length;
 
       const inputs = this.baseInputMap[modState][treeState];
 
       for (let i = 0; i < geometriesLength; i++) {
-        const nodeId = geometries[i];
-        let geoInputs = inputs[nodeId];
-        if (dataOverrideState) {
-          if (dataOverrideState[nodeId]) {
-            geoInputs = dataOverrideState[nodeId];
-          }
-        }
+        const nodeId = geoLinks[i];
+        const geoInputs = inputs[nodeId];
 
-        const geomtry =
-          VoxelModelConstructorRegister.geometry[
-            this.model.data.geoLinkMap[nodeId]
-          ];
+        const geomtry = VoxelModelConstructorRegister.geometry[geometries[i]];
 
         const nodesLength = geomtry.nodes.length;
         for (let k = 0; k < nodesLength; k++) {
@@ -90,17 +111,14 @@ export class VoxelModelVoxelConstructor extends VoxelConstructor {
         this.model.data.condiotnalShapeStateMap[conditonalTreeState];
       const condiotnalNodesLength = condiotnalNodes.length;
 
-      for (let i = 0; i < condiotnalNodesLength; i++) {
-        const geometries = condiotnalNodes[i];
+      for (let c = 0; c < condiotnalNodesLength; c++) {
+        const geometries = condiotnalNodes[c];
         const geometriesLength = geometries.length;
-        const inputs = this.conditonalInputMap[modState][i];
-        for (let k = 0; k < geometriesLength; k++) {
-          const nodeId = geometries[k];
-          let geoInputs = inputs[k];
-          if (dataOverrideState) {
-            if (dataOverrideState[nodeId])
-              geoInputs = dataOverrideState[nodeId];
-          }
+        const inputs = this.conditonalInputMap[modState][c];
+
+        for (let i = 0; i < geometriesLength; i++) {
+          const nodeId = geometries[i];
+          const geoInputs = inputs[i];
 
           const geomtry =
             VoxelModelConstructorRegister.geometry[
@@ -108,8 +126,8 @@ export class VoxelModelVoxelConstructor extends VoxelConstructor {
             ];
 
           const nodesLength = geomtry.nodes.length;
-          for (let g = 0; g < nodesLength; g++) {
-            geomtry.nodes[g].add(tool, hashed, ShapeTool.origin, geoInputs[g]);
+          for (let k = 0; k < nodesLength; k++) {
+            geomtry.nodes[k].add(tool, hashed, ShapeTool.origin, geoInputs[k]);
           }
         }
       }

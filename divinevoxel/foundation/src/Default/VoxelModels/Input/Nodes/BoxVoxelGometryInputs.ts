@@ -1,5 +1,5 @@
 import { VoxelFacesArray } from "@divinevoxel/core/Math";
-import { Vec4Array } from "@amodx/math";
+import { QuadUVData } from "@amodx/meshing/Geometry.types";
 
 export type BoxFaceArags = [
   //upp
@@ -7,7 +7,8 @@ export type BoxFaceArags = [
   Fliped: boolean,
   texture: number,
   rotation: number,
-  uvs: Vec4Array
+  transparent: boolean,
+  uvs: QuadUVData
 ];
 
 enum ArgIndexes {
@@ -15,6 +16,7 @@ enum ArgIndexes {
   Fliped,
   Texture,
   Rotation,
+  Transparent,
   UVs,
 }
 
@@ -24,7 +26,13 @@ const getArgs = (): BoxFaceArags => {
   args[ArgIndexes.Fliped] = false;
   args[ArgIndexes.Texture] = 0;
   args[ArgIndexes.Rotation] = 0;
-  args[ArgIndexes.UVs] = [0, 0, 1, 1];
+  args[ArgIndexes.Transparent] = false;
+  args[ArgIndexes.UVs] = [
+    [1, 1],
+    [0, 1],
+    [0, 0],
+    [1, 0],
+  ];
   return args;
 };
 

@@ -2,6 +2,7 @@ import { QuadVerticies } from "@amodx/meshing/Geometry.types";
 import { VoxelFaces, VoxelFacesArray } from "@divinevoxel/core/Math";
 import { Vec4Array, Vector2Like } from "@amodx/math";
 import { VoxelRelativeCubeIndex } from "../../VoxelModels/Indexing/VoxelRelativeCubeIndex";
+import { LightData } from "../../../Data/LightData";
 
 export const GradientCheckSets: Record<
   VoxelFaces,
@@ -337,20 +338,20 @@ export function getVertexWeights(
       break;
     case VoxelFaces.North:
       u = x;
-      v = z;
+      v = y;
+      flip = true;
       break;
     case VoxelFaces.South:
       u = x;
-      v = z;
-      flip = true;
+      v = y;
       break;
     case VoxelFaces.East:
-      u = y;
-      v = z;
+      u = z;
+      v = y;
       break;
     case VoxelFaces.West:
-      u = y;
-      v = z;
+      u = z;
+      v = y;
       flip = true;
       break;
   }
@@ -358,11 +359,39 @@ export function getVertexWeights(
   return getInterpolationWeights(u, v, flip);
 }
 
+const lightValues1: Vec4Array = [0, 0, 0, 0];
+const lightValues2: Vec4Array = [0, 0, 0, 0];
+const lightValues3: Vec4Array = [0, 0, 0, 0];
+const lightValues4: Vec4Array = [0, 0, 0, 0];
+const lightValues5: Vec4Array = [0, 0, 0, 0];
+
+
 export function getInterpolationValue(value: Vec4Array, weights: Vec4Array) {
-  return (
-    weights[0] * value[0] +
-    weights[1] * value[1] +
-    weights[2] * value[2] +
-    weights[3] * value[3]
-  );
+  LightData.getLightValuesToRef(value[0], lightValues1);
+  LightData.getLightValuesToRef(value[1], lightValues2);
+  LightData.getLightValuesToRef(value[2], lightValues3);
+  LightData.getLightValuesToRef(value[3], lightValues4);
+
+  lightValues5[0] =
+    lightValues1[0] * weights[0] +
+    lightValues2[0] * weights[1] +
+    lightValues3[0] * weights[2] +
+    lightValues4[0] * weights[3];
+  lightValues5[1] =
+    lightValues1[1] * weights[0] +
+    lightValues2[1] * weights[1] +
+    lightValues3[1] * weights[2] +
+    lightValues4[1] * weights[3];
+  lightValues5[2] =
+    lightValues1[2] * weights[0] +
+    lightValues2[2] * weights[1] +
+    lightValues3[2] * weights[2] +
+    lightValues4[2] * weights[3];
+  lightValues5[3] =
+    lightValues1[3] * weights[0] +
+    lightValues2[3] * weights[1] +
+    lightValues3[3] * weights[2] +
+    lightValues4[3] * weights[3];
+
+  return LightData.setLightValues(lightValues5);
 }

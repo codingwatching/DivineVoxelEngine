@@ -1,15 +1,15 @@
-import { ShapeRelationsScehmaNodeData } from "../State.types";
+import { VoxelRelationsScehmaNodeData } from "../State.types";
 import { SameVoxelCondition } from "./Conditions/SameVoxelConditions";
 import { ShapeStateSchemaRelationsCondition } from "./Conditions/ShapeStateSchemaRelationsCondition";
-import { ShapeStateSchema } from "./ShapeStateSchema";
+import { StateSchema } from "./StateSchema";
 
 export class ShapeStateRelationsNode {
   id: string;
 
   conditions: ShapeStateSchemaRelationsCondition[] = [];
   constructor(
-    public schema: ShapeStateSchema,
-    data: ShapeRelationsScehmaNodeData
+    public schema: StateSchema,
+    data: VoxelRelationsScehmaNodeData
   ) {
     this.id = data.id;
     for (const cond of data.conditions) {
@@ -32,4 +32,6 @@ export class ShapeStateRelationsNode {
     
     return value;
   }
+
+
 }

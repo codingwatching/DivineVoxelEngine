@@ -65,7 +65,7 @@ const uint gVLIndex = uint(8);
 const uint bVLIndex = uint(12);
 const uint aoIndex = uint(16);
 const uint animIndex = uint(20);
-const float aoValue =  pow( .2, 2.2);
+const float aoValue =  pow( .5, 2.2);
         `,
       },
     },

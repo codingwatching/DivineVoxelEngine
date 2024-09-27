@@ -1,11 +1,10 @@
 import { SameVoxelRelationsConditionData } from "Default/VoxelModels/VoxelModel.types";
 import { ShapeStateSchemaRelationsCondition } from "./ShapeStateSchemaRelationsCondition";
-import { ShapeStateSchema } from "../ShapeStateSchema";
-import { Vector3Like } from "@amodx/math";
+import { StateSchema } from "../StateSchema";
 
 export class SameVoxelCondition extends ShapeStateSchemaRelationsCondition {
   constructor(
-    schema: ShapeStateSchema,
+    schema: StateSchema,
     public data: SameVoxelRelationsConditionData
   ) {
     super(schema);

@@ -179,10 +179,10 @@ const getId = (
 ): number => {
   if (importedChunk.chunk.buffers.state instanceof Uint16Array) return value;
 
-  const { chunk } = importedChunk;
-  const { column } = importedColumn;
-  if (typeof chunk.buffers.id == "number") {
-    return VoxelPalette.ids.getNumberId(column.palettes.id[chunk.buffers.id]);
+  if (typeof importedChunk.chunk.buffers.id == "number") {
+    return VoxelPalette.ids.getNumberId(
+      importedColumn.column.palettes.id[importedChunk.chunk.buffers.id]
+    );
   }
   if (importedChunk.idPalette) {
     return VoxelPalette.ids.getNumberId(
@@ -202,9 +202,8 @@ const getLight = (
   importedColumn: ImportedColumnData,
   importedChunk: ImportedChunkData
 ): number => {
-  const { chunk } = importedChunk;
   if (importedChunk.chunk.buffers.light instanceof Uint16Array) return value;
-  if (typeof chunk.buffers.light == "number") {
+  if (typeof importedChunk.chunk.buffers.light == "number") {
     return value;
   }
   if (importedChunk.lightPalette && importedColumn.lightPalette) {
@@ -224,8 +223,7 @@ const getState = (
 ): number => {
   if (importedChunk.chunk.buffers.state instanceof Uint16Array) return value;
 
-  const { chunk } = importedChunk;
-  if (typeof chunk.buffers.state == "number") {
+  if (typeof importedChunk.chunk.buffers.state == "number") {
     return value;
   }
   if (importedChunk.statePalette && importedColumn.statePalette) {
@@ -245,8 +243,7 @@ const getMod = (
 ): number => {
   if (importedChunk.chunk.buffers.mod instanceof Uint16Array) return value;
 
-  const { chunk } = importedChunk;
-  if (typeof chunk.buffers.mod == "number") {
+  if (typeof importedChunk.chunk.buffers.mod == "number") {
     return value;
   }
   if (importedChunk.modPalette && importedColumn.modPalette) {
@@ -267,13 +264,13 @@ const getSecondary = (
 ): number => {
   if (importedChunk.chunk.buffers.state instanceof Uint16Array) return value;
 
-  const { chunk } = importedChunk;
-  const { column } = importedColumn;
   VoxelStruct.setVoxel(voxelId);
   if (VoxelStruct.instance[VoxelTagIDs.canHaveSecondary] == 1) {
-    if (typeof chunk.buffers.secondary == "number") {
+    if (typeof importedChunk.chunk.buffers.secondary == "number") {
       return VoxelPalette.ids.getNumberId(
-        column.palettes.secondaryId![chunk.buffers.secondary]
+        importedColumn.column.palettes.secondaryId![
+          importedChunk.chunk.buffers.secondary
+        ]
       );
     }
     if (importedChunk.secondaryId) {
@@ -283,10 +280,12 @@ const getSecondary = (
         )
       );
     }
-    return VoxelPalette.ids.getNumberId(column.palettes.secondaryId![value]);
+    return VoxelPalette.ids.getNumberId(
+      importedColumn.column.palettes.secondaryId![value]
+    );
   }
 
-  if (typeof chunk.buffers.secondary == "number") {
+  if (typeof importedChunk.chunk.buffers.secondary == "number") {
     return value;
   }
   if (importedChunk.secondaryState && importedColumn.secondaryState) {
@@ -345,6 +344,7 @@ export default function ImportColumn(
         importedColumn,
         importedChunk
       );
+
       newChunk.state[i] = getState(
         typeof chunk.buffers.state == "number"
           ? chunk.buffers.state
@@ -352,6 +352,7 @@ export default function ImportColumn(
         importedColumn,
         importedChunk
       );
+
       newChunk.mod[i] = getMod(
         typeof chunk.buffers.mod == "number"
           ? chunk.buffers.mod
@@ -367,6 +368,7 @@ export default function ImportColumn(
         importedColumn,
         importedChunk
       );
+
       newChunk.secondary[i] = getSecondary(
         newChunk.ids[i],
         typeof chunk.buffers.secondary == "number"

@@ -4,6 +4,7 @@ import {
   DVEFWorldCore,
   DVEFWorldCoreProps,
 } from "../../Contexts/World/DVEFWorldCore";
+import InitVoxelModelsWorld from "../VoxelModels/World/InitVoxelModelsWorld";
 type StartWorldProps = {
   voxels: VoxelData[];
 } & DVEFWorldCoreProps;
@@ -12,6 +13,7 @@ export async function StartWorld(props: StartWorldProps) {
 
   const core = new DVEFWorldCore(props);
 
+  InitVoxelModelsWorld(DVEW);
   core.dataRegiser.voxels.registerData(props.voxels);
 
   await DVEW.init(core);
