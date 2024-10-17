@@ -1,10 +1,11 @@
 import { VoxelFaceCullResultsIndex } from "../../Indexing/VoxelFaceCullResultsIndex";
 import { VoxelAOResultsIndex } from "../../Indexing/VoxelAOResultsIndex";
 import { VoxelGeometrySyncData } from "../../VoxelModelRules.types";
-import { BoxVoxelGometryNode } from "../Nodes/BoxVoxelGeometryNode";
+import { BoxVoxelGometryNode } from "../Nodes/Ruled/BoxVoxelGeometryNode";
+import { QuadVoxelGometryNode } from "../Nodes/Ruled/QuadVoxelGeometryNode";
 
 export class VoxelGeometryConstructor {
-  nodes: BoxVoxelGometryNode[] = [];
+  nodes: (BoxVoxelGometryNode | QuadVoxelGometryNode)[] = [];
 
   cullIndex: VoxelFaceCullResultsIndex;
   aoIndex: VoxelAOResultsIndex;
@@ -16,8 +17,25 @@ export class VoxelGeometryConstructor {
     this.aoIndex = new VoxelAOResultsIndex(data.aoIndex);
 
     for (const node of data.nodes) {
-      if (node.type == "box") {
-        this.nodes.push(new BoxVoxelGometryNode(geometryPaletteId, this, node));
+      if (node.node.type == "box") {
+        this.nodes.push(
+          new BoxVoxelGometryNode(
+            geometryPaletteId,
+            this,
+            node.node,
+            node.tranform
+          )
+        );
+      }
+      if (node.node.type == "quad") {
+        this.nodes.push(
+          new QuadVoxelGometryNode(
+            geometryPaletteId,
+            this,
+            node.node,
+            node.tranform
+          )
+        );
       }
     }
     let faceCount = 0;

@@ -84,6 +84,10 @@ export class DVEBRClassicMaterial extends URIMaterial<
       }
     );
 
+    if(data.alphaBlending) {
+      shaderMaterial.separateCullingPass = true;
+    }
+
     this._material = shaderMaterial;
 
     this._material.fogEnabled = true;
@@ -121,9 +125,7 @@ export class DVEBRClassicMaterial extends URIMaterial<
       effect.setColor3("vFogColor", scene.fogColor);
     };
 
-    if (data.backFaceCulling !== undefined) {
-      this._material.backFaceCulling = data.backFaceCulling;
-    }
+    
 
     this.afterCreate.forEach((_) => _(this._material));
     return this._material;

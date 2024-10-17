@@ -342,6 +342,11 @@ export class DataTool extends DataToolBase {
     if (vID < 2) return false;
     return this.__struct[VoxelTagIDs.isLightSource] == 1;
   }
+  noAO() {
+    const vID = this._loadedId;
+    if (vID < 2) return false;
+    return this.__struct[VoxelTagIDs.noAO] == 1;
+  }
   getLightSourceValue() {
     const vID = this._loadedId;
     if (vID < 2) return 0;

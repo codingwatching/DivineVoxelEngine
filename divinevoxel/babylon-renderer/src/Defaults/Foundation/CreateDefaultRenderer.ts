@@ -16,6 +16,8 @@ const defaultSubstances = [
   "#dve_glow",
   "#dve_flora",
   "#dve_solid",
+  "#dve_transparent",
+  
   "#dve_liquid",
 ];
 
@@ -43,9 +45,10 @@ export function CreateDefaultRenderer(
     return {
       id,
       material: {
-        alphaBlending: id == "#dve_liquid" ? true : false,
+        alphaBlending: id == "#dve_liquid" || id == "#dve_transparent"  ? true : false,
         alphaTesting: true,
-        backFaceCulling: id == "#dve_liquid" ? false : true,
+        backFaceCulling:
+          id == "#dve_liquid" || id == "#dve_flora" ? false : true,
         stencil: id == "#dve_liquid" ? true : undefined,
         mipMapBias: -0.6,
       },
@@ -72,14 +75,12 @@ export function CreateDefaultRenderer(
       ),
     ]);
 
-
     await TextureBuilder.setUpImageCreation();
     TextureManager.registerTexture(initData.textureData);
 
-
     await TextureManager.$INIT();
     await TextureManager.createRawDataMap();
- 
+
     const uvMap = TextureManager.generateTextureUVMap();
 
     for (const constructor of dver.core.threads.construcotrs.getThreads()) {

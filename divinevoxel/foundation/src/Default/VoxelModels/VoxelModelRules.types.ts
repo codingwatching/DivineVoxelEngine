@@ -1,3 +1,4 @@
+import { Vec3Array } from "@amodx/math";
 import { VoxelAOResultsIndexData } from "./Indexing/VoxelAOResultsIndex";
 import { VoxelFaceCullResultsIndexData } from "./Indexing/VoxelFaceCullResultsIndex";
 import { VoxelFaceTransparentResultsIndexData } from "./Indexing/VoxelFaceTransparentResultsIndex";
@@ -5,15 +6,40 @@ import {
   VoxelModelStateSchemaData,
   StateLogicStatement,
 } from "./State/State.types";
-import { VoxelGeometryNodes } from "./VoxelModel.types";
+import { VoxelGeometryData, VoxelGeometryNodes } from "./VoxelModel.types";
+
+export interface PrcoessedVoxelGeometryNodes {
+  node: VoxelGeometryNodes;
+  tranform: VoxelGeometryTransform;
+}
+
+export interface VoxelGeometryTransform {
+  position?: Vec3Array;
+  scale?: Vec3Array;
+  rotation?: Vec3Array;
+  rotationPivoit?: Vec3Array;
+  flip?: [flipX: 0 | 1, flipY: 0 | 1, flipZ: 0 | 1];
+}
+
+export interface PrcoessedVoxelGeometryData {
+  id: string;
+  ogData: VoxelGeometryData;
+  nodes: PrcoessedVoxelGeometryNodes[];
+}
 
 export interface VoxelGeometrySyncData {
   id: string;
-  nodes: VoxelGeometryNodes[];
+  nodes: PrcoessedVoxelGeometryNodes[];
   faceCullMap: number[][];
   vertexHitMap: number[][];
   aoIndex: VoxelAOResultsIndexData;
   cullIndex: VoxelFaceCullResultsIndexData;
+}
+
+export interface VoxelGeometryRulelessSyncData {
+  id: string;
+  nodes: PrcoessedVoxelGeometryNodes[];
+  ruleless: true;
 }
 
 export interface VoxelModelSyncData {
@@ -52,7 +78,7 @@ export interface VoxelInputsSyncData {
 
 export interface ConstructorVoxelModelSyncData {
   geometryPalette: string[];
-  geometry: VoxelGeometrySyncData[];
+  geometry: (VoxelGeometrySyncData | VoxelGeometryRulelessSyncData)[];
   models: VoxelModelSyncData[];
   voxels: VoxelInputsSyncData[];
 }

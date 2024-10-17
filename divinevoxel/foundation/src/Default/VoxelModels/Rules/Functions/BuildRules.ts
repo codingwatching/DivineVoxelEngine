@@ -1,4 +1,4 @@
-import { OcclusionFace, OcclusionQuadFace } from "../Classes/OcclusionFace";
+import { OcclusionFace, OcclusionFlatQuadFace } from "../Classes/OcclusionFace";
 import { VoxelRuleGeometry } from "../Classes/VoxelRulesGeometry";
 import { VoxelRelativeCubeIndex } from "../../Indexing/VoxelRelativeCubeIndex";
 import { Vec3Array, Vector3Like } from "@amodx/math";
@@ -177,6 +177,7 @@ export function BuildRules(main: VoxelRuleGeometry, geoPalette: StringPalette) {
     let other = VoxelModelManager.geometry.get(
       geoPalette._palette[otherNumberId]
     )!;
+    if(other.data.ogData.doNotBuildRules !== undefined) continue;
     if (other.id == main.id) other = main.clone();
 
     for (let y = -1; y < 2; y++) {

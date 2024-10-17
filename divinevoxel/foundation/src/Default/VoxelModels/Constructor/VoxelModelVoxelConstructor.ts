@@ -58,6 +58,7 @@ export class VoxelModelVoxelConstructor extends VoxelConstructor {
       ) == 1
     );
   }
+
   isCondtionalStateFaceTransparent(
     modState: number,
     shapeState: number,
@@ -72,6 +73,7 @@ export class VoxelModelVoxelConstructor extends VoxelConstructor {
       ) == 1
     );
   }
+
   process(tool: VoxelMesherDataTool) {
     const hashed = VoxelGeometryLookUp.getHash(
       tool.voxel.x,

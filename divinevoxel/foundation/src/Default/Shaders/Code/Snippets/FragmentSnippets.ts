@@ -58,6 +58,26 @@ vec4 rgb = getBaseColor(vec2(0.,0.));
   },
  });
  builder.snippets.create({
+  id: "standard_transparent_color",
+  body: {
+   GLSL: () => /* glsl */`
+vec4 rgb = getBaseColor(vec2(0.,0.));
+
+  rgb = getAO(rgb);
+  rgb = getColor(rgb); 
+  vec4 mixLight = getLight(rgb);
+  vec3 finalColor = doFog(mixLight);
+
+  FragColor = vec4(finalColor.rgb , rgb.a );
+
+  if (FragColor.a < 0.01) { 
+    discard;
+  }
+
+  `,
+  },
+ });
+ builder.snippets.create({
   id: "skybox_frag",
   body: {
    GLSL: () => /* glsl */`

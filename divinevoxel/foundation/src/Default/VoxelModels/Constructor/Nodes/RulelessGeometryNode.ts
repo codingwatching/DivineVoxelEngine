@@ -1,9 +1,9 @@
 import { VoxelMesherDataTool } from "../../../Mesher/Tools/VoxelMesherDataTool";
 import { BoxVoxelGometryArgs } from "../../Input/BoxVoxelGometryInputs";
 import { Vector3Like } from "@amodx/math";
-import { VoxelGeometryConstructor } from "../Register/VoxelGeometryConstructor";
+import { VoxelGeometryRulelessConstructor } from "../Register/VoxelGeometryRulelessConstructor";
 
-export abstract class GeoemtryNode<Args> {
+export abstract class RulelessGeoemtryNode<Args> {
   faceIndex = -1;
   vertexIndex = -1;
 
@@ -15,7 +15,7 @@ export abstract class GeoemtryNode<Args> {
 
   constructor(
     public geometryPaletteId: number,
-    public geomtry: VoxelGeometryConstructor
+    public geomtry: VoxelGeometryRulelessConstructor
   ) {}
 
   abstract add(

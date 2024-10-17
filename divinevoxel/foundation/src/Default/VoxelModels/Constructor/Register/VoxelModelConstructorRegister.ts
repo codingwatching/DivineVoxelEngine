@@ -1,14 +1,19 @@
 import { StringPalette } from "@divinevoxel/core/Interfaces/Data/StringPalette";
 import {
+  VoxelGeometryRulelessSyncData,
   VoxelGeometrySyncData,
   VoxelModelSyncData,
 } from "../../VoxelModelRules.types";
 import { VoxelGeometryConstructor } from "./VoxelGeometryConstructor";
 import { VoxelModelConstructor } from "./VoxelModelsConstructor";
+import { VoxelGeometryRulelessConstructor } from "./VoxelGeometryRulelessConstructor";
 
 export class VoxelModelConstructorRegister {
   static geometryPalette: StringPalette;
-  static geometry: VoxelGeometryConstructor[] = [];
+  static geometry: (
+    | VoxelGeometryConstructor
+    | VoxelGeometryRulelessConstructor
+  )[] = [];
 
   static setGeometryPalette(palette: string[]) {
     this.geometryPalette = new StringPalette(palette);
@@ -20,13 +25,22 @@ export class VoxelModelConstructorRegister {
       this.models.set(model.id, new VoxelModelConstructor(model));
     }
   }
-  static registerGeometry(geometries: VoxelGeometrySyncData[]) {
+  static registerGeometry(
+    geometries: (VoxelGeometrySyncData | VoxelGeometryRulelessSyncData)[]
+  ) {
     for (const geometry of geometries) {
       const paletteId = this.geometryPalette.getNumberId(geometry.id);
-      this.geometry[paletteId] = new VoxelGeometryConstructor(
-        paletteId,
-        geometry
-      );
+      if ((geometry as VoxelGeometryRulelessSyncData).ruleless == true) {
+        this.geometry[paletteId] = new VoxelGeometryRulelessConstructor(
+          paletteId,
+          geometry as VoxelGeometryRulelessSyncData
+        );
+      } else {
+        this.geometry[paletteId] = new VoxelGeometryConstructor(
+          paletteId,
+          geometry as VoxelGeometrySyncData
+        );
+      }
     }
   }
 }

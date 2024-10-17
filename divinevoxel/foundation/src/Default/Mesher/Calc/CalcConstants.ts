@@ -1,8 +1,12 @@
-import { QuadVerticies } from "@amodx/meshing/Geometry.types";
+import {
+  QuadVerticies,
+  QuadVerticiesArray,
+} from "@amodx/meshing/Geometry.types";
 import { VoxelFaces, VoxelFacesArray } from "@divinevoxel/core/Math";
-import { Vec4Array, Vector2Like } from "@amodx/math";
+import { Vec3Array, Vec4Array, Vector2Like } from "@amodx/math";
 import { VoxelRelativeCubeIndex } from "../../VoxelModels/Indexing/VoxelRelativeCubeIndex";
 import { LightData } from "../../../Data/LightData";
+import { Quad } from "@amodx/meshing/Classes/Quad";
 
 export const GradientCheckSets: Record<
   VoxelFaces,
@@ -365,7 +369,6 @@ const lightValues3: Vec4Array = [0, 0, 0, 0];
 const lightValues4: Vec4Array = [0, 0, 0, 0];
 const lightValues5: Vec4Array = [0, 0, 0, 0];
 
-
 export function getInterpolationValue(value: Vec4Array, weights: Vec4Array) {
   LightData.getLightValuesToRef(value[0], lightValues1);
   LightData.getLightValuesToRef(value[1], lightValues2);
@@ -394,4 +397,46 @@ export function getInterpolationValue(value: Vec4Array, weights: Vec4Array) {
     lightValues4[3] * weights[3];
 
   return LightData.setLightValues(lightValues5);
+}
+
+type QuadVertexWeights = [Vec4Array, Vec4Array, Vec4Array, Vec4Array];
+
+export const addQuadWeights = (
+  quad: Quad,
+  direction: VoxelFaces
+): QuadVertexWeights => {
+  const returnArray: QuadVertexWeights = [] as any;
+  for (const vertex of QuadVerticiesArray) {
+    const { x, y, z } = quad.positions.vertices[vertex];
+    returnArray[vertex] = getVertexWeights(direction, x, y, z);
+  }
+
+  return returnArray;
+};
+export function closestUnitNormal(v: Vec3Array): Vec3Array {
+  const [x, y, z] = v;
+  let maxDotOverMagnitude = -Infinity;
+  let bestS: Vec3Array = [0, 0, 0];
+
+  for (const sx of [-1, 0, 1]) {
+    for (const sy of [-1, 0, 1]) {
+      for (const sz of [-1, 0, 1]) {
+        if (sx === 0 && sy === 0 && sz === 0) continue; // Skip the zero vector
+        const sMagnitude = Math.sqrt(sx * sx + sy * sy + sz * sz);
+        const vDotS = x * sx + y * sy + z * sz;
+        const dotOverMagnitude = vDotS / sMagnitude;
+
+        if (dotOverMagnitude > maxDotOverMagnitude) {
+          maxDotOverMagnitude = dotOverMagnitude;
+          bestS = [sx, sy, sz];
+        }
+      }
+    }
+  }
+
+  // Normalize the best vector to unit length
+  const sMagnitude = Math.sqrt(
+    bestS[0] * bestS[0] + bestS[1] * bestS[1] + bestS[2] * bestS[2]
+  );
+  return [bestS[0] / sMagnitude, bestS[1] / sMagnitude, bestS[2] / sMagnitude];
 }

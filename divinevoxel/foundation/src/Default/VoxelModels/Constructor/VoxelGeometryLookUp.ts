@@ -11,7 +11,7 @@ export class VoxelGeometryLookUp {
   static conditonalStateCache: number[] = [];
   static geometryCache: number[][] = [];
   static conditionalGeometryCache: number[][][] = [];
-  static lightSourecCache: boolean[] = [];
+  static noCastAO: boolean[] = [];
   static offset: Vec3Array = [0, 0, 0];
 
   static init() {
@@ -32,7 +32,7 @@ export class VoxelGeometryLookUp {
     this.geometryCache.length = 0;
     this.conditionalGeometryCache.length = 0;
     this.conditonalStateCache.length = 0;
-    this.lightSourecCache.length = 0;
+    this.noCastAO.length = 0;
   }
 
   static getHash(x: number, y: number, z: number) {
@@ -79,7 +79,7 @@ export class VoxelGeometryLookUp {
     this.voxelHash[hashed] = voxelConstructor;
     this.conditonalStateCache[hashed] = conditonalState;
 
-    this.lightSourecCache[hashed] = this.dataTool.isLightSource();
+    this.noCastAO[hashed] = this.dataTool.isLightSource() || this.dataTool.noAO();
 
     this.geometryCache[hashed] =
       voxelConstructor.model.data.shapeStateGeometryMap[state];

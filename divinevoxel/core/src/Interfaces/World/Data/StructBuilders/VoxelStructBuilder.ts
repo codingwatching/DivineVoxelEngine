@@ -35,6 +35,11 @@ VoxelTagBuilder.addNode([
     default: false,
   },
   {
+    id: VoxelTagIDs.noAO,
+    type: "boolean",
+    default: false,
+  },
+  {
     id: VoxelTagIDs.lightValue,
     type: "number",
     numberType: BinaryNumberTypes.Uint16,

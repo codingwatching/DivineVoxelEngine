@@ -130,7 +130,9 @@ function reMapTree(
     const propertyIndex = schemaIdPalette.getNumberId(key);
     const baseChild = baseObj[key];
     const reMapedChildren: any[] = [];
-    const schemaValueIndex = schemaValuePalette.get(key);
+    const schemaValueIndex = schemaValuePalette.has(key)
+      ? schemaValuePalette.get(key)
+      : Number(key);
 
     if (propertyIndex === undefined) {
       throw new Error(
@@ -138,10 +140,13 @@ function reMapTree(
       );
     }
 
-    if (!schemaValueIndex) continue;
+    if (schemaValueIndex === undefined) continue;
     for (const value in baseChild) {
       const propertyValue = baseChild[value];
-      const valueIndex = schemaValueIndex.getNumberId(value);
+      const valueIndex =
+        typeof value === "string" && typeof schemaValueIndex == "object"
+          ? schemaValueIndex.getNumberId(value)
+          : Number(value);
       if (typeof propertyValue == "object") {
         reMapedChildren[valueIndex] = reMapTree(
           schemaIdPalette,
@@ -339,7 +344,9 @@ export function BuildStateData(
     );
     condiotnalShapeStateNodeRecord[key] =
       condiotnalShapeStateGeometryPalette.length - 1;
-      condiotnalShapeStateRelativeGeometryMap[condiotnalShapeStateNodeRecord[key]] ??= [];
+    condiotnalShapeStateRelativeGeometryMap[
+      condiotnalShapeStateNodeRecord[key]
+    ] ??= [];
     const nodeData = data.shapeStatesConditonalNodes[key];
 
     for (const node of nodeData) {
@@ -368,7 +375,9 @@ export function BuildStateData(
             statement.push([
               schemaIdPalette.getNumberId(schemaId),
               StateCompareOperationsMap[op],
-              schemaValuePalette.get(schemaId)!.getNumberId(value),
+              !schemaValuePalette.has(schemaId)!
+                ? schemaValuePalette.get(schemaId)!.getNumberId(value)
+                : Number(value),
             ]);
             break;
           }

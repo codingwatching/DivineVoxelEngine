@@ -12,7 +12,18 @@ export function RegisterVoxelSnippets(builder: typeof URIShaderBuilder) {
       GLSL: () => `@standard_color`,
     },
   });
-
+  builder.snippets.create({
+    id: "#dve_transparent_vertex",
+    body: {
+      GLSL: () => `@standard_position`,
+    },
+  });
+  builder.snippets.create({
+    id: "#dve_transparent_frag",
+    body: {
+      GLSL: () => `@standard_transparent_color`,
+    },
+  });
   builder.snippets.create({
     id: "#dve_glow_vertex",
     body: {

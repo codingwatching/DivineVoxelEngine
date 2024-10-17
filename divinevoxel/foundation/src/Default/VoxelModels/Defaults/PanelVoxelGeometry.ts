@@ -1,4 +1,82 @@
 import { VoxelGeometryData } from "../VoxelModel.types";
+export const diagonalFlatPanelWestEast: VoxelGeometryData = {
+  id: "dve_diagonal_flat_panel_west_east",
+  arguments: {
+    texture: {
+      type: "texture",
+    },
+    uvs: {
+      type: "box-uv",
+      default: [0, 0, 1, 1],
+    },
+    textureRotation: {
+      type: "int",
+      default: 0,
+    },
+    transaprent: {
+      type: "boolean",
+      default: false,
+    },
+    doubleSided: {
+      type: "boolean",
+      default: false,
+    },
+  },
+  nodes: [
+    {
+      type: "quad",
+      points: [
+        [0, 1, 1],
+        [1, 1, 0],
+        [1, 0, 0],
+        [0, 0, 1],
+      ],
+      doubleSided: "@doubleSided",
+      uv: "@uvs",
+      texture: "@texture",
+      textureRotation: "@textureRotation",
+    },
+  ],
+};
+export const diagonalFlatPanelEastWest: VoxelGeometryData = {
+  id: "dve_diagonal_flat_panel_east_west",
+  arguments: {
+    texture: {
+      type: "texture",
+    },
+    uvs: {
+      type: "box-uv",
+      default: [0, 0, 1, 1],
+    },
+    textureRotation: {
+      type: "int",
+      default: 0,
+    },
+    transaprent: {
+      type: "boolean",
+      default: false,
+    },
+    doubleSided: {
+      type: "boolean",
+      default: false,
+    },
+  },
+  nodes: [
+    {
+      type: "quad",
+      points: [
+        [1, 1, 1],
+        [0, 1, 0],
+        [0, 0, 0],
+        [1, 0, 1],
+      ],
+      doubleSided: "@doubleSided",
+      uv: "@uvs",
+      texture: "@texture",
+      textureRotation: "@textureRotation",
+    },
+  ],
+};
 
 export const thinPanelDown: VoxelGeometryData = {
   id: "dve_thin_panel_down",

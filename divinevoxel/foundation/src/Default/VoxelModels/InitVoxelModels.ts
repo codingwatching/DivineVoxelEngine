@@ -1,4 +1,14 @@
-import { fence, fenceEastWest, fenceNorthsouth, fencePost } from "./Examples";
+import {
+  candlesGeometry1,
+  candlesGeometry2,
+  candlesGeometry3,
+  candlesGeometry4,
+  candlesModel,
+  fence,
+  fenceEastWest,
+  fenceNorthsouth,
+  fencePost,
+} from "./Examples";
 import {
   cube,
   halfDownCube,
@@ -10,11 +20,14 @@ import {
   halfWestCube,
 } from "./Defaults/CubeVoxelGeometry";
 import {
+  orientedCube,
   pillarCube,
   simpleCube,
   simpleHalfCube,
 } from "./Defaults/CubeVoxelModels";
 import {
+  diagonalFlatPanelEastWest,
+  diagonalFlatPanelWestEast,
   thinPanelDown,
   thinPanelSouth,
   thinPanelWest,
@@ -36,7 +49,10 @@ import { BuildGeomtryInputs } from "./Rules/Functions/BuildGeomtryInputs";
 import { BuildFinalInputs } from "./Rules/Functions/BuildFinalInputs";
 import { ConstructorVoxelModelSyncData } from "./VoxelModelRules.types";
 import { SchemaRegister } from "./State/SchemaRegister";
-import { simpleThinPannel } from "./Defaults/PanelVoxelModels";
+import {
+  simpleCrossedPannel,
+  simpleThinPannel,
+} from "./Defaults/PanelVoxelModels";
 
 export function InitVoxelModels(data: {
   constructors: ThreadPool;
@@ -62,17 +78,29 @@ export function InitVoxelModels(data: {
     thinPanelDown,
     thinPanelSouth,
     thinPanelWest,
+    diagonalFlatPanelEastWest,
+    diagonalFlatPanelWestEast,
+
+    candlesGeometry1,
+    candlesGeometry2,
+    candlesGeometry3,
+    candlesGeometry4,
 
     ...(data.geometry || [])
   );
 
   VoxelModelManager.registerModels(
     simpleCube,
+    orientedCube,
     simpleHalfCube,
     pillarCube,
     simpleThinPannel,
     fence,
     stair,
+    simpleCrossedPannel,
+
+    candlesModel,
+
     ...(data.models || [])
   );
 
@@ -96,18 +124,27 @@ export function InitVoxelModels(data: {
       throw new Error(`Voxel model with id ${voxelData.id} does not exist.`);
     model!.voxels.set(voxel.id, voxelData);
   }
+
   const output: any = {};
 
   const startTime = performance.now();
   for (const [mainKey, mainGeo] of VoxelModelManager.geometry) {
+    if (mainGeo.data.ogData.doNotBuildRules) {
+      syncData.geometry.push({
+        id: mainKey,
+        nodes: mainGeo.data.nodes,
+        ruleless: true,
+      });
+      continue;
+    }
     const output = BuildRules(mainGeo, VoxelModelManager.geometryPalette);
-
     syncData.geometry.push({
       id: mainKey,
       nodes: mainGeo.data.nodes,
       ...output,
     });
   }
+
   console.log("done building rules", performance.now() - startTime);
 
   const inputStartTime = performance.now();
@@ -167,7 +204,6 @@ export function InitVoxelModels(data: {
     "init voxel models done | totle time: ",
     performance.now() - initTime
   );
-
 
   /* 
   const blob = new Blob([JSON.stringify(output, null, 1)], {});

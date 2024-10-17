@@ -21,6 +21,8 @@ export default function (DVEC: DivineVoxelEngineConstructor) {
       for (const model of data.models) {
         SchemaRegister.registerModel(model.id, model.schema);
       }
+
+      
       for (const voxel of data.voxels) {
         SchemaRegister.registerVoxel(voxel.id, voxel.modelId, voxel.modSchema);
         VoxelConstructorsRegister.registerVoxel(

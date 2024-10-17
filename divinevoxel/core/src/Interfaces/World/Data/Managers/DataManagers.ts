@@ -75,8 +75,8 @@ SubstanceManager.registerData([
   {
     id: "#dve_transparent",
     tags: [
-      [SubstanceTagIds.parent, "#dve_solid"],
-      [SubstanceTagIds.rendered, "#dve_solid"],
+      [SubstanceTagIds.parent, "#dve_transparent"],
+      [SubstanceTagIds.rendered, "#dve_transparent"],
       [SubstanceTagIds.isSolid, true],
       [SubstanceTagIds.isLiquid, false],
       [SubstanceTagIds.isTransparent, true],

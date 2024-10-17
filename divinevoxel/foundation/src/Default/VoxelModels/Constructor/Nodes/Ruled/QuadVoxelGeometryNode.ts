@@ -1,4 +1,4 @@
-import { Vec4Array, Vector3Like } from "@amodx/math";
+import { Vec3Array, Vec4Array, Vector3Like } from "@amodx/math";
 import { VoxelFaces } from "@divinevoxel/core/Math";
 
 import { QuadScalarVertexData } from "@amodx/meshing";
@@ -6,168 +6,94 @@ import {
   QuadVerticies,
   QuadVerticiesArray,
 } from "@amodx/meshing/Geometry.types";
-import { VoxelBoxGeometryNode } from "../../VoxelModel.types";
+import { VoxelQuadGeometryNode } from "../../../VoxelModel.types";
 
 import { Quad } from "@amodx/meshing/Classes/Quad";
-import { VoxelMesherDataTool } from "../../../Mesher/Tools/VoxelMesherDataTool";
-import { VoxelGeometry } from "../../../Mesher/Geometry/VoxelGeometry";
+import { VoxelMesherDataTool } from "../../../../Mesher/Tools/VoxelMesherDataTool";
+import { VoxelGeometry } from "../../../../Mesher/Geometry/VoxelGeometry";
+
+import { VoxelGeometryLookUp } from "../../VoxelGeometryLookUp";
+import { GeoemtryNode } from "../GeometryNode";
+import { VoxelGeometryConstructor } from "../../Register/VoxelGeometryConstructor";
 import {
-  BoxVoxelGometryArgs,
-  BoxVoxelGometryInputs,
-} from "../../Input/Nodes/BoxVoxelGometryInputs";
-import { VoxelGeometryLookUp } from "../VoxelGeometryLookUp";
-import { GeoemtryNode } from "./GeometryNode";
-import { VoxelGeometryConstructor } from "../Register/VoxelGeometryConstructor";
-import {
+  addQuadWeights,
+  closestUnitNormal,
   getInterpolationValue,
-  getVertexWeights,
   shouldCauseFlip,
-} from "../../../Mesher/Calc/CalcConstants";
+} from "../../../../Mesher/Calc/CalcConstants";
 
-import { LightData } from "../../../../Data/LightData";
+import { LightData } from "../../../../../Data/LightData";
 
-import { VoxelRelativeCubeIndexPositionMap } from "../../Indexing/VoxelRelativeCubeIndex";
+import { VoxelRelativeCubeIndexPositionMap } from "../../../Indexing/VoxelRelativeCubeIndex";
+import {
+  QuadVoxelGometryArgs,
+  QuadVoxelGometryInputs,
+} from "../../../Input/QuadVoxelGometryInputs";
+import { VoxelGeometryTransform } from "Default/VoxelModels/VoxelModelRules.types";
+import { TransformQuad } from "../../../Shared/Transform";
 
-const ArgIndexes = BoxVoxelGometryInputs.ArgIndexes;
+const ArgIndexes = QuadVoxelGometryInputs.ArgIndexes;
 
-type QuadVertexWeights = [Vec4Array, Vec4Array, Vec4Array, Vec4Array];
-
-const addQuadWeights = (
-  quad: Quad,
-  direction: VoxelFaces
-): QuadVertexWeights => {
-  const returnArray: QuadVertexWeights = [] as any;
-  for (const vertex of QuadVerticiesArray) {
-    const { x, y, z } = quad.positions.vertices[vertex];
-    returnArray[vertex] = getVertexWeights(direction, x, y, z);
-  }
-
-  return returnArray;
-};
-
-export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
-  quads: Quad[] = [];
-  vertexWeights: [Vec4Array, Vec4Array, Vec4Array, Vec4Array][] = [];
+export class QuadVoxelGometryNode extends GeoemtryNode<QuadVoxelGometryArgs> {
+  quad: Quad;
+  vertexWeights: [Vec4Array, Vec4Array, Vec4Array, Vec4Array];
   worldLight: QuadScalarVertexData;
   worldAO: QuadScalarVertexData;
-
+  closestFace: VoxelFaces;
   constructor(
     geometryPaletteId: number,
     geometry: VoxelGeometryConstructor,
-    public data: VoxelBoxGeometryNode
+    public data: VoxelQuadGeometryNode,
+    transform: VoxelGeometryTransform
   ) {
     super(geometryPaletteId, geometry);
-
-    const [start, end] = data.points.map((_) => Vector3Like.Create(..._));
 
     this.faceCount = 6;
     this.vertexCount = this.faceCount * 4;
 
-    this.quads[VoxelFaces.Up] = Quad.Create(
-      [
-        [end.x, end.y, end.z],
-        [start.x, end.y, end.z],
-        [start.x, end.y, start.z],
-        [end.x, end.y, start.z],
-      ],
-      undefined,
-      false,
-      0
-    );
+    this.quad = TransformQuad(Quad.Create(data.points), transform);
+    this.quad.orientation = 0;
 
-    this.vertexWeights[VoxelFaces.Up] = addQuadWeights(
-      this.quads[VoxelFaces.Up],
-      VoxelFaces.Up
-    );
+    const normals = this.quad.normals.getAsArray();
+    const averageNormal: Vec3Array = [0, 0, 0];
 
-    this.quads[VoxelFaces.Down] = Quad.Create(
-      [
-        [start.x, start.y, end.z],
-        [end.x, start.y, end.z],
-        [end.x, start.y, start.z],
-        [start.x, start.y, start.z],
-      ],
-      undefined,
-      false,
-      0
-    );
+    for (let i = 0; i < normals.length; i++) {
+      averageNormal[0] += normals[i].x;
+      averageNormal[1] += normals[i].y;
+      averageNormal[2] += normals[i].z;
+    }
+    averageNormal[0] /= normals.length;
+    averageNormal[1] /= normals.length;
+    averageNormal[2] /= normals.length;
 
-    this.vertexWeights[VoxelFaces.Down] = addQuadWeights(
-      this.quads[VoxelFaces.Down],
-      VoxelFaces.Down
+    // Normalize the average normal
+    const magnitude = Math.sqrt(
+      averageNormal[0] * averageNormal[0] +
+        averageNormal[1] * averageNormal[1] +
+        averageNormal[2] * averageNormal[2]
     );
+    if (magnitude !== 0) {
+      averageNormal[0] /= magnitude;
+      averageNormal[1] /= magnitude;
+      averageNormal[2] /= magnitude;
+    }
 
-    this.quads[VoxelFaces.North] = Quad.Create(
-      [
-        [start.x, end.y, end.z],
-        [end.x, end.y, end.z],
-        [end.x, start.y, end.z],
-        [start.x, start.y, end.z],
-      ],
-      undefined,
-      false,
-      0
-    );
+    const unitNormal = closestUnitNormal(averageNormal);
+    let closestFace = VoxelFaces.Up;
+    if (unitNormal[0] == 1) closestFace = VoxelFaces.East;
+    if (unitNormal[0] == -1) closestFace = VoxelFaces.West;
+    if (unitNormal[1] == 1) closestFace = VoxelFaces.Up;
+    if (unitNormal[1] == -1) closestFace = VoxelFaces.Down;
+    if (unitNormal[2] == 1) closestFace = VoxelFaces.North;
+    if (unitNormal[2] == -1) closestFace = VoxelFaces.South;
 
-    this.vertexWeights[VoxelFaces.North] = addQuadWeights(
-      this.quads[VoxelFaces.North],
-      VoxelFaces.North
-    );
+    this.vertexWeights = addQuadWeights(this.quad, closestFace);
 
-    this.quads[VoxelFaces.South] = Quad.Create(
-      [
-        [end.x, end.y, start.z],
-        [start.x, end.y, start.z],
-        [start.x, start.y, start.z],
-        [end.x, start.y, start.z],
-      ],
-      undefined,
-      false,
-      0
-    );
-
-    this.vertexWeights[VoxelFaces.South] = addQuadWeights(
-      this.quads[VoxelFaces.South],
-      VoxelFaces.South
-    );
-
-    this.quads[VoxelFaces.East] = Quad.Create(
-      [
-        [end.x, end.y, end.z],
-        [end.x, end.y, start.z],
-        [end.x, start.y, start.z],
-        [end.x, start.y, end.z],
-      ],
-      undefined,
-      false,
-      0
-    );
-
-    this.vertexWeights[VoxelFaces.East] = addQuadWeights(
-      this.quads[VoxelFaces.East],
-      VoxelFaces.East
-    );
-
-    this.quads[VoxelFaces.West] = Quad.Create(
-      [
-        [start.x, end.y, start.z],
-        [start.x, end.y, end.z],
-        [start.x, start.y, end.z],
-        [start.x, start.y, start.z],
-      ],
-      undefined,
-      false,
-      0
-    );
-
-    this.vertexWeights[VoxelFaces.West] = addQuadWeights(
-      this.quads[VoxelFaces.West],
-      VoxelFaces.West
-    );
+    this.closestFace = closestFace;
   }
 
-  isExposed(face: VoxelFaces) {
-    const trueFaceIndex = face + this.faceIndex;
+  isExposed() {
+    const trueFaceIndex = this.faceIndex;
     const faceIndexes = this.geomtry.data.faceCullMap[trueFaceIndex];
     if (!faceIndexes) return true;
 
@@ -239,11 +165,11 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
     return true;
   }
 
-  determineShading(face: VoxelFaces) {
+  determineShading() {
     const tool = this.tool;
 
-    const lightData = tool.lightData[face];
-    const isLightSource = this.tool.voxel.isLightSource();
+    const lightData = tool.lightData[VoxelFaces.Up];
+    const noAO = this.tool.voxel.isLightSource() || this.tool.voxel.noAO();
 
     const worldLight = this.worldLight;
     const worldAO = this.worldAO;
@@ -252,12 +178,12 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
 
       worldLight.vertices[v] = getInterpolationValue(
         lightData as Vec4Array,
-        this.vertexWeights[face][v]
+        this.vertexWeights[v]
       );
 
-      if (isLightSource) continue;
+      if (noAO) continue;
 
-      const trueVertexIndex = this.vertexIndex + face * 4 + v;
+      const trueVertexIndex = this.vertexIndex + 4 + v;
 
       const aoIndexes = this.geomtry.data.vertexHitMap[trueVertexIndex];
 
@@ -277,7 +203,7 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
           tool.voxel.z + p[2]
         );
 
-        if (VoxelGeometryLookUp.lightSourecCache[hashed] === true) continue;
+        if (VoxelGeometryLookUp.noCastAO[hashed] === true) continue;
         const baseGeo = VoxelGeometryLookUp.geometryCache[hashed];
         const conditonalGeo =
           VoxelGeometryLookUp.conditionalGeometryCache[hashed];
@@ -356,7 +282,7 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
     tool: VoxelMesherDataTool,
     originHash: number,
     origin: Vector3Like,
-    args: BoxVoxelGometryArgs
+    args: QuadVoxelGometryArgs
   ) {
     this.tool = tool;
     this.origin = tool.voxel;
@@ -364,30 +290,29 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
     this.worldAO = tool.getWorldAO();
     this.worldLight = tool.getWorldLight();
 
-    for (let face = 0 as VoxelFaces; face < 6; face++) {
-      if (args[face][ArgIndexes.Enabled] && this.isExposed(face)) {
-        tool.calculateFaceData(face);
-        this.determineShading(face);
-        const faceArgs = args[face];
-        const quad = this.quads[face];
-        quad.flip = this.shouldFlip() || faceArgs[ArgIndexes.Fliped];
-        tool.setTexture(faceArgs[ArgIndexes.Texture]);
+    if (args[ArgIndexes.Enabled] && this.isExposed()) {
+      tool.calculateFaceData(this.closestFace);
+      this.determineShading();
 
-        const uvs = faceArgs[ArgIndexes.UVs];
-        //1
-        quad.uvs.vertices[0].x = uvs[0][0];
-        quad.uvs.vertices[0].y = uvs[0][1];
-        //2
-        quad.uvs.vertices[1].x = uvs[1][0];
-        quad.uvs.vertices[1].y = uvs[1][1];
-        //3
-        quad.uvs.vertices[2].x = uvs[2][0];
-        quad.uvs.vertices[2].y = uvs[2][1];
-        //4
-        quad.uvs.vertices[3].x = uvs[3][0];
-        quad.uvs.vertices[3].y = uvs[3][1];
-        VoxelGeometry.addQuad(tool, origin, quad);
-      }
+      const quad = this.quad;
+      quad.flip = this.shouldFlip() || args[ArgIndexes.Fliped];
+      tool.setTexture(args[ArgIndexes.Texture]);
+
+      quad.doubleSided = args[ArgIndexes.DoubleSided];
+      const uvs = args[ArgIndexes.UVs];
+      //1
+      quad.uvs.vertices[0].x = uvs[0][0];
+      quad.uvs.vertices[0].y = uvs[0][1];
+      //2
+      quad.uvs.vertices[1].x = uvs[1][0];
+      quad.uvs.vertices[1].y = uvs[1][1];
+      //3
+      quad.uvs.vertices[2].x = uvs[2][0];
+      quad.uvs.vertices[2].y = uvs[2][1];
+      //4
+      quad.uvs.vertices[3].x = uvs[3][0];
+      quad.uvs.vertices[3].y = uvs[3][1];
+      VoxelGeometry.addQuad(tool, origin, quad);
     }
 
     this.worldLight.setAll(0);

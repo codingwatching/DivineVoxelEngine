@@ -14,6 +14,7 @@ export interface VoxelStruct {
   [VoxelTagIDs.colliderID]: number;
   [VoxelTagIDs.checkCollisions]: number;
   [VoxelTagIDs.isLightSource]: number;
+  [VoxelTagIDs.noAO]: number;
   [VoxelTagIDs.lightValue]: number;
   [VoxelTagIDs.isRich]: number;
   [VoxelTagIDs.canHaveSecondary]: number;

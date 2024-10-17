@@ -58,13 +58,15 @@ export function BuildFinalInputs(model: VoxelRulesModoel) {
                 )
               ]
             ];
-          for (let i = 0; i < geo.inputs.faceTransparentIndex.length; i++) {
-            transparentIndex.setValue(
-              modIndex,
-              byteIndex,
-              i,
-              geo.inputs.faceTransparentIndex[i] ? 1 : 0
-            );
+          if (geo.data.ogData.doNotBuildRules !== true) {
+            for (let i = 0; i < geo.inputs.faceTransparentIndex.length; i++) {
+              transparentIndex.setValue(
+                modIndex,
+                byteIndex,
+                i,
+                geo.inputs.faceTransparentIndex[i] ? 1 : 0
+              );
+            }
           }
         }
 
@@ -105,13 +107,15 @@ export function BuildFinalInputs(model: VoxelRulesModoel) {
               ]
             ];
 
-          for (let i = 0; i < geo.inputs.faceTransparentIndex.length; i++) {
-            transparentIndex.setValue(
-              modIndex,
-              byteIndex,
-              i,
-              geo.inputs.faceTransparentIndex[i] ? 1 : 0
-            );
+          if (geo.data.ogData.doNotBuildRules !== true) {
+            for (let i = 0; i < geo.inputs.faceTransparentIndex.length; i++) {
+              transparentIndex.setValue(
+                modIndex,
+                byteIndex,
+                i,
+                geo.inputs.faceTransparentIndex[i] ? 1 : 0
+              );
+            }
           }
         }
 

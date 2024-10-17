@@ -7,7 +7,51 @@ import {
 } from "../VoxelModel.types";
 import { VoxelRuleGeometry } from "./Classes/VoxelRulesGeometry";
 import { VoxelRulesModoel } from "./Classes/VoxelRulesModel";
+const addGeo = (
+  modelId: string,
+  stateId: string,
+  nodes: VoxelGeometryLinkData[]
+) => {
+  const registred: [string, string][] = [];
 
+  for (const geoLinkNode of nodes) {
+    const geo = VoxelModelManager.geometry.get(geoLinkNode.geometryId);
+    if (!geo)
+      throw new Error(`Geometry ${geoLinkNode.geometryId} is not registered.`);
+    const newId = getGeometryLinkId(geoLinkNode);
+
+    if (VoxelModelManager.geometry.has(newId)) continue;
+    registred.push([stateId, newId]);
+    if (!VoxelModelManager.geometryPalette.isRegistered(newId))
+      VoxelModelManager.geometryPalette.register(newId);
+    const newData = structuredClone(geo.data);
+    newData.nodes = newData.nodes.map((_) => ({
+      ..._,
+      tranform: {
+        position: geoLinkNode.position,
+        scale: geoLinkNode.scale,
+        rotation: geoLinkNode.rotation,
+        rotationPivoit: geoLinkNode.rotationPivoit,
+        flip: geoLinkNode.flip,
+      },
+    }));
+
+    
+    VoxelModelManager.geometry.set(
+      newId,
+      new VoxelRuleGeometry(
+        newId,
+        newData,
+        structuredClone(geoLinkNode.position),
+        structuredClone(geoLinkNode.scale),
+        structuredClone(geoLinkNode.rotation)
+      )
+    );
+    continue;
+  }
+
+  return registred;
+};
 const getGeometryLinkId = (node: VoxelGeometryLinkData) => {
   return `${node.geometryId}${
     node.position ? `-p${node.position.toString()}` : ""
@@ -30,64 +74,26 @@ export class VoxelModelManager {
     for (const geo of geometry) {
       if (!this.geometryPalette.isRegistered(geo.id))
         this.geometryPalette.register(geo.id);
-      this.geometry.set(geo.id, new VoxelRuleGeometry(geo.id, geo));
+
+      this.geometry.set(
+        geo.id,
+        new VoxelRuleGeometry(geo.id, {
+          ogData: geo,
+          id: geo.id,
+          nodes: geo.nodes.map((node) => ({
+            node,
+            tranform: {},
+          })),
+        })
+      );
     }
   }
 
   static getGeomtryFromLink(link: VoxelGeometryLinkData) {
-
-    return this.geometry.get( getGeometryLinkId(link));
+    return this.geometry.get(getGeometryLinkId(link));
   }
 
   static registerModels(...models: VoxelModelData[]) {
-    const addGeo = (
-      modelId: string,
-      stateId: string,
-      nodes: VoxelGeometryLinkData[]
-    ) => {
-      const registred: [string, string][] = [];
-
-      for (const geoLinkNode of nodes) {
-        const geo = this.geometry.get(geoLinkNode.geometryId);
-        if (!geo)
-          throw new Error(
-            `Geometry ${geoLinkNode.geometryId} is not registered.`
-          );
-        const newId = getGeometryLinkId(geoLinkNode);
-
-        if (this.geometry.has(newId)) continue;
-        registred.push([stateId, newId]);
-        if (!this.geometryPalette.isRegistered(newId))
-          this.geometryPalette.register(newId);
-        const newData = structuredClone(geo.data);
-        if (geoLinkNode.position) {
-          for (const node of newData.nodes) {
-            if (node.type == "box") {
-              node.points[0][0] += geoLinkNode.position[0];
-              node.points[0][1] += geoLinkNode.position[1];
-              node.points[0][2] += geoLinkNode.position[2];
-              node.points[1][0] += geoLinkNode.position[0];
-              node.points[1][1] += geoLinkNode.position[1];
-              node.points[1][2] += geoLinkNode.position[2];
-            }
-          }
-        }
-
-        this.geometry.set(
-          newId,
-          new VoxelRuleGeometry(
-            newId,
-            newData,
-            structuredClone(geoLinkNode.position),
-            structuredClone(geoLinkNode.scale),
-            structuredClone(geoLinkNode.rotation)
-          )
-        );
-        continue;
-      }
-
-      return registred;
-    };
     for (const model of models) {
       const rulesModel = new VoxelRulesModoel(model);
 
