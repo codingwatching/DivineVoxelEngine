@@ -33,7 +33,6 @@ import { TransformBox } from "../../../Shared/Transform";
 
 const ArgIndexes = BoxVoxelGometryInputs.ArgIndexes;
 
-
 export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
   quads: Quad[] = [];
   vertexWeights: [Vec4Array, Vec4Array, Vec4Array, Vec4Array][] = [];
@@ -177,8 +176,10 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
 
       if (offsetBaseGometry) {
         for (let i = 0; i < offsetBaseGometry.length; i++) {
+          const geoId = offsetBaseGometry[i];
+          if (VoxelGeometryLookUp.isRulesless(geoId)) continue;
           const faceIndex = this.geomtry.cullIndex.getValue(
-            offsetBaseGometry[i],
+            geoId,
             currentIndex,
             trueFaceIndex
           );
@@ -187,7 +188,7 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
             !VoxelGeometryLookUp.voxelHash[hashed].isShapeStateFaceTransparent(
               VoxelGeometryLookUp.modCache[hashed],
               VoxelGeometryLookUp.stateCache[hashed],
-              offsetBaseGometry[i],
+              geoId,
               faceIndex
             )
           ) {
@@ -200,8 +201,10 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
       for (let i = 0; i < offsetConditonalGeometry.length; i++) {
         const cond = offsetConditonalGeometry[i];
         for (let k = 0; k < cond.length; k++) {
+          const geoId = cond[k];
+          if (VoxelGeometryLookUp.isRulesless(geoId)) continue;
           const faceIndex = this.geomtry.cullIndex.getValue(
-            cond[k],
+            geoId,
             currentIndex,
             trueFaceIndex
           );
@@ -212,7 +215,7 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
             ].isCondtionalStateFaceTransparent(
               VoxelGeometryLookUp.modCache[hashed],
               VoxelGeometryLookUp.stateCache[hashed],
-              cond[i],
+              geoId,
               faceIndex
             )
           )
@@ -228,7 +231,7 @@ export class BoxVoxelGometryNode extends GeoemtryNode<BoxVoxelGometryArgs> {
     const tool = this.tool;
 
     const lightData = tool.lightData[face];
-    const noAO = this.tool.voxel.isLightSource()||this.tool.voxel.noAO();
+    const noAO = this.tool.voxel.isLightSource() || this.tool.voxel.noAO();
 
     const worldLight = this.worldLight;
     const worldAO = this.worldAO;

@@ -8,6 +8,8 @@ import {
   fenceEastWest,
   fenceNorthsouth,
   fencePost,
+  leverGeometry,
+  leverModel,
 } from "./Examples";
 import {
   cube,
@@ -86,6 +88,8 @@ export function InitVoxelModels(data: {
     candlesGeometry3,
     candlesGeometry4,
 
+    ...leverGeometry,
+
     ...(data.geometry || [])
   );
 
@@ -100,6 +104,7 @@ export function InitVoxelModels(data: {
     simpleCrossedPannel,
 
     candlesModel,
+    leverModel,
 
     ...(data.models || [])
   );

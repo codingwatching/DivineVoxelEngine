@@ -15,6 +15,8 @@ export class VoxelModelConstructorRegister {
     | VoxelGeometryRulelessConstructor
   )[] = [];
 
+  static rulesless: boolean[] = [];
+
   static setGeometryPalette(palette: string[]) {
     this.geometryPalette = new StringPalette(palette);
   }
@@ -35,11 +37,13 @@ export class VoxelModelConstructorRegister {
           paletteId,
           geometry as VoxelGeometryRulelessSyncData
         );
+        this.rulesless[paletteId] = true;
       } else {
         this.geometry[paletteId] = new VoxelGeometryConstructor(
           paletteId,
           geometry as VoxelGeometrySyncData
         );
+        this.rulesless[paletteId] = false;
       }
     }
   }

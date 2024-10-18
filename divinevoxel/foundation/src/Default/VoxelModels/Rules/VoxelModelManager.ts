@@ -31,7 +31,7 @@ const addGeo = (
         position: geoLinkNode.position,
         scale: geoLinkNode.scale,
         rotation: geoLinkNode.rotation,
-        rotationPivoit: geoLinkNode.rotationPivoit,
+        rotationPivot: geoLinkNode.rotationPivot,
         flip: geoLinkNode.flip,
       },
     }));

@@ -17,7 +17,8 @@ export interface VoxelGeometryTransform {
   position?: Vec3Array;
   scale?: Vec3Array;
   rotation?: Vec3Array;
-  rotationPivoit?: Vec3Array;
+  rotationPivot?: Vec3Array;
+  lockUVs?:true;
   flip?: [flipX: 0 | 1, flipY: 0 | 1, flipZ: 0 | 1];
 }
 

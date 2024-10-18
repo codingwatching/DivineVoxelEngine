@@ -1,5 +1,6 @@
 import { VoxelConstructorsRegister } from "../../Mesher/Constructors/Voxel/VoxelConstructorsRegister";
 import { DataTool } from "../../Tools/Data/DataTool";
+import { VoxelModelConstructorRegister } from "./Register/VoxelModelConstructorRegister";
 import { VoxelModelVoxelConstructor } from "./VoxelModelVoxelConstructor";
 import { Vec3Array, Vector3Like } from "@amodx/math";
 
@@ -23,6 +24,10 @@ export class VoxelGeometryLookUp {
     this.offset[0] = x;
     this.offset[1] = y;
     this.offset[2] = z;
+  }
+
+  static isRulesless(geoId: number) {
+    return VoxelModelConstructorRegister.rulesless[geoId] == true;
   }
 
   static stop() {
@@ -79,7 +84,8 @@ export class VoxelGeometryLookUp {
     this.voxelHash[hashed] = voxelConstructor;
     this.conditonalStateCache[hashed] = conditonalState;
 
-    this.noCastAO[hashed] = this.dataTool.isLightSource() || this.dataTool.noAO();
+    this.noCastAO[hashed] =
+      this.dataTool.isLightSource() || this.dataTool.noAO();
 
     this.geometryCache[hashed] =
       voxelConstructor.model.data.shapeStateGeometryMap[state];

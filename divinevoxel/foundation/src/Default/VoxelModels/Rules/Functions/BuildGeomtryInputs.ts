@@ -9,6 +9,7 @@ import { TextureManager } from "../../../../Textures/TextureManager";
 import { Matrix2x2Like, Mat2Array, Vec4Array, AMath } from "@amodx/math";
 import { QuadUVData } from "@amodx/meshing/Geometry.types";
 import { QuadVoxelGometryInputs } from "../../Input/QuadVoxelGometryInputs";
+import { VoxelGeometryTransform } from "Default/VoxelModels/VoxelModelRules.types";
 
 const isArgString = (data: any) => {
   if (typeof data !== "string") return;
@@ -17,20 +18,68 @@ const isArgString = (data: any) => {
 
 const rotationMatrix = new Map<number, Mat2Array>();
 
-const mapQuadUvs = (uvs: Vec4Array, rotation: number = 0): QuadUVData => {
-  let rotM = rotationMatrix.get(rotation);
+const mapQuadUvs = (
+  uvs: Vec4Array,
+  rotation: number = 0,
+  transform: VoxelGeometryTransform
+): QuadUVData => {
+  if (transform.lockUVs == true) {
+    let rotM = rotationMatrix.get(rotation);
 
-  if (!rotM) {
-    rotM = Matrix2x2Like.Rotation(AMath.DegreesToRadians(rotation));
-    rotationMatrix.set(rotation, rotM);
+    if (!rotM) {
+      rotM = Matrix2x2Like.Rotation(AMath.DegreesToRadians(rotation));
+      rotationMatrix.set(rotation, rotM);
+    }
+
+    return [
+      Matrix2x2Like.ApplyMatrixArray(rotM, [uvs[2], uvs[3]]),
+      Matrix2x2Like.ApplyMatrixArray(rotM, [uvs[0], uvs[3]]),
+      Matrix2x2Like.ApplyMatrixArray(rotM, [uvs[0], uvs[1]]),
+      Matrix2x2Like.ApplyMatrixArray(rotM, [uvs[2], uvs[1]]),
+    ];
   }
 
-  return [
-    Matrix2x2Like.ApplyMatrixArray(rotM, [uvs[2], uvs[3]]),
-    Matrix2x2Like.ApplyMatrixArray(rotM, [uvs[0], uvs[3]]),
-    Matrix2x2Like.ApplyMatrixArray(rotM, [uvs[0], uvs[1]]),
-    Matrix2x2Like.ApplyMatrixArray(rotM, [uvs[2], uvs[1]]),
+  let u0 = uvs[0];
+  let v0 = uvs[1];
+  let u1 = uvs[2];
+  let v1 = uvs[3];
+
+  if (transform.flip) {
+    if (transform.flip[0] === 1) {
+      [u0, u1] = [u1, u0];
+    }
+    if (transform.flip[1] === 1) {
+      [v0, v1] = [v1, v0];
+    }
+  }
+
+  let quadUVs: QuadUVData = [
+    [u1, v1],
+    [u0, v1],
+    [u0, v0],
+    [u1, v0],
   ];
+
+  if (rotation !== 0) {
+    let rotM = rotationMatrix.get(rotation);
+    if (!rotM) {
+      rotM = Matrix2x2Like.Rotation(AMath.DegreesToRadians(rotation));
+      rotationMatrix.set(rotation, rotM);
+    }
+
+    const centerU = (u0 + u1) / 2;
+    const centerV = (v0 + v1) / 2;
+    quadUVs = quadUVs.map(([u, v]) => {
+      let x = u - centerU;
+      let y = v - centerV;
+      [x, y] = Matrix2x2Like.ApplyMatrixArray(rotM, [x, y]);
+      x += centerU;
+      y += centerV;
+      return [x, y];
+    }) as QuadUVData;
+  }
+
+  return quadUVs;
 };
 
 export function BuildGeomtryInputs(geomtry: VoxelRuleGeometry) {
@@ -49,7 +98,7 @@ export function BuildGeomtryInputs(geomtry: VoxelRuleGeometry) {
   let faceCount = 0;
   let args: any[] = [];
   for (const prcoessedNode of geomtry.data.nodes) {
-    const { node } = prcoessedNode;
+    const { node, tranform } = prcoessedNode;
     if (node.type == "box") {
       const newArgs = BoxVoxelGometryInputs.CreateArgs();
       args.push(newArgs);
@@ -102,7 +151,7 @@ export function BuildGeomtryInputs(geomtry: VoxelRuleGeometry) {
 
             args[argsIndex][VoxelFaceNameRecord[face]][
               BoxVoxelGometryInputs.ArgIndexes.UVs
-            ] = mapQuadUvs(defaultUvs, value);
+            ] = mapQuadUvs(defaultUvs, value, tranform);
           });
         } else {
           faceData.rotation &&
@@ -121,7 +170,8 @@ export function BuildGeomtryInputs(geomtry: VoxelRuleGeometry) {
               defaultInput.default,
               args[argsIndex][VoxelFaceNameRecord[face]][
                 BoxVoxelGometryInputs.ArgIndexes.Rotation
-              ]
+              ],
+              tranform
             );
             defaultUvs = defaultInput.default;
           }
@@ -133,7 +183,8 @@ export function BuildGeomtryInputs(geomtry: VoxelRuleGeometry) {
               value,
               args[argsIndex][VoxelFaceNameRecord[face]][
                 BoxVoxelGometryInputs.ArgIndexes.Rotation
-              ]
+              ],
+              tranform
             );
           });
         } else {
@@ -143,7 +194,8 @@ export function BuildGeomtryInputs(geomtry: VoxelRuleGeometry) {
             faceData.uv as Vec4Array,
             args[argsIndex][VoxelFaceNameRecord[face]][
               BoxVoxelGometryInputs.ArgIndexes.Rotation
-            ]
+            ],
+            tranform
           );
           defaultUvs = faceData.uv as Vec4Array;
         }
@@ -196,7 +248,8 @@ export function BuildGeomtryInputs(geomtry: VoxelRuleGeometry) {
 
           args[argsIndex][QuadVoxelGometryInputs.ArgIndexes.UVs] = mapQuadUvs(
             defaultUvs,
-            value
+            value,
+            tranform
           );
         });
       } else {
@@ -211,7 +264,8 @@ export function BuildGeomtryInputs(geomtry: VoxelRuleGeometry) {
         if (defaultInput.type == "box-uv" && defaultInput.default) {
           args[argsIndex][QuadVoxelGometryInputs.ArgIndexes.UVs] = mapQuadUvs(
             defaultInput.default,
-            args[argsIndex][QuadVoxelGometryInputs.ArgIndexes.Rotation]
+            args[argsIndex][QuadVoxelGometryInputs.ArgIndexes.Rotation],
+            tranform
           );
           defaultUvs = defaultInput.default;
         }
@@ -219,13 +273,15 @@ export function BuildGeomtryInputs(geomtry: VoxelRuleGeometry) {
         getInputObserver(String(node.uv!)).subscribe((value) => {
           args[argsIndex][QuadVoxelGometryInputs.ArgIndexes.UVs] = mapQuadUvs(
             value,
-            args[argsIndex][QuadVoxelGometryInputs.ArgIndexes.Rotation]
+            args[argsIndex][QuadVoxelGometryInputs.ArgIndexes.Rotation],
+            tranform
           );
         });
       } else {
         args[argsIndex][QuadVoxelGometryInputs.ArgIndexes.UVs] = mapQuadUvs(
           node.uv as Vec4Array,
-          args[argsIndex][QuadVoxelGometryInputs.ArgIndexes.Rotation]
+          args[argsIndex][QuadVoxelGometryInputs.ArgIndexes.Rotation],
+          tranform
         );
         defaultUvs = node.uv as Vec4Array;
       }

@@ -3,6 +3,11 @@ import { QuadVerticies } from "@amodx/meshing/Geometry.types";
 import { Vector3Like } from "@amodx/math";
 import { VoxelGeometryTransform } from "../VoxelModelRules.types";
 
+// Utility function to convert degrees to radians
+function degreesToRadians(degrees: number): number {
+  return (degrees * Math.PI) / 180;
+}
+
 export function TransformQuad(
   quad: Quad,
   transform: VoxelGeometryTransform
@@ -55,12 +60,16 @@ export function TransformQuad(
 
   // Rotate vertices around the pivot point if rotation is specified
   if (transform.rotation) {
-    const [rotX, rotY, rotZ] = transform.rotation;
-    const pivot = transform.rotationPivoit
+    const [rotXDeg, rotYDeg, rotZDeg] = transform.rotation;
+    const rotX = degreesToRadians(rotXDeg);
+    const rotY = degreesToRadians(rotYDeg);
+    const rotZ = degreesToRadians(rotZDeg);
+
+    const pivot = transform.rotationPivot
       ? {
-          x: transform.rotationPivoit[0],
-          y: transform.rotationPivoit[1],
-          z: transform.rotationPivoit[2],
+          x: transform.rotationPivot[0],
+          y: transform.rotationPivot[1],
+          z: transform.rotationPivot[2],
         }
       : centroid;
 
@@ -166,6 +175,7 @@ export function TransformBox(
   centroid.y /= uniqueVertices.length;
   centroid.z /= uniqueVertices.length;
 
+  let scaled = false;
   // Initialize effective scales
   let effectiveScaleX = 1;
   let effectiveScaleY = 1;
@@ -177,6 +187,7 @@ export function TransformBox(
     effectiveScaleX = scaleX;
     effectiveScaleY = scaleY;
     effectiveScaleZ = scaleZ;
+    scaled = true;
   }
 
   // Apply flips by negating effective scales
@@ -185,29 +196,41 @@ export function TransformBox(
     if (flipX) effectiveScaleX *= -1;
     if (flipY) effectiveScaleY *= -1;
     if (flipZ) effectiveScaleZ *= -1;
+    scaled = true;
   }
 
   // Compute determinant
   const determinant = effectiveScaleX * effectiveScaleY * effectiveScaleZ;
 
-  // Apply transformations to each unique vertex
-  for (const vertex of uniqueVertices) {
-    // Scale relative to the centroid
-    vertex.x = centroid.x + (vertex.x - centroid.x) * effectiveScaleX;
-    vertex.y = centroid.y + (vertex.y - centroid.y) * effectiveScaleY;
-    vertex.z = centroid.z + (vertex.z - centroid.z) * effectiveScaleZ;
+  if (scaled) {
+    // Apply scaling and flips to each unique vertex
+    for (const vertex of uniqueVertices) {
+      vertex.x = centroid.x + (vertex.x - centroid.x) * effectiveScaleX;
+      vertex.y = centroid.y + (vertex.y - centroid.y) * effectiveScaleY;
+      vertex.z = centroid.z + (vertex.z - centroid.z) * effectiveScaleZ;
+    }
+  }
 
-    // Rotate around a pivot point if specified
-    if (transform.rotation) {
-      const [rotX, rotY, rotZ] = transform.rotation;
-      const pivot = transform.rotationPivoit
-        ? {
-            x: transform.rotationPivoit[0],
-            y: transform.rotationPivoit[1],
-            z: transform.rotationPivoit[2],
-          }
-        : centroid;
+  // Rotate around a pivot point if specified
+  if (transform.rotation) {
+    const [rotXDeg, rotYDeg, rotZDeg] = transform.rotation;
+    const rotX = degreesToRadians(rotXDeg);
+    const rotY = degreesToRadians(rotYDeg);
+    const rotZ = degreesToRadians(rotZDeg);
 
+
+    const pivot = transform.rotationPivot
+      ? {
+          x: transform.rotationPivot[0],
+          y: transform.rotationPivot[1],
+          z: transform.rotationPivot[2],
+        }
+      : centroid;
+
+      if(transform.rotationPivot) {
+        console.warn(pivot,transform.rotationPivot)
+      }
+    for (const vertex of uniqueVertices) {
       // Translate vertex to pivot point
       let x = vertex.x - pivot.x;
       let y = vertex.y - pivot.y;
@@ -248,10 +271,12 @@ export function TransformBox(
       vertex.y = y + pivot.y;
       vertex.z = z + pivot.z;
     }
+  }
 
-    // Translate vertices if position is specified
-    if (transform.position) {
-      const [dx, dy, dz] = transform.position;
+  // Translate vertices if position is specified
+  if (transform.position) {
+    const [dx, dy, dz] = transform.position;
+    for (const vertex of uniqueVertices) {
       vertex.x += dx;
       vertex.y += dy;
       vertex.z += dz;

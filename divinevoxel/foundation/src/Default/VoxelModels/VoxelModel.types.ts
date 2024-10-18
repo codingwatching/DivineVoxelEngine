@@ -168,7 +168,7 @@ export interface VoxelGeometryBaseLinkData {
   scale?: Vec3Array;
   position?: Vec3Array;
   rotation?: Vec3Array;
-  rotationPivoit?: Vec3Array;
+  rotationPivot?: Vec3Array;
   flip?: [flipX: 0 | 1, flipY: 0 | 1, flipZ: 0 | 1];
 }
 

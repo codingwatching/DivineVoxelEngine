@@ -790,8 +790,8 @@ export const candlesModel: VoxelModelData = {
   },
 };
 
-export const leverModelBaseDownSouthNorth: VoxelGeometryData = {
-  id: "dve_lever_model_base_down_south_north",
+export const leverGeometryBase: VoxelGeometryData = {
+  id: "dve_lever_model_base",
   arguments: {
     texture: {
       type: "texture",
@@ -801,13 +801,13 @@ export const leverModelBaseDownSouthNorth: VoxelGeometryData = {
     {
       type: "box",
       points: [
-        [5 / 16, 0, 4 / 16],
-        [10 / 16, 3 / 16, 12 / 16],
+        [4 / 16, 0, 4 / 16],
+        [12 / 16, 3 / 16, 12 / 16],
       ],
       faces: {
         up: {
           texture: "@texture",
-          uv: [5 / 16, 4 / 16, 10 / 16, 12 / 16],
+          uv: [4 / 16, 4 / 16, 12 / 16, 12 / 16],
         },
         down: {
           texture: "@texture",
@@ -833,52 +833,8 @@ export const leverModelBaseDownSouthNorth: VoxelGeometryData = {
     },
   ],
 };
-export const leverModelBaseDownWestEast: VoxelGeometryData = {
-  id: "dve_lever_model_base_down_west_east",
-  arguments: {
-    texture: {
-      type: "texture",
-    },
-  },
-  nodes: [
-    {
-      type: "box",
-      points: [
-        [4 / 16, 0, 5 / 16],
-        [12 / 16, 3 / 16, 10 / 16],
-      ],
-      faces: {
-        up: {
-          texture: "@texture",
-          uv: [5 / 16, 4 / 16, 10 / 16, 12 / 16],
-        },
-        down: {
-          texture: "@texture",
-          uv: [5 / 16, 4 / 16, 10 / 16, 12 / 16],
-        },
-        north: {
-          texture: "@texture",
-          uv: [5 / 16, 0 / 16, 10 / 16, 3 / 16],
-        },
-        south: {
-          texture: "@texture",
 
-          uv: [4 / 16, 0 / 16, 12 / 16, 3 / 16],
-        },
-        east: {
-          texture: "@texture",
-
-          uv: [5 / 16, 0 / 16, 10 / 16, 3 / 16],
-        },
-        west: {
-          texture: "@texture",
-          uv: [4 / 16, 0 / 16, 12 / 16, 3 / 16],
-        },
-      },
-    },
-  ],
-};
-export const leverModelBaseWestSouthNorth: VoxelGeometryData = {
+/* export const leverGeometryBaseWestSouthNorth: VoxelGeometryData = {
   id: "dve_lever_model_base_side_west_south_north",
   arguments: {
     texture: {
@@ -921,7 +877,7 @@ export const leverModelBaseWestSouthNorth: VoxelGeometryData = {
     },
   ],
 };
-export const leverModelBaseWestEastWest: VoxelGeometryData = {
+export const leverGeometryBaseWestEastWest: VoxelGeometryData = {
   id: "dve_lever_model_base_side_west_east_west",
   arguments: {
     texture: {
@@ -964,7 +920,7 @@ export const leverModelBaseWestEastWest: VoxelGeometryData = {
     },
   ],
 };
-export const leverModelBaseSouthSouthNorth: VoxelGeometryData = {
+export const leverGeometryBaseSouthSouthNorth: VoxelGeometryData = {
   id: "dve_lever_model_base_side_south_south_north",
   arguments: {
     texture: {
@@ -1007,7 +963,7 @@ export const leverModelBaseSouthSouthNorth: VoxelGeometryData = {
     },
   ],
 };
-export const leverModelBaseSouthEastWest: VoxelGeometryData = {
+export const leverGeometryBaseSouthEastWest: VoxelGeometryData = {
   id: "dve_lever_model_base_side_south_east_west",
   arguments: {
     texture: {
@@ -1050,9 +1006,9 @@ export const leverModelBaseSouthEastWest: VoxelGeometryData = {
     },
   ],
 };
-
-export const leverModelDown: VoxelGeometryData = {
-  id: "dve_lever_model_down",
+ */
+export const leverGeometryDown: VoxelGeometryData = {
+  id: "dve_lever_model",
   doNotBuildRules: true,
   arguments: {
     texture: {
@@ -1064,38 +1020,38 @@ export const leverModelDown: VoxelGeometryData = {
       type: "box",
       points: [
         [7 / 16, 0, 7 / 16],
-        [8 / 16, 15 / 16, 8 / 16],
+        [9 / 16, 14 / 16, 9 / 16],
       ],
       faces: {
         up: {
-          texture: "@candleTexture",
-          uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
+          texture: "@texture",
+          uv: [7 / 16, 0 / 16, 9 / 16, 14 / 16],
         },
         down: {
-          texture: "@candleTexture",
-          uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
+          texture: "@texture",
+          uv: [7 / 16, 0 / 16, 9 / 16, 14 / 16],
         },
         north: {
-          texture: "@candleTexture",
-          uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
+          texture: "@texture",
+          uv: [7 / 16, 0 / 16, 9 / 16, 14 / 16],
         },
         south: {
-          texture: "@candleTexture",
-          uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
+          texture: "@texture",
+          uv: [7 / 16, 0 / 16, 9 / 16, 14 / 16],
         },
         east: {
-          texture: "@candleTexture",
-          uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
+          texture: "@texture",
+          uv: [7 / 16, 0 / 16, 9 / 16, 14 / 16],
         },
         west: {
-          texture: "@candleTexture",
-          uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
+          texture: "@texture",
+          uv: [7 / 16, 0 / 16, 9 / 16, 14 / 16],
         },
       },
     },
   ],
 };
-export const leverModelWest: VoxelGeometryData = {
+/* export const leverGeometryWest: VoxelGeometryData = {
   id: "dve_lever_model_west",
   doNotBuildRules: true,
   arguments: {
@@ -1108,38 +1064,38 @@ export const leverModelWest: VoxelGeometryData = {
       type: "box",
       points: [
         [0, 7 / 16, 7 / 16],
-        [15 / 16, 8 / 16, 8 / 16],
+        [15 / 16, 10 / 16, 8 / 16],
       ],
       faces: {
         up: {
-          texture: "@candleTexture",
+          texture: "@texture",
           uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
         },
         down: {
-          texture: "@candleTexture",
+          texture: "@texture",
           uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
         },
         north: {
-          texture: "@candleTexture",
+          texture: "@texture",
           uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
         },
         south: {
-          texture: "@candleTexture",
+          texture: "@texture",
           uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
         },
         east: {
-          texture: "@candleTexture",
+          texture: "@texture",
           uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
         },
         west: {
-          texture: "@candleTexture",
+          texture: "@texture",
           uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
         },
       },
     },
   ],
 };
-export const leverModelSouth: VoxelGeometryData = {
+export const leverGeometrySouth: VoxelGeometryData = {
   id: "dve_lever_model_south",
   doNotBuildRules: true,
   arguments: {
@@ -1152,40 +1108,52 @@ export const leverModelSouth: VoxelGeometryData = {
       type: "box",
       points: [
         [7 / 16, 7 / 16, 0],
-        [8 / 16, 8 / 16, 15 / 16],
+        [8 / 16, 10 / 16, 15 / 16],
       ],
       faces: {
         up: {
-          texture: "@candleTexture",
+          texture: "@texture",
           uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
         },
         down: {
-          texture: "@candleTexture",
+          texture: "@texture",
           uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
         },
         north: {
-          texture: "@candleTexture",
+          texture: "@texture",
           uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
         },
         south: {
-          texture: "@candleTexture",
+          texture: "@texture",
           uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
         },
         east: {
-          texture: "@candleTexture",
+          texture: "@texture",
           uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
         },
         west: {
-          texture: "@candleTexture",
+          texture: "@texture",
           uv: [7 / 16, 0 / 16, 9 / 16, 15 / 16],
         },
       },
     },
   ],
 };
+ */
+export const leverGeometry = [
+  leverGeometryBase,
+
+  /*   leverGeometryBaseWestSouthNorth,
+  leverGeometryBaseWestEastWest,
+  leverGeometryBaseSouthSouthNorth,
+  leverGeometryBaseSouthEastWest, */
+  leverGeometryDown,
+  /*   leverGeometryWest,
+  leverGeometrySouth, */
+];
 
 export const leverModel: VoxelModelData = {
-  id: "dve_candle",
+  id: "dve_lever",
   arguments: {
     baseTexture: {
       type: "texture",
@@ -1229,58 +1197,1014 @@ export const leverModel: VoxelModelData = {
   ],
   shapeStatesConditonalNodes: {},
   shapeStatesNodes: {
-    "placement=down,direction=north,state=off": [],
-    "placement=down,direction=north,state=on": [],
-    "placement=down,direction=south,state=off": [],
-    "placement=down,direction=south,state=on": [],
-    "placement=down,direction=east,state=off": [],
-    "placement=down,direction=east,state=on": [],
-    "placement=down,direction=west,state=off": [],
-    "placement=down,direction=west,state=on": [],
+    "placement=down,direction=north,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, -0.03, -0.2],
+        rotation: [-45, 0, 0],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=down,direction=north,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, -0.03, 0.2],
+        rotation: [45, 0, 0],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=down,direction=south,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, -0.05, 0.2],
+        rotation: [45, 0, 0],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=down,direction=south,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, -0.05, -0.2],
+        rotation: [-45, 0, 0],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=down,direction=east,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [-0.2, -0.03, 0],
+        rotation: [0, 0, 45],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=down,direction=east,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0.2, -0.03, 0],
+        rotation: [0, 0, -45],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=down,direction=west,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0.2, -0.03, 0],
+        rotation: [0, 0, -45],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=down,direction=west,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [-0.2, -0.03, 0],
+        rotation: [0, 0, 45],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
 
-    "placement=up,direction=north,state=off": [],
-    "placement=up,direction=north,state=on": [],
-    "placement=up,direction=south,state=off": [],
-    "placement=up,direction=south,state=on": [],
-    "placement=up,direction=east,state=off": [],
-    "placement=up,direction=east,state=on": [],
-    "placement=up,direction=west,state=off": [],
-    "placement=up,direction=west,state=on": [],
+    //placment up
+    "placement=up,direction=north,state=off": [
+      {
+        id: "lever_base",
+        rotation: [0, 0, 180],
+        rotationPivot: [0.5, 0.5, 0.5],
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        rotation: [45, 0, 0],
+        position: [0, 2 / 16, -0.2],
+        rotationPivot: [0.5, 0.5, 0.5],
+        flip: [0, 1, 0],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=up,direction=north,state=on": [
+      {
+        id: "lever_base",
+        rotation: [0, 0, 180],
+        rotationPivot: [0.5, 0.5, 0.5],
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        rotation: [-45, 0, 0],
+        position: [0, 2 / 16, 0.2],
+        rotationPivot: [0.5, 0.5, 0.5],
+        flip: [0, 1, 0],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=up,direction=south,state=off": [
+      {
+        id: "lever_base",
+        rotation: [0, 0, 180],
+        rotationPivot: [0.5, 0.5, 0.5],
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        rotation: [-45, 0, 0],
+        position: [0, 2 / 16, 0.2],
+        rotationPivot: [0.5, 0.5, 0.5],
+        flip: [0, 1, 0],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=up,direction=south,state=on": [
+      {
+        id: "lever_base",
+        rotation: [0, 0, 180],
+        rotationPivot: [0.5, 0.5, 0.5],
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        rotation: [45, 0, 0],
+        position: [0, 2 / 16, -0.2],
+        rotationPivot: [0.5, 0.5, 0.5],
+        flip: [0, 1, 0],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=up,direction=east,state=off": [
+      {
+        id: "lever_base",
+        rotation: [0, 0, 180],
+        rotationPivot: [0.5, 0.5, 0.5],
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        rotation: [0, 0, -45],
+        position: [-0.2, 2 / 16, -0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        flip: [0, 1, 0],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=up,direction=east,state=on": [
+      {
+        id: "lever_base",
+        rotation: [0, 0, 180],
+        rotationPivot: [0.5, 0.5, 0.5],
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        rotation: [0, 0, 45],
+        position: [0.2, 2 / 16, -0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        flip: [0, 1, 0],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=up,direction=west,state=off": [
+      {
+        id: "lever_base",
+        rotation: [0, 0, 180],
+        rotationPivot: [0.5, 0.5, 0.5],
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        rotation: [0, 0, 45],
+        position: [0.2, 2 / 16, -0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        flip: [0, 1, 0],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=up,direction=west,state=on": [
+      {
+        id: "lever_base",
+        rotation: [0, 0, 180],
+        rotationPivot: [0.5, 0.5, 0.5],
+        geometryId: "dve_lever_model_base",
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        rotation: [0, 0, -45],
+        position: [-0.2, 2 / 16, -0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        flip: [0, 1, 0],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
 
-    "placement=north,direction=north,state=off": [],
-    "placement=north,direction=north,state=on": [],
-    "placement=north,direction=south,state=off": [],
-    "placement=north,direction=south,state=on": [],
-    "placement=north,direction=east,state=off": [],
-    "placement=north,direction=east,state=on": [],
-    "placement=north,direction=west,state=off": [],
-    "placement=north,direction=west,state=on": [],
+    //placement north
+    "placement=north,direction=north,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [-90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, -5 / 16, 0.03],
+        rotation: [-90 - 45, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=north,direction=north,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [-90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, 5 / 16, 0.03],
+        rotation: [-90 + 45, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=north,direction=south,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [-90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, 5 / 16, 0.03],
+        rotation: [-90 + 45, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=north,direction=south,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [-90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, -5 / 16, 0.03],
+        rotation: [-90 - 45, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=north,direction=east,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [-90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [-5 / 16, 0, 0.03],
+        rotation: [-90, 45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=north,direction=east,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [-90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [5 / 16, 0, 0.03],
+        rotation: [-90, -45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=north,direction=west,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [-90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [-5 / 16, 0, 0.03],
+        rotation: [-90, 45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=north,direction=west,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [-90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [5 / 16, 0, 0.03],
+        rotation: [-90, -45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
 
-    "placement=south,direction=north,state=off": [],
-    "placement=south,direction=north,state=on": [],
-    "placement=south,direction=south,state=off": [],
-    "placement=south,direction=south,state=on": [],
-    "placement=south,direction=east,state=off": [],
-    "placement=south,direction=east,state=on": [],
-    "placement=south,direction=west,state=off": [],
-    "placement=south,direction=west,state=on": [],
+    "placement=south,direction=north,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
 
-    "placement=east,direction=north,state=off": [],
-    "placement=east,direction=north,state=on": [],
-    "placement=east,direction=south,state=off": [],
-    "placement=east,direction=south,state=on": [],
-    "placement=east,direction=east,state=off": [],
-    "placement=east,direction=east,state=on": [],
-    "placement=east,direction=west,state=off": [],
-    "placement=east,direction=west,state=on": [],
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, -5 / 16, 0.03],
+        rotation: [90 + 45, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=south,direction=north,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, 5 / 16, 0.03],
+        rotation: [90 - 45, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=south,direction=south,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
 
-    "placement=west,direction=north,state=off": [],
-    "placement=west,direction=north,state=on": [],
-    "placement=west,direction=south,state=off": [],
-    "placement=west,direction=south,state=on": [],
-    "placement=west,direction=east,state=off": [],
-    "placement=west,direction=east,state=on": [],
-    "placement=west,direction=west,state=off": [],
-    "placement=west,direction=west,state=on": [],
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, 5 / 16, 0.03],
+        rotation: [90 - 45, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=south,direction=south,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, -5 / 16, 0.03],
+        rotation: [90 + 45, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=south,direction=east,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [-5 / 16, 0, 0.03],
+        rotation: [90, -45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=south,direction=east,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [5 / 16, 0, 0.03],
+        rotation: [90, 45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=south,direction=west,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [-5 / 16, 0, 0.03],
+        rotation: [90, -45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=south,direction=west,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [90, 0, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [5 / 16, 0, 0.03],
+        rotation: [90, 45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+
+    "placement=east,direction=north,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, 90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, -5 / 16, 0.03],
+        rotation: [90, -90, 45],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=east,direction=north,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, 90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, 5 / 16, 0.03],
+        rotation: [90, -90, -45],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=east,direction=south,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, 90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, 5 / 16, 0.03],
+        rotation: [90, -90, -45],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=east,direction=south,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, 90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, -5 / 16, 0.03],
+        rotation: [90, -90, 45],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=east,direction=east,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, 90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0.03, 0, 5 / 16],
+        rotation: [90, -90 + 45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=east,direction=east,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, 90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0.03, 0, -5 / 16],
+        rotation: [90, -90 - 45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=east,direction=west,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, 90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0.03, 0, -5 / 16],
+        rotation: [90, -90 - 45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=east,direction=west,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, 90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0.03, 0, 5 / 16],
+        rotation: [90, -90 + 45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+
+    "placement=west,direction=north,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, -90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, -5 / 16, 0.03],
+        rotation: [90, 90, -45],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=west,direction=north,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, -90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, 5 / 16, 0.03],
+        rotation: [90, 90, 45],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=west,direction=south,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, -90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, 5 / 16, 0.03],
+        rotation: [90, 90, 45],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=west,direction=south,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, -90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0, -5 / 16, 0.03],
+        rotation: [90, 90, -45],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=west,direction=east,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, -90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0.03, 0, 5 / 16],
+        rotation: [90, 90 - 45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=west,direction=east,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, -90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0.03, 0, -5 / 16],
+        rotation: [90, 90 + 45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=west,direction=west,state=off": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, -90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0.03, 0, -5 / 16],
+        rotation: [90, 90 + 45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
+    "placement=west,direction=west,state=on": [
+      {
+        id: "lever_base",
+        geometryId: "dve_lever_model_base",
+        rotation: [0, 0, -90],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@baseTexture",
+        },
+      },
+      {
+        id: "lever",
+        geometryId: "dve_lever_model",
+        position: [0.03, 0, 5 / 16],
+        rotation: [90, 90 - 45, 0],
+        rotationPivot: [0.5, 0.5, 0.5],
+        inputs: {
+          "@texture": "@leverTexture",
+        },
+      },
+    ],
   },
 };
